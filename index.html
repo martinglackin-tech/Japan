@@ -270,11 +270,42 @@
                 </div>
             `;
 
-            mainContent.querySelector('#flashcard').addEventListener('click', (e) => {
+            const flashcard = mainContent.querySelector('#flashcard');
+            
+            // Click to flip
+            flashcard.addEventListener('click', (e) => {
                 if (!e.target.closest('.play-audio-btn')) {
                     e.currentTarget.classList.toggle('is-flipped');
                 }
             });
+
+            // Swipe functionality
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const swipeThreshold = 50; // Minimum distance for a swipe
+
+            flashcard.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            flashcard.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const swipeDistance = touchEndX - touchStartX;
+                if (swipeDistance > swipeThreshold) {
+                    // Swipe Right (previous card)
+                    currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
+                    renderFlashcard();
+                } else if (swipeDistance < -swipeThreshold) {
+                    // Swipe Left (next card)
+                    currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
+                    renderFlashcard();
+                }
+            }
+
             mainContent.querySelector('.play-audio-btn').addEventListener('click', (e) => playAudio(e.currentTarget.dataset.text, e));
             mainContent.querySelector('#prev-card').addEventListener('click', () => {
                 currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
@@ -293,7 +324,7 @@
         
         function startQuiz() {
             quizScore = 0;
-            currentFlashcardIndex = 0;
+            currentQuizQuestionIndex = 0;
             quizResults = [];
             quizQuestions = generateQuizQuestions();
             renderQuizQuestion();
