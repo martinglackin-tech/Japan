@@ -11,8 +11,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-            color: #4A4A4A;
+            background: #E0F2F1; /* Soft Teal Background */
+            color: #37474F; /* Dark Slate Blue Text */
         }
         .jp-font {
             font-family: 'Noto Sans JP', sans-serif;
@@ -43,10 +43,10 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
         .btn-nav.active {
-            background: #ff758c; /* Vibrant Pink */
+            background: #FF6F61; /* Warm Orange-Red */
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(255, 117, 140, 0.4);
+            box-shadow: 0 4px 8px rgba(255, 111, 97, 0.4);
         }
         .modal {
             transition: opacity 0.3s ease;
@@ -55,7 +55,7 @@
             cursor: pointer;
         }
         .quiz-option-container:hover {
-            background-color: #ffc2d1; /* Light Pink Hover */
+            background-color: #FFDAB9; /* Peach Hover */
         }
     </style>
 </head>
@@ -65,8 +65,8 @@
 
         <!-- Header -->
         <header class="text-center mb-8">
-            <img src="Gemini_Generated_Image_irs7jbirs7jbirs7.jpg" alt="Martin & Alex's Japanese Phrasebook" class="mx-auto rounded-2xl shadow-2xl mb-6 max-w-xs w-full">
-            <p class="text-xl text-white/90 mt-2 title-font">Essential phrases for our holiday of dreams.</p>
+            <img src="title.jpg" alt="Martin & Alex's Japanese Phrasebook" class="mx-auto rounded-2xl shadow-2xl mb-6 max-w-sm w-full">
+            <p class="text-xl text-slate-700/90 mt-2 title-font">Essential phrases for our holiday of dreams!</p>
         </header>
 
         <!-- Navigation -->
@@ -84,15 +84,15 @@
 
     <!-- Quiz Results Modal -->
     <div id="quiz-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-md w-full transform transition-all scale-95 opacity-0" style="background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);">
-            <h2 id="modal-title" class="title-font text-3xl font-bold mb-4 text-pink-500">Quiz Complete!</h2>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-md w-full transform transition-all scale-95 opacity-0" style="background: linear-gradient(135deg, #fff1eb 0%, #e0f2f1 100%);">
+            <h2 id="modal-title" class="title-font text-3xl font-bold mb-4 text-orange-600">Quiz Complete!</h2>
             <p id="modal-score" class="text-5xl font-bold mb-2 text-gray-800"></p>
             <p id="modal-feedback" class="text-lg text-gray-600 mb-4"></p>
-            <a href="#" id="see-answers-link" class="text-pink-500 hover:underline mb-4 block">See answers</a>
+            <a href="#" id="see-answers-link" class="text-orange-500 hover:underline mb-4 block">See answers</a>
             <div id="answers-breakdown" class="hidden text-left max-h-60 overflow-y-auto mb-4 p-3 bg-white/50 rounded-lg">
                 <!-- Breakdown will be inserted here -->
             </div>
-            <button id="modal-close-btn" class="bg-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-pink-600 transition-transform duration-200 hover:scale-105 shadow-lg">Try Again!</button>
+            <button id="modal-close-btn" class="bg-orange-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-orange-600 transition-transform duration-200 hover:scale-105 shadow-lg">Try Again!</button>
         </div>
     </div>
 
@@ -214,10 +214,10 @@
                     <div class="bg-white/80 backdrop-blur-sm p-5 rounded-2xl shadow-lg flex items-center justify-between transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
                         <div>
                             <p class="font-semibold text-lg text-gray-800">${phrase.english}</p>
-                            <p class="text-pink-500 font-medium">${phrase.romaji}</p>
+                            <p class="text-orange-600 font-medium">${phrase.romaji}</p>
                             <div class="flex items-center mt-2">
                                 <p class="jp-font text-gray-900 text-2xl">${phrase.japanese}</p>
-                                <button class="play-audio-btn text-gray-500 hover:text-pink-500 ml-4" data-text="${phrase.japanese}">${speakerIconSVG}</button>
+                                <button class="play-audio-btn text-gray-500 hover:text-orange-600 ml-4" data-text="${phrase.japanese}">${speakerIconSVG}</button>
                             </div>
                         </div>
                     </div>
@@ -255,18 +255,18 @@
                         <div class="card-face absolute w-full h-full bg-white rounded-2xl shadow-xl flex items-center justify-center p-6 text-center">
                             <h2 class="text-2xl md:text-3xl font-bold text-gray-800">${item.english}</h2>
                         </div>
-                        <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-pink-400 to-orange-300 text-white rounded-2xl shadow-xl flex flex-col items-center justify-center p-6 text-center">
+                        <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-orange-400 to-red-400 text-white rounded-2xl shadow-xl flex flex-col items-center justify-center p-6 text-center">
                             <p class="text-2xl md:text-3xl font-semibold">${item.romaji}</p>
                              <div class="flex items-center mt-4">
                                 <p class="jp-font text-3xl md:text-4xl">${item.japanese}</p>
-                                <button class="play-audio-btn text-white hover:text-pink-100 ml-4" data-text="${item.japanese}">${speakerIconSVG}</button>
+                                <button class="play-audio-btn text-white hover:text-orange-100 ml-4" data-text="${item.japanese}">${speakerIconSVG}</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-between items-center mt-8">
                     <button id="prev-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full">&lt; Prev</button>
-                    <span class="font-semibold text-white/90 text-lg">${currentFlashcardIndex + 1} / ${flashcardItems.length}</span>
+                    <span class="font-semibold text-slate-700/90 text-lg">${currentFlashcardIndex + 1} / ${flashcardItems.length}</span>
                     <button id="next-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full">Next &gt;</button>
                 </div>
             `;
@@ -330,8 +330,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         ${q.options.map(option => `
                             <div class="quiz-option-container flex items-center bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer" data-answer="${option.romaji}">
-                                <span class="flex-grow p-4 text-lg text-pink-500 font-semibold text-center">${option.romaji}</span>
-                                <button class="play-audio-btn p-4 text-gray-500 hover:text-pink-500 flex-shrink-0" data-text="${option.japanese}">${speakerIconSVG}</button>
+                                <span class="flex-grow p-4 text-lg text-orange-600 font-semibold text-center">${option.romaji}</span>
+                                <button class="play-audio-btn p-4 text-gray-500 hover:text-orange-600 flex-shrink-0" data-text="${option.japanese}">${speakerIconSVG}</button>
                             </div>
                         `).join('')}
                     </div>
