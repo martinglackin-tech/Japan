@@ -66,7 +66,7 @@
         <!-- Header -->
         <header class="text-center mb-8">
             <img src="Gemini_Generated_Image_irs7jbirs7jbirs7.jpg" alt="Martin & Alex's Japanese Phrasebook" class="mx-auto rounded-2xl shadow-2xl mb-6 max-w-xs w-full">
-            <p class="text-xl text-white/90 mt-2 title-font">Essential phrases for our holiday of dreams!</p>
+            <p class="text-xl text-white/90 mt-2 title-font">Essential phrases for our holiday of dreams.</p>
         </header>
 
         <!-- Navigation -->
@@ -84,10 +84,14 @@
 
     <!-- Quiz Results Modal -->
     <div id="quiz-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm w-full transform transition-all scale-95 opacity-0" style="background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-md w-full transform transition-all scale-95 opacity-0" style="background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);">
             <h2 id="modal-title" class="title-font text-3xl font-bold mb-4 text-pink-500">Quiz Complete!</h2>
             <p id="modal-score" class="text-5xl font-bold mb-2 text-gray-800"></p>
-            <p id="modal-feedback" class="text-lg text-gray-600 mb-6"></p>
+            <p id="modal-feedback" class="text-lg text-gray-600 mb-4"></p>
+            <a href="#" id="see-answers-link" class="text-pink-500 hover:underline mb-4 block">See answers</a>
+            <div id="answers-breakdown" class="hidden text-left max-h-60 overflow-y-auto mb-4 p-3 bg-white/50 rounded-lg">
+                <!-- Breakdown will be inserted here -->
+            </div>
             <button id="modal-close-btn" class="bg-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-pink-600 transition-transform duration-200 hover:scale-105 shadow-lg">Try Again!</button>
         </div>
     </div>
@@ -112,11 +116,32 @@
             { id: 14, english: "Excuse me, where is this train?", romaji: "Sumimasen, kono densha wa doko desu ka?", japanese: "すみません、この電車はどこですか？" }
         ];
 
+        const words = [
+            { id: 101, english: "English", romaji: "Eigo", japanese: "英語" },
+            { id: 102, english: "Japanese", romaji: "Nihongo", japanese: "日本語" },
+            { id: 103, english: "Card", romaji: "Kaado", japanese: "カード" },
+            { id: 104, english: "Toilet", romaji: "Toire", japanese: "トイレ" },
+            { id: 105, english: "Where", romaji: "Doko", japanese: "どこ" },
+            { id: 106, english: "Okay", romaji: "Daijoubu", japanese: "大丈夫" },
+            { id: 107, english: "Bill", romaji: "Okaikei", japanese: "お会計" },
+            { id: 108, english: "Excuse me", romaji: "Sumimasen", japanese: "すみません" },
+            { id: 109, english: "Beer", romaji: "Biiru", japanese: "ビール" },
+            { id: 110, english: "Water", romaji: "Mizu", japanese: "水" },
+            { id: 111, english: "Tea", romaji: "Ocha", japanese: "お茶" },
+            { id: 112, english: "Please give me", romaji: "Kudasai", japanese: "ください" },
+            { id: 113, english: "Cool", romaji: "Kakkoī", japanese: "かっこいい" },
+            { id: 114, english: "Pretty", romaji: "Kirei", japanese: "きれい" },
+            { id: 115, english: "Cute", romaji: "Kawaī", japanese: "かわいい" },
+            { id: 116, english: "Train", romaji: "Densha", japanese: "電車" },
+        ];
+
         // --- STATE ---
+        let flashcardItems = [];
         let currentFlashcardIndex = 0;
         let quizQuestions = [];
         let currentQuizQuestionIndex = 0;
         let quizScore = 0;
+        let quizResults = [];
         let japaneseVoices = [];
 
         // --- DOM ELEMENTS ---
@@ -126,15 +151,24 @@
         const navQuiz = document.getElementById('nav-quiz');
         const quizModal = document.getElementById('quiz-modal');
         const modalContent = quizModal.querySelector('div');
+        const seeAnswersLink = document.getElementById('see-answers-link');
+        const answersBreakdown = document.getElementById('answers-breakdown');
 
         // --- EVENT LISTENERS ---
         navLearn.addEventListener('click', showLearnView);
         navFlashcards.addEventListener('click', showFlashcardsView);
         navQuiz.addEventListener('click', showQuizView);
+        
         document.getElementById('modal-close-btn').addEventListener('click', () => {
              hideQuizModal();
              showQuizView();
         });
+
+        seeAnswersLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAnswersBreakdown();
+        });
+
 
         // --- AUDIO FUNCTIONALITY ---
         function loadVoices() {
@@ -146,21 +180,15 @@
         function playAudio(text, event) {
             if (event) event.stopPropagation();
             if ('speechSynthesis' in window) {
-                // Cancel any previous speech
                 window.speechSynthesis.cancel();
-
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'ja-JP';
                 utterance.rate = 0.9;
-                
-                // If Japanese voices are loaded, use the first available one
                 if (japaneseVoices.length > 0) {
                     utterance.voice = japaneseVoices[0];
                 } else {
-                    // This is a fallback if voices haven't loaded for some reason
                     console.warn("Japanese voice not found, using browser default for ja-JP.");
                 }
-                
                 window.speechSynthesis.speak(utterance);
             } else {
                 console.error('Text-to-Speech not supported in this browser.');
@@ -205,30 +233,40 @@
 
         function showFlashcardsView() {
             setActiveNav(navFlashcards);
+            flashcardItems = [...phrases, ...words];
+            // Shuffle the combined array using Fisher-Yates algorithm
+            for (let i = flashcardItems.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcardItems[i], flashcardItems[j]] = [flashcardItems[j], flashcardItems[i]];
+            }
             currentFlashcardIndex = 0;
             renderFlashcard();
         }
 
         function renderFlashcard() {
-            const phrase = phrases[currentFlashcardIndex];
+            if (flashcardItems.length === 0) {
+                mainContent.innerHTML = `<p>No flashcards to display.</p>`;
+                return;
+            }
+            const item = flashcardItems[currentFlashcardIndex];
             mainContent.innerHTML = `
                 <div class="perspective-1000 h-80">
                     <div id="flashcard" class="card relative w-full h-full mx-auto cursor-pointer">
                         <div class="card-face absolute w-full h-full bg-white rounded-2xl shadow-xl flex items-center justify-center p-6 text-center">
-                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800">${phrase.english}</h2>
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800">${item.english}</h2>
                         </div>
                         <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-pink-400 to-orange-300 text-white rounded-2xl shadow-xl flex flex-col items-center justify-center p-6 text-center">
-                            <p class="text-2xl md:text-3xl font-semibold">${phrase.romaji}</p>
+                            <p class="text-2xl md:text-3xl font-semibold">${item.romaji}</p>
                              <div class="flex items-center mt-4">
-                                <p class="jp-font text-3xl md:text-4xl">${phrase.japanese}</p>
-                                <button class="play-audio-btn text-white hover:text-pink-100 ml-4" data-text="${phrase.japanese}">${speakerIconSVG}</button>
+                                <p class="jp-font text-3xl md:text-4xl">${item.japanese}</p>
+                                <button class="play-audio-btn text-white hover:text-pink-100 ml-4" data-text="${item.japanese}">${speakerIconSVG}</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-between items-center mt-8">
                     <button id="prev-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full">&lt; Prev</button>
-                    <span class="font-semibold text-white/90 text-lg">${currentFlashcardIndex + 1} / ${phrases.length}</span>
+                    <span class="font-semibold text-white/90 text-lg">${currentFlashcardIndex + 1} / ${flashcardItems.length}</span>
                     <button id="next-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full">Next &gt;</button>
                 </div>
             `;
@@ -240,11 +278,11 @@
             });
             mainContent.querySelector('.play-audio-btn').addEventListener('click', (e) => playAudio(e.currentTarget.dataset.text, e));
             mainContent.querySelector('#prev-card').addEventListener('click', () => {
-                currentFlashcardIndex = (currentFlashcardIndex - 1 + phrases.length) % phrases.length;
+                currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
                 renderFlashcard();
             });
             mainContent.querySelector('#next-card').addEventListener('click', () => {
-                currentFlashcardIndex = (currentFlashcardIndex + 1) % phrases.length;
+                currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
                 renderFlashcard();
             });
         }
@@ -257,6 +295,7 @@
         function startQuiz() {
             quizScore = 0;
             currentQuizQuestionIndex = 0;
+            quizResults = [];
             quizQuestions = generateQuizQuestions();
             renderQuizQuestion();
         }
@@ -317,8 +356,16 @@
 
             const selectedAnswer = container.dataset.answer;
             const correctAnswer = quizQuestions[currentQuizQuestionIndex].answer;
+            const isCorrect = selectedAnswer === correctAnswer;
+
+            quizResults.push({
+                question: quizQuestions[currentQuizQuestionIndex].question,
+                selectedAnswer: selectedAnswer,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect
+            });
             
-            if (selectedAnswer === correctAnswer) {
+            if (isCorrect) {
                 quizScore++;
                 container.classList.add('bg-green-400', 'text-white');
             } else {
@@ -343,6 +390,32 @@
             showQuizModal();
         }
 
+        function showAnswersBreakdown() {
+            let breakdownHTML = '<ul class="space-y-3">';
+            quizResults.forEach(result => {
+                if (result.isCorrect) {
+                    breakdownHTML += `
+                        <li class="p-2 rounded-md bg-green-100 border-l-4 border-green-500">
+                            <p class="font-semibold text-gray-700">${result.question}</p>
+                            <p class="text-green-700">Your answer: ${result.selectedAnswer} (Correct)</p>
+                        </li>
+                    `;
+                } else {
+                    breakdownHTML += `
+                        <li class="p-2 rounded-md bg-red-100 border-l-4 border-red-500">
+                            <p class="font-semibold text-gray-700">${result.question}</p>
+                            <p class="text-red-700">Your answer: ${result.selectedAnswer} (Incorrect)</p>
+                            <p class="text-gray-600">Correct answer: ${result.correctAnswer}</p>
+                        </li>
+                    `;
+                }
+            });
+            breakdownHTML += '</ul>';
+            answersBreakdown.innerHTML = breakdownHTML;
+            answersBreakdown.classList.remove('hidden');
+            seeAnswersLink.classList.add('hidden');
+        }
+
         function showQuizModal() {
             quizModal.classList.remove('hidden');
             setTimeout(() => {
@@ -358,14 +431,15 @@
             quizModal.classList.add('opacity-0');
             setTimeout(() => {
                 quizModal.classList.add('hidden');
+                // Reset the answers view for the next quiz
+                answersBreakdown.classList.add('hidden');
+                seeAnswersLink.classList.remove('hidden');
             }, 300);
         }
 
         // --- APP INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Initial load of voices
             loadVoices();
-            // The 'voiceschanged' event is fired when the list of voices has been loaded and is ready.
             if (speechSynthesis.onvoiceschanged !== undefined) {
                 speechSynthesis.onvoiceschanged = loadVoices;
             }
