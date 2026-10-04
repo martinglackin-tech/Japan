@@ -317,117 +317,7 @@
             }, duration);
         }
 
-        // --- STUDIO-GRADE GEMINI TTS HELPERS ---
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        function pcmToWav(pcm16, sampleRate = 24000, numChannels = 1) {
-            const buffer = new ArrayBuffer(44 + pcm16.length * 2);
-            const view = new DataView(buffer);
-
-            // RIFF chunk descriptor
-            writeAsciiString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + pcm16.length * 2, true);
-            writeAsciiString(view, 8, 'WAVE');
-
-            // "fmt " sub-chunk
-            writeAsciiString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true); // Subchunk1Size (16 for PCM)
-            view.setUint16(20, 1, true);  // AudioFormat (1 for PCM)
-            view.setUint16(22, numChannels, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * numChannels * 2, true); // ByteRate
-            view.setUint16(32, numChannels * 2, true);             // BlockAlign
-            view.setUint16(34, 16, true);                          // BitsPerSample
-
-            // "data" sub-chunk
-            writeAsciiString(view, 36, 'data');
-            view.setUint32(40, pcm16.length * 2, true);
-
-            // PCM samples
-            let offset = 44;
-            for (let i = 0; i < pcm16.length; i++, offset += 2) {
-                view.setInt16(offset, pcm16[i], true);
-            }
-
-            return new Blob([view], { type: 'audio/wav' });
-        }
-
-        function writeAsciiString(view, offset, string) {
-            for (let i = 0; i < string.length; i++) {
-                view.setUint8(offset + i, string.charCodeAt(i));
-            }
-        }
-
-        async function fetchStudioJapaneseAudio(text) {
-            const cacheKey = `${text}_${speechRate}`;
-            if (studioAudioCache.has(cacheKey)) {
-                return studioAudioCache.get(cacheKey);
-            }
-
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{
-                    parts: [{
-                        text: `Speak clearly and at a gentle, comfortable, easy-to-follow pace with pleasant natural Japanese pronunciation: ${text}`
-                    }]
-                }],
-                generationConfig: {
-                    responseModalities: ["AUDIO"],
-                    speechConfig: {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: { voiceName: "Aoede" }
-                        }
-                    }
-                },
-                model: "gemini-2.5-flash-preview-tts"
-            };
-
-            // Exponential backoff fetch
-            let delay = 1000;
-            for (let attempt = 0; attempt < 3; attempt++) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        const part = result?.candidates?.[0]?.content?.parts?.[0];
-                        const audioData = part?.inlineData?.data;
-                        const mimeType = part?.inlineData?.mimeType || "audio/L16;rate=24000";
-
-                        if (audioData) {
-                            const rateMatch = mimeType.match(/rate=(\d+)/);
-                            const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
-                            const pcmBuffer = base64ToArrayBuffer(audioData);
-                            const pcm16 = new Int16Array(pcmBuffer);
-                            const wavBlob = pcmToWav(pcm16, sampleRate, 1);
-                            const audioUrl = URL.createObjectURL(wavBlob);
-                            studioAudioCache.set(cacheKey, audioUrl);
-                            return audioUrl;
-                        }
-                    }
-                } catch (e) {
-                    // Backoff retry without breaking console
-                }
-                await new Promise(r => setTimeout(r, delay));
-                delay *= 2;
-            }
-            return null;
-        }
-
+        // --- HIGH-DEFINITION INSTANT AUDIO ENGINE ---
         function populateVoices() {
             if ('speechSynthesis' in window) {
                 try {
@@ -438,16 +328,34 @@
             }
         }
 
+        // Smart voice selector: prioritize natural, neural, Google & clear female Japanese voices (Kyoko, Haruka, Nanami)
+        // Explicitly deprioritize legacy robotic desktop voices like "Microsoft Ichiro"
         function getBestJapaneseVoice() {
             if (!cachedVoices || cachedVoices.length === 0) {
                 populateVoices();
             }
-            let match = cachedVoices.find(v => v.lang === 'ja-JP' || v.lang === 'ja_JP');
-            if (match) return match;
-            match = cachedVoices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja'));
-            if (match) return match;
-            match = cachedVoices.find(v => v.name && (v.name.toLowerCase().includes('japan') || v.name.includes('日本語')));
-            return match || null;
+            const jpVoices = cachedVoices.filter(v => 
+                (v.lang && (v.lang === 'ja-JP' || v.lang === 'ja_JP' || v.lang.toLowerCase().startsWith('ja'))) ||
+                (v.name && (v.name.toLowerCase().includes('japan') || v.name.includes('日本語')))
+            );
+
+            if (jpVoices.length === 0) return null;
+
+            return jpVoices.sort((a, b) => {
+                const scoreVoice = (v) => {
+                    const name = (v.name || '').toLowerCase();
+                    let score = 0;
+                    if (name.includes('natural') || name.includes('neural') || name.includes('online')) score += 60;
+                    if (name.includes('google')) score += 40;
+                    if (name.includes('kyoko') || name.includes('nanami') || name.includes('haruka') || name.includes('ayumi') || name.includes('sayaka')) score += 30;
+                    if (v.lang === 'ja-JP') score += 10;
+                    // Strongly deprioritize legacy robotic male synthesizer on Windows desktop
+                    if (name.includes('ichiro')) score -= 50;
+                    if (name.includes('desktop')) score -= 20;
+                    return score;
+                };
+                return scoreVoice(b) - scoreVoice(a);
+            })[0];
         }
 
         function playFallbackSpeechSynthesis(cleanText, triggerBtn) {
@@ -521,35 +429,35 @@
             const cleanText = sanitizeJapaneseText(text);
             showToast(`Speaking: ${cleanText}`);
 
+            // Primary: High-definition native Japanese audio stream (Zero-latency, crystal-clear natural female voice)
             try {
-                // Attempt high-definition native studio audio via Gemini TTS
-                const audioUrl = await fetchStudioJapaneseAudio(cleanText);
+                const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(cleanText)}`;
+                const audio = new Audio();
+                audio.playbackRate = speechRate;
+                currentPlayingAudio = audio;
 
-                if (audioUrl) {
-                    const audio = new Audio(audioUrl);
-                    currentPlayingAudio = audio;
-                    audio.playbackRate = speechRate;
+                const cleanup = () => {
+                    if (triggerBtn) {
+                        triggerBtn.classList.remove('speaking-pulse', 'text-orange-600', 'bg-orange-100');
+                    }
+                };
 
-                    const cleanup = () => {
-                        if (triggerBtn) {
-                            triggerBtn.classList.remove('speaking-pulse', 'text-orange-600', 'bg-orange-100');
-                        }
-                    };
+                const playPromise = new Promise((resolve, reject) => {
+                    audio.onended = () => { cleanup(); resolve(); };
+                    audio.onerror = (e) => reject(e);
+                    audio.src = audioUrl;
+                    audio.play().then(resolve).catch(reject);
+                });
 
-                    audio.onended = cleanup;
-                    audio.onerror = () => {
-                        cleanup();
-                        playFallbackSpeechSynthesis(cleanText, triggerBtn);
-                    };
+                // Fall back quickly to speech synthesis if network blocks the stream (under 800ms)
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 800));
 
-                    await audio.play();
-                    return;
-                }
+                await Promise.race([playPromise, timeoutPromise]);
+                return;
             } catch (err) {
-                // Seamlessly fallback to browser synthesis if offline
+                // Instantly fall back to device synthesis with smart voice ranking
             }
 
-            // Fallback to local synthesis if studio stream isn't available
             playFallbackSpeechSynthesis(cleanText, triggerBtn);
         }
 
