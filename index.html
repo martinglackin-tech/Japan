@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>Josey &amp; Frankie's Japanese Phrasebook</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -77,7 +78,6 @@
                 box-shadow: 0 0 0 10px rgba(234, 88, 12, 0);
             }
         }
-        /* Custom scrollbar hiding for clean chip filter view */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -115,51 +115,79 @@
                     <span>🔊</span>
                     <span>Test Sound</span>
                 </button>
-                <span id="audio-status-badge" class="inline-flex items-center space-x-1.5 bg-white/80 px-3 py-1.5 rounded-full shadow-sm border border-gray-100 text-teal-800">
-                    <span id="audio-status-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span id="audio-status-text">Audio Ready</span>
-                </span>
             </div>
         </header>
 
-        <!-- Navigation Tabs -->
-        <nav id="navigation" class="flex justify-center space-x-2 md:space-x-4 mb-6">
-            <button id="nav-learn" class="btn-nav active bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">
-                📖 Learn
-            </button>
-            <button id="nav-flashcards" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">
-                🗂️ Flashcards
-            </button>
-            <button id="nav-quiz" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">
-                ⚡ Quiz
-            </button>
+        <!-- Primary Navigation -->
+        <nav id="navigation" class="flex justify-center space-x-2 md:space-x-4 mb-8">
+            <button id="nav-learn" class="btn-nav active bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Learn</button>
+            <button id="nav-flashcards" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Flashcards</button>
+            <button id="nav-quiz" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Quiz</button>
         </nav>
 
-        <!-- Main Dynamic Content Area -->
+        <!-- Main Content Area -->
         <main id="main-content">
-            <!-- Populated via JavaScript -->
+            <!-- Dynamically populated by JavaScript -->
         </main>
     </div>
 
     <!-- Quiz Results Modal -->
-    <div id="quiz-modal" class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div id="modal-container" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center max-w-md w-full transform transition-all scale-95 opacity-0 border border-orange-100" style="background: linear-gradient(135deg, #fffbf7 0%, #e8f5e9 100%);">
-            <h2 id="modal-title" class="title-font text-2xl md:text-3xl font-bold mb-3 text-orange-600">Quiz Complete! 🎉</h2>
-            <p id="modal-score" class="text-5xl font-black mb-2 text-gray-900"></p>
-            <p id="modal-feedback" class="text-base font-medium text-gray-600 mb-4"></p>
-            <button id="see-answers-btn" class="text-sm font-bold text-orange-600 hover:text-orange-700 underline mb-4 block mx-auto">
-                Review My Answers
-            </button>
-            <div id="answers-breakdown" class="hidden text-left max-h-56 overflow-y-auto mb-5 p-3 bg-white/80 rounded-2xl border border-gray-200 text-xs md:text-sm">
-                <!-- Breakdown inserted dynamically -->
+    <div id="quiz-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div id="modal-container" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center max-w-md w-full transform transition-all scale-95 opacity-0 border border-orange-100">
+            <h2 id="modal-title" class="title-font text-2xl md:text-3xl font-bold mb-3 text-orange-600">Quiz Complete!</h2>
+            <p id="modal-score" class="text-4xl md:text-5xl font-black mb-2 text-gray-800">100%</p>
+            <p id="modal-feedback" class="text-sm md:text-base text-gray-600 mb-4"></p>
+            <button id="see-answers-btn" class="text-orange-600 font-semibold hover:underline mb-4 text-xs md:text-sm block mx-auto">See answers breakdown</button>
+            <div id="answers-breakdown" class="hidden text-left max-h-60 overflow-y-auto mb-4 p-3 bg-gray-50 rounded-2xl border border-gray-100 text-xs md:text-sm"></div>
+            <button id="modal-close-btn" class="w-full bg-orange-600 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-700 transition-all duration-200 shadow-md">Practice Again</button>
+        </div>
+    </div>
+
+    <!-- Coeliac & Gluten-Free Chef Warning Modal -->
+    <div id="gf-chef-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 md:p-6 hidden z-50 overflow-y-auto">
+        <div id="gf-modal-container" class="bg-white rounded-3xl shadow-2xl p-5 md:p-7 max-w-xl w-full transform transition-all scale-95 opacity-0 border-2 border-red-200 my-auto">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between border-b border-gray-100 pb-3 mb-4">
+                <div class="flex items-center space-x-2">
+                    <span class="text-3xl">⚠️</span>
+                    <div>
+                        <h2 class="title-font text-xl md:text-2xl font-black text-red-600">Coeliac Restaurant Card</h2>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">シェフ・店員様へのご案内 (Show to staff / chef)</p>
+                    </div>
+                </div>
+                <button id="gf-modal-close-icon" class="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 text-2xl leading-none">&times;</button>
             </div>
-            <button id="modal-close-btn" class="w-full bg-orange-600 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-700 transition-all duration-200 hover:scale-102 shadow-lg">
-                Try Again
+
+            <!-- Primary Japanese Notice (Show directly to server/chef) -->
+            <div class="bg-red-50/80 border-2 border-red-300 rounded-2xl p-4 md:p-5 mb-4 shadow-inner">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="inline-block bg-red-600 text-white text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider">
+                        店員様・調理場へ提示
+                    </span>
+                    <button id="speak-chef-card-btn" class="flex items-center space-x-1 text-xs font-bold text-red-700 bg-white px-2.5 py-1 rounded-full shadow-sm border border-red-200 hover:bg-red-50">
+                        <span>🔊</span><span>Speak Notice</span>
+                    </button>
+                </div>
+                <p id="chef-card-jp-text" class="jp-font text-base md:text-lg font-bold text-gray-900 leading-relaxed text-left">
+                    【重要】セリアック病（重度の小麦・グルテンアレルギー）があります。小麦、大麦、ライ麦、および普通の醤油や麦味噌など、グルテンを含む調味料も一切摂取できません。調理器具や揚げ油の使い回し（コンタミネーション）も避ける必要があります。食べられるものはありますか？
+                </p>
+            </div>
+
+            <!-- English Translation -->
+            <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 mb-5 text-left">
+                <p class="text-xs uppercase font-extrabold text-amber-800 tracking-wider mb-1">English Translation</p>
+                <p class="text-xs md:text-sm text-gray-700 leading-relaxed italic">
+                    "[Important] I have Coeliac disease (a severe wheat/gluten allergy). I cannot consume any wheat, barley, rye, or seasonings containing gluten such as regular soy sauce or barley miso. Cross-contamination from shared cooking utensils or frying oil must also be avoided. Is there anything I can eat?"
+                </p>
+            </div>
+
+            <button id="gf-modal-close-btn" class="w-full bg-red-600 text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-all duration-200 shadow-md hover:shadow-lg">
+                Close Card
             </button>
         </div>
     </div>
 
-    <!-- Audio Prompt Toast Notification -->
+    <!-- Audio Notification Toast -->
     <div id="audio-toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white text-xs md:text-sm px-4 py-2 rounded-full shadow-2xl backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center space-x-2">
         <span id="toast-icon">🔊</span>
         <span id="toast-message">Playing audio...</span>
@@ -169,7 +197,8 @@
         // --- CATEGORIES & PHRASES DATASET ---
         const categories = {
             greetings: { id: "greetings", name: "Greetings & Polite Essentials", icon: "🎌", jp: "挨拶と基本表現" },
-            dining: { id: "dining", name: "Drinking & Dining (Coeliac & GF)", icon: "🍱", jp: "飲食・セリアック対応" },
+            coeliac: { id: "coeliac", name: "Coeliac & Gluten-Free", icon: "🌾", jp: "セリアック・グルテンフリー" },
+            dining: { id: "dining", name: "Drinking & Dining", icon: "🍱", jp: "飲食・レストラン" },
             about: { id: "about", name: "About Us & Introductions", icon: "👥", jp: "自己紹介と会話" },
             travel: { id: "travel", name: "Getting Around & Paying", icon: "🚆", jp: "移動・お会計・便利表現" }
         };
@@ -187,9 +216,14 @@
             { id: 9, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
             { id: 10, category: "greetings", english: "Don't worry, it's okay, I'm fine", romaji: "Daijoubu", japanese: "大丈夫。" },
 
-            // --- DRINKING & DINING (COELIAC & ALLERGIES) ---
-            { id: 11, category: "dining", english: "I am coeliac (I cannot eat wheat/gluten)", romaji: "Watashi wa seriakku-byou desu", japanese: "私はセリアック病です。" },
-            { id: 12, category: "dining", english: "Is this gluten-free?", romaji: "Kore wa guruten furii desu ka?", japanese: "これはグルテンフリーですか？" },
+            // --- COELIAC & GLUTEN-FREE ---
+            { id: 11, category: "coeliac", english: "I am coeliac", romaji: "Watashi wa seriakku-byou desu", japanese: "私はセリアック病です。" },
+            { id: 1001, category: "coeliac", english: "I have a severe wheat and gluten allergy", romaji: "Komugi to guruten no arerugī ga arimasu", japanese: "小麦とグルテンのアレルギーがあります。" },
+            { id: 1002, category: "coeliac", english: "I cannot eat wheat, barley, or rye", romaji: "Komugi, ōmugi, raimugi wa taberaremasen", japanese: "小麦、大麦、ライ麦は食べられません。" },
+            { id: 1004, category: "coeliac", english: "Does this contain wheat or soy sauce?", romaji: "Kore ni komugi ya shōyu wa haitte imasu ka?", japanese: "これに小麦や醤油は入っていますか？" },
+            { id: 12, category: "coeliac", english: "Is this gluten-free?", romaji: "Kore wa guruten furii desu ka?", japanese: "これはグルテンフリーですか？" },
+
+            // --- DRINKING & DINING ---
             { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！" },
             { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Biiru/mizu/ocha kudasai", japanese: "ビール／水／お茶 ください。" },
             { id: 13, category: "dining", english: "Let's eat! / Bon appétit (before meal)", romaji: "Itadakimasu", japanese: "いただきます！" },
@@ -200,7 +234,7 @@
             // --- ABOUT US & INTRODUCTIONS ---
             { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョージーです。" },
             { id: 19, category: "about", english: "My name is Frankie", romaji: "Watashi no namae wa Furankī desu", japanese: "私の名前はフランキーです。" },
-            { id: 20, category: "about", english: "I am British", romaji: "Watashi wa Igirisu-jin desu", japanese: "私はイギリス人です。" },
+            { id: 20, category: "about", english: "I am from the UK", romaji: "Watashi wa Igirisu kara kimashita", japanese: "私はイギリスから来ました。" },
             { id: 21, category: "about", english: "Do you understand English?", romaji: "Eigo wakarimasu ka?", japanese: "英語分かりますか？" },
             { id: 22, category: "about", english: "I don't understand Japanese", romaji: "Nihongo wakarimasen", japanese: "日本語分かりません。" },
             { id: 23, category: "about", english: "Cool, pretty, cute", romaji: "Kakkoī, kirei, kawaī", japanese: "かっこいい、きれい、かわいい。" },
@@ -221,9 +255,13 @@
             { id: 106, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
             { id: 107, category: "greetings", english: "Okay / Fine", romaji: "Daijoubu", japanese: "大丈夫" },
             { id: 108, category: "greetings", english: "Excuse me", romaji: "Sumimasen", japanese: "すみません" },
-            { id: 109, category: "dining", english: "Coeliac disease", romaji: "Seriakku-byou", japanese: "セリアック病" },
-            { id: 110, category: "dining", english: "Gluten-free", romaji: "Guruten furii", japanese: "グルテンフリー" },
-            { id: 111, category: "dining", english: "Wheat allergy", romaji: "Komugi arerugii", japanese: "小麦アレルギー" },
+            { id: 109, category: "coeliac", english: "Coeliac disease", romaji: "Seriakku-byou", japanese: "セリアック病" },
+            { id: 110, category: "coeliac", english: "Gluten-free", romaji: "Guruten furii", japanese: "グルテンフリー" },
+            { id: 111, category: "coeliac", english: "Wheat allergy", romaji: "Komugi arerugii", japanese: "小麦アレルギー" },
+            { id: 128, category: "coeliac", english: "Wheat", romaji: "Komugi", japanese: "小麦" },
+            { id: 129, category: "coeliac", english: "Soy sauce", romaji: "Shōyu", japanese: "醤油" },
+            { id: 130, category: "coeliac", english: "Barley", romaji: "Ōmugi", japanese: "大麦" },
+            { id: 131, category: "coeliac", english: "Cannot eat", romaji: "Taberaremasen", japanese: "食べられません" },
             { id: 112, category: "dining", english: "Beer", romaji: "Biiru", japanese: "ビール" },
             { id: 113, category: "dining", english: "Water", romaji: "Mizu", japanese: "水" },
             { id: 114, category: "dining", english: "Tea", romaji: "Ocha", japanese: "お茶" },
@@ -234,12 +272,15 @@
             { id: 126, category: "dining", english: "Delicious", romaji: "Oishii", japanese: "おいしい" },
             { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語" },
             { id: 120, category: "about", english: "Japanese", romaji: "Nihongo", japanese: "日本語" },
-            { id: 121, category: "about", english: "British", romaji: "Igirisu-jin", japanese: "イギリス人" },
+            { id: 121, category: "about", english: "UK / Britain", romaji: "Igirisu", japanese: "イギリス" },
             { id: 122, category: "travel", english: "Toilet", romaji: "Toire", japanese: "トイレ" },
             { id: 123, category: "travel", english: "Where", romaji: "Doko", japanese: "どこ" },
             { id: 124, category: "travel", english: "Train", romaji: "Densha", japanese: "電車" },
             { id: 125, category: "travel", english: "Card", romaji: "Kaado", japanese: "カード" }
         ];
+
+        // Phrases excluded from Flashcards and Quizzes (IDs: 1001, 1002, 1004)
+        const excludedPracticeIds = [1001, 1002, 1004];
 
         let selectedCategoryFilter = "all";
         let flashcardItems = [];
@@ -248,13 +289,13 @@
         let currentQuizQuestionIndex = 0;
         let quizScore = 0;
         let quizResults = [];
-        let speechRate = 0.85; // Default: slightly slower, comfortable natural cadence
+        let speechRate = 0.85; // Default: comfortable natural cadence
         let activeUtterances = new Set();
         let cachedVoices = [];
         let audioContext = null;
-        const studioAudioCache = new Map();
         let currentPlayingAudio = null;
 
+        // DOM Elements
         const mainContent = document.getElementById('main-content');
         const navLearn = document.getElementById('nav-learn');
         const navFlashcards = document.getElementById('nav-flashcards');
@@ -268,9 +309,13 @@
         const speedComfortableBtn = document.getElementById('speed-comfortable');
         const speedSlowBtn = document.getElementById('speed-slow');
         const speedNormalBtn = document.getElementById('speed-normal');
-        const audioStatusText = document.getElementById('audio-status-text');
         const audioToast = document.getElementById('audio-toast');
         const toastMessage = document.getElementById('toast-message');
+        const gfChefModal = document.getElementById('gf-chef-modal');
+        const gfModalContainer = document.getElementById('gf-modal-container');
+        const gfModalCloseBtn = document.getElementById('gf-modal-close-btn');
+        const gfModalCloseIcon = document.getElementById('gf-modal-close-icon');
+        const speakChefCardBtn = document.getElementById('speak-chef-card-btn');
 
         const speakerIconSVG = `
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -286,27 +331,7 @@
                     audioContext.resume();
                 }
             } catch (e) {
-                console.warn("AudioContext init handled:", e);
-            }
-        }
-
-        function playChime() {
-            try {
-                initAudioContext();
-                if (!audioContext) return;
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, audioContext.currentTime); // D5
-                osc.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.12); // A5
-                gain.gain.setValueAtTime(0.08, audioContext.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
-                osc.start();
-                osc.stop(audioContext.currentTime + 0.2);
-            } catch (e) {
-                // Non-critical audio chime
+                console.warn("AudioContext init note:", e);
             }
         }
 
@@ -321,7 +346,6 @@
             }, duration);
         }
 
-        // --- HIGH-DEFINITION INSTANT AUDIO ENGINE ---
         function populateVoices() {
             if ('speechSynthesis' in window) {
                 try {
@@ -332,8 +356,6 @@
             }
         }
 
-        // Smart voice selector: prioritize natural, neural, Google & clear female Japanese voices (Kyoko, Haruka, Nanami)
-        // Explicitly deprioritize legacy robotic desktop voices like "Microsoft Ichiro"
         function getBestJapaneseVoice() {
             if (!cachedVoices || cachedVoices.length === 0) {
                 populateVoices();
@@ -353,13 +375,20 @@
                     if (name.includes('google')) score += 40;
                     if (name.includes('kyoko') || name.includes('nanami') || name.includes('haruka') || name.includes('ayumi') || name.includes('sayaka')) score += 30;
                     if (v.lang === 'ja-JP') score += 10;
-                    // Strongly deprioritize legacy robotic male synthesizer on Windows desktop
                     if (name.includes('ichiro')) score -= 50;
                     if (name.includes('desktop')) score -= 20;
                     return score;
                 };
                 return scoreVoice(b) - scoreVoice(a);
             })[0];
+        }
+
+        function sanitizeJapaneseText(text) {
+            return text
+                .replace(/[\/\／]/g, '、')
+                .replace(/[\(\)（）]/g, '')
+                .replace(/[!！?？]/g, '。')
+                .trim();
         }
 
         function playFallbackSpeechSynthesis(cleanText, triggerBtn) {
@@ -392,7 +421,7 @@
 
                     utterance.onend = cleanup;
                     utterance.onerror = cleanup;
-                    setTimeout(cleanup, 4500);
+                    setTimeout(cleanup, 5000);
 
                     window.speechSynthesis.speak(utterance);
                     window.speechSynthesis.resume();
@@ -400,14 +429,6 @@
             } catch (err) {
                 if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
             }
-        }
-
-        function sanitizeJapaneseText(text) {
-            return text
-                .replace(/[\/\／]/g, '、')
-                .replace(/[\(\)（）]/g, '')
-                .replace(/[!！?？]/g, '。')
-                .trim();
         }
 
         async function playAudio(text, event, triggerBtn) {
@@ -422,7 +443,6 @@
                 triggerBtn.classList.add('speaking-pulse', 'text-orange-600', 'bg-orange-100');
             }
 
-            // Stop any currently playing audio track
             if (currentPlayingAudio) {
                 try {
                     currentPlayingAudio.pause();
@@ -433,7 +453,6 @@
             const cleanText = sanitizeJapaneseText(text);
             showToast(`Speaking: ${cleanText}`);
 
-            // Primary: High-definition native Japanese audio stream (Zero-latency, crystal-clear natural female voice)
             try {
                 const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(cleanText)}`;
                 const audio = new Audio();
@@ -453,13 +472,11 @@
                     audio.play().then(resolve).catch(reject);
                 });
 
-                // Fall back quickly to speech synthesis if network blocks the stream (under 800ms)
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 800));
-
                 await Promise.race([playPromise, timeoutPromise]);
                 return;
             } catch (err) {
-                // Instantly fall back to device synthesis with smart voice ranking
+                // Fall back to SpeechSynthesis
             }
 
             playFallbackSpeechSynthesis(cleanText, triggerBtn);
@@ -473,7 +490,6 @@
         function showLearnView() {
             setActiveNav(navLearn);
 
-            // Category filter pills
             const filterButtons = `
                 <div class="flex items-center space-x-2 overflow-x-auto pb-2 mb-5 no-scrollbar">
                     <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'all' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="all">
@@ -482,8 +498,11 @@
                     <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'greetings' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="greetings">
                         🎌 Greetings
                     </button>
+                    <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'coeliac' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="coeliac">
+                        🌾 Coeliac &amp; GF
+                    </button>
                     <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'dining' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="dining">
-                        🍱 Dining &amp; Coeliac
+                        🍱 Dining &amp; Drinks
                     </button>
                     <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'about' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="about">
                         👥 About Us
@@ -502,7 +521,7 @@
                 ${filterButtons}
             `;
 
-            const sectionOrder = ["greetings", "dining", "about", "travel"];
+            const sectionOrder = ["greetings", "coeliac", "dining", "about", "travel"];
             const sectionsToRender = selectedCategoryFilter === "all" 
                 ? sectionOrder 
                 : [selectedCategoryFilter];
@@ -526,8 +545,29 @@
                                 ${catPhrases.length} phrases
                             </span>
                         </div>
-                        <div class="space-y-3">
                 `;
+
+                if (catKey === "coeliac") {
+                    content += `
+                        <div class="mb-4">
+                            <button id="open-gf-card-btn" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white p-4 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.01] border-2 border-red-300 text-left">
+                                <div class="flex items-center space-x-3.5">
+                                    <span class="text-3xl bg-white/20 p-2 rounded-2xl backdrop-blur-sm flex-shrink-0">⚠️</span>
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <span class="font-extrabold text-base md:text-lg tracking-tight">Show to Chef &amp; Staff (Coeliac Warning Card)</span>
+                                            <span class="text-[10px] md:text-xs bg-white text-red-700 font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Crucial in Japan</span>
+                                        </div>
+                                        <p class="text-xs text-red-100 font-medium mt-1">Tap to display full Japanese card &amp; allergy warnings (soy sauce, miso, cross-contamination)</p>
+                                    </div>
+                                </div>
+                                <span class="text-2xl font-bold ml-2 text-white/90 flex-shrink-0">➜</span>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                content += `<div class="space-y-3">`;
 
                 catPhrases.forEach(phrase => {
                     content += `
@@ -548,34 +588,34 @@
                     `;
                 });
 
-                content += `
-                        </div>
-                    </section>
-                `;
+                content += `</div></section>`;
             });
 
             mainContent.innerHTML = content;
 
-            // Bind audio buttons
             mainContent.querySelectorAll('.play-audio-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     playAudio(button.dataset.text, e, button);
                 });
             });
 
-            // Bind category filter tabs
             mainContent.querySelectorAll('.cat-filter-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     selectedCategoryFilter = e.currentTarget.dataset.category;
                     showLearnView();
                 });
             });
+
+            const openGfBtn = mainContent.querySelector('#open-gf-card-btn');
+            if (openGfBtn) {
+                openGfBtn.addEventListener('click', showGfChefModal);
+            }
         }
 
         function showFlashcardsView() {
             setActiveNav(navFlashcards);
-            flashcardItems = [...phrases, ...words];
-            // Fisher-Yates shuffle
+            const eligiblePhrases = phrases.filter(p => !excludedPracticeIds.includes(p.id));
+            flashcardItems = [...eligiblePhrases, ...words];
             for (let i = flashcardItems.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [flashcardItems[i], flashcardItems[j]] = [flashcardItems[j], flashcardItems[i]];
@@ -655,7 +695,6 @@
                 renderFlashcard();
             });
 
-            // Touch Swipe Handler
             let touchStartX = 0;
             let touchEndX = 0;
             flashcard.addEventListener('touchstart', (e) => {
@@ -689,9 +728,10 @@
         }
 
         function generateQuizQuestions() {
-            const shuffled = [...phrases].sort(() => 0.5 - Math.random());
+            const eligiblePhrases = phrases.filter(p => !excludedPracticeIds.includes(p.id));
+            const shuffled = [...eligiblePhrases].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, 10).map(correctPhrase => {
-                const wrongPool = phrases
+                const wrongPool = eligiblePhrases
                     .filter(p => p.id !== correctPhrase.id)
                     .sort(() => 0.5 - Math.random())
                     .slice(0, 3);
@@ -837,6 +877,39 @@
             }, 250);
         }
 
+        function showGfChefModal() {
+            gfChefModal.classList.remove('hidden');
+            setTimeout(() => {
+                gfChefModal.classList.remove('opacity-0');
+                gfModalContainer.classList.remove('scale-95', 'opacity-0');
+                gfModalContainer.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function hideGfChefModal() {
+            gfModalContainer.classList.remove('scale-100', 'opacity-100');
+            gfModalContainer.classList.add('scale-95', 'opacity-0');
+            gfChefModal.classList.add('opacity-0');
+            setTimeout(() => {
+                gfChefModal.classList.add('hidden');
+            }, 250);
+        }
+
+        if (gfModalCloseBtn) gfModalCloseBtn.addEventListener('click', hideGfChefModal);
+        if (gfModalCloseIcon) gfModalCloseIcon.addEventListener('click', hideGfChefModal);
+        if (gfChefModal) {
+            gfChefModal.addEventListener('click', (e) => {
+                if (e.target === gfChefModal) hideGfChefModal();
+            });
+        }
+
+        if (speakChefCardBtn) {
+            speakChefCardBtn.addEventListener('click', (e) => {
+                const text = document.getElementById('chef-card-jp-text').innerText;
+                playAudio(text, e, speakChefCardBtn);
+            });
+        }
+
         navLearn.addEventListener('click', showLearnView);
         navFlashcards.addEventListener('click', showFlashcardsView);
         navQuiz.addEventListener('click', showQuizView);
@@ -863,32 +936,29 @@
             });
         }
 
-        // Speed Toggle Listeners
         speedComfortableBtn.addEventListener('click', () => {
-            speechRate = 0.85; // Slightly slower, comfortable cadence
+            speechRate = 0.85;
             updateSpeedButtonStates(speedComfortableBtn);
             showToast("Audio speed: 0.85x (Comfortable pace)");
         });
 
         speedNormalBtn.addEventListener('click', () => {
-            speechRate = 1.0; // Standard native speed
+            speechRate = 1.0;
             updateSpeedButtonStates(speedNormalBtn);
             showToast("Audio speed: 1.0x (Standard speed)");
         });
 
         speedSlowBtn.addEventListener('click', () => {
-            speechRate = 0.7; // Slower for careful study
+            speechRate = 0.7;
             updateSpeedButtonStates(speedSlowBtn);
             showToast("Audio speed: 0.7x (Slow practice)");
         });
 
-        // Audio Test Button
         testAudioBtn.addEventListener('click', (e) => {
             initAudioContext();
             playAudio("こんにちは。ありがとうございます！", e, testAudioBtn);
         });
 
-        // App Initialization
         document.addEventListener('DOMContentLoaded', () => {
             populateVoices();
             if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
