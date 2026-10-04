@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Josey &amp; Frankie's Japanese Phrasebook</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Mochiy+Pop+One&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2f1 0%, #fff3e0 100%);
+            min-height: 100vh;
+            color: #37474F;
+        }
+        .jp-font {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .title-font {
+            font-family: 'Mochiy Pop One', cursive, sans-serif;
+        }
+        .card {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .btn-nav {
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+        }
+        .btn-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+        }
+        .btn-nav.active {
+            background-color: #ea580c;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(234, 88, 12, 0.35);
+        }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .play-audio-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .play-audio-btn:hover {
+            transform: scale(1.08);
+        }
+        .play-audio-btn:active {
+            transform: scale(0.95);
+        }
+        .speaking-pulse {
+            animation: pulse-ring 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.6);
+            }
+            50% {
+                transform: scale(1.06);
+                box-shadow: 0 0 0 10px rgba(234, 88, 12, 0);
+            }
+        }
+        /* Custom scrollbar hiding for clean chip filter view */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased selection:bg-orange-200">
+
+    <div id="app-container" class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+        <!-- Header -->
+        <header class="text-center mb-6">
+            <div class="inline-block bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/80 mb-3 max-w-lg w-full">
+                <div class="flex items-center justify-center space-x-2 mb-2">
+                    <span class="text-2xl" role="img" aria-label="Japan flag">🇯🇵</span>
+                    <h1 class="title-font text-2xl md:text-3xl font-extrabold text-orange-600 tracking-tight">Josey &amp; Frankie's</h1>
+                    <span class="text-2xl" role="img" aria-label="Lantern">🏮</span>
+                </div>
+                <p class="text-xs uppercase tracking-widest text-teal-800 font-bold mb-1">Japanese Travel &amp; Dining Guide</p>
+                <p class="jp-font font-bold text-gray-700 text-lg md:text-xl">日本語フレーズブック</p>
+            </div>
+
+            <!-- Audio Settings Toolbar -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mt-3 text-xs font-semibold text-gray-700">
+                <span class="flex items-center space-x-1.5 bg-white/80 px-3 py-1.5 rounded-full shadow-sm border border-gray-100">
+                    <span class="text-gray-500">Speed:</span>
+                    <button id="speed-comfortable" class="px-2.5 py-0.5 rounded-full bg-orange-500 text-white font-bold transition-colors">0.85x (Comfortable)</button>
+                    <button id="speed-normal" class="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold transition-colors">1.0x (Standard)</button>
+                    <button id="speed-slow" class="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold transition-colors">0.7x (Slow)</button>
+                </span>
+                <button id="test-audio-btn" class="bg-orange-100 hover:bg-orange-200 text-orange-800 px-3.5 py-1.5 rounded-full shadow-sm border border-orange-200 flex items-center space-x-1.5 transition-all">
+                    <span>🔊</span>
+                    <span>Test Sound</span>
+                </button>
+                <span id="audio-status-badge" class="inline-flex items-center space-x-1.5 bg-white/80 px-3 py-1.5 rounded-full shadow-sm border border-gray-100 text-teal-800">
+                    <span id="audio-status-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span id="audio-status-text">Audio Ready</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav id="navigation" class="flex justify-center space-x-2 md:space-x-4 mb-6">
+            <button id="nav-learn" class="btn-nav active bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">
+                📖 Learn
+            </button>
+            <button id="nav-flashcards" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">
+                🗂️ Flashcards
+            </button>
+            <button id="nav-quiz" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">
+                ⚡ Quiz
+            </button>
+        </nav>
+
+        <!-- Main Dynamic Content Area -->
+        <main id="main-content">
+            <!-- Populated via JavaScript -->
+        </main>
+    </div>
+
+    <!-- Quiz Results Modal -->
+    <div id="quiz-modal" class="modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div id="modal-container" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center max-w-md w-full transform transition-all scale-95 opacity-0 border border-orange-100" style="background: linear-gradient(135deg, #fffbf7 0%, #e8f5e9 100%);">
+            <h2 id="modal-title" class="title-font text-2xl md:text-3xl font-bold mb-3 text-orange-600">Quiz Complete! 🎉</h2>
+            <p id="modal-score" class="text-5xl font-black mb-2 text-gray-900"></p>
+            <p id="modal-feedback" class="text-base font-medium text-gray-600 mb-4"></p>
+            <button id="see-answers-btn" class="text-sm font-bold text-orange-600 hover:text-orange-700 underline mb-4 block mx-auto">
+                Review My Answers
+            </button>
+            <div id="answers-breakdown" class="hidden text-left max-h-56 overflow-y-auto mb-5 p-3 bg-white/80 rounded-2xl border border-gray-200 text-xs md:text-sm">
+                <!-- Breakdown inserted dynamically -->
+            </div>
+            <button id="modal-close-btn" class="w-full bg-orange-600 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-700 transition-all duration-200 hover:scale-102 shadow-lg">
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <!-- Audio Prompt Toast Notification -->
+    <div id="audio-toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white text-xs md:text-sm px-4 py-2 rounded-full shadow-2xl backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center space-x-2">
+        <span id="toast-icon">🔊</span>
+        <span id="toast-message">Playing audio...</span>
+    </div>
+
+    <script>
+        // --- CATEGORIES & PHRASES DATASET ---
+        const categories = {
+            greetings: { id: "greetings", name: "Greetings & Polite Essentials", icon: "🎌", jp: "挨拶と基本表現" },
+            dining: { id: "dining", name: "Drinking & Dining (Coeliac & GF)", icon: "🍱", jp: "飲食・セリアック対応" },
+            about: { id: "about", name: "About Us & Introductions", icon: "👥", jp: "自己紹介と会話" },
+            travel: { id: "travel", name: "Getting Around & Paying", icon: "🚆", jp: "移動・お会計・便利表現" }
+        };
+
+        const phrases = [
+            // --- GREETINGS & POLITE ESSENTIALS ---
+            { id: 1, category: "greetings", english: "Hello / Good day (polite standard)", romaji: "Konnichiwa", japanese: "こんにちは。" },
+            { id: 2, category: "greetings", english: "Good morning (polite)", romaji: "Ohayou gozaimasu", japanese: "おはようございます。" },
+            { id: 3, category: "greetings", english: "Good evening (polite)", romaji: "Konbanwa", japanese: "こんばんは。" },
+            { id: 4, category: "greetings", english: "Thank you (polite)", romaji: "Arigatou gozaimasu", japanese: "ありがとうございます。" },
+            { id: 5, category: "greetings", english: "Thank you very much (upon leaving shops/restaurants)", romaji: "Arigatou gozaimashita", japanese: "ありがとうございました。" },
+            { id: 6, category: "greetings", english: "Excuse me / Sorry", romaji: "Sumimasen", japanese: "すみません。" },
+            { id: 8, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
+            { id: 9, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
+            { id: 10, category: "greetings", english: "Don't worry, it's okay, I'm fine", romaji: "Daijoubu", japanese: "大丈夫。" },
+
+            // --- DRINKING & DINING (COELIAC & ALLERGIES) ---
+            { id: 11, category: "dining", english: "I am coeliac (I cannot eat wheat/gluten)", romaji: "Watashi wa seriakku-byou desu", japanese: "私はセリアック病です。" },
+            { id: 12, category: "dining", english: "Is this gluten-free?", romaji: "Kore wa guruten furii desu ka?", japanese: "これはグルテンフリーですか？" },
+            { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！" },
+            { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Biiru/mizu/ocha kudasai", japanese: "ビール／水／お茶 ください。" },
+            { id: 13, category: "dining", english: "Let's eat! / Bon appétit (before meal)", romaji: "Itadakimasu", japanese: "いただきます！" },
+            { id: 17, category: "dining", english: "Can I get the bill, please?", romaji: "Okaikei onegaishimasu", japanese: "お会計お願いします。" },
+            { id: 15, category: "dining", english: "Thank you for the meal (after eating)", romaji: "Gochisousama deshita", japanese: "ごちそうさまでした。" },
+
+            // --- ABOUT US & INTRODUCTIONS ---
+            { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョージーです。" },
+            { id: 19, category: "about", english: "My name is Frankie", romaji: "Watashi no namae wa Furankī desu", japanese: "私の名前はフランキーです。" },
+            { id: 20, category: "about", english: "I am British", romaji: "Watashi wa Igirisu-jin desu", japanese: "私はイギリス人です。" },
+            { id: 21, category: "about", english: "Do you understand English?", romaji: "Eigo wakarimasu ka?", japanese: "英語分かりますか？" },
+            { id: 22, category: "about", english: "I don't understand Japanese", romaji: "Nihongo wakarimasen", japanese: "日本語分かりません。" },
+            { id: 23, category: "about", english: "Cool, pretty, cute", romaji: "Kakkoī, kirei, kawaī", japanese: "かっこいい、きれい、かわいい。" },
+
+            // --- GETTING AROUND & PAYING ---
+            { id: 24, category: "travel", english: "Where is the toilet?", romaji: "Toire wa doko desu ka?", japanese: "トイレはどこですか？" },
+            { id: 25, category: "travel", english: "Is card okay?", romaji: "Kaado ii desu ka?", japanese: "カードいいですか？" },
+            { id: 26, category: "travel", english: "Excuse me, where is this train?", romaji: "Sumimasen, kono densha wa doko desu ka?", japanese: "すみません、この電車はどこですか？" }
+        ];
+
+        const words = [
+            { id: 101, category: "greetings", english: "Hello", romaji: "Konnichiwa", japanese: "こんにちは" },
+            { id: 102, category: "greetings", english: "Good morning", romaji: "Ohayou", japanese: "おはよう" },
+            { id: 103, category: "greetings", english: "Good evening", romaji: "Konbanwa", japanese: "こんばんは" },
+            { id: 104, category: "greetings", english: "Thank you", romaji: "Arigatou", japanese: "ありがとう" },
+            { id: 105, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
+            { id: 106, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
+            { id: 107, category: "greetings", english: "Okay / Fine", romaji: "Daijoubu", japanese: "大丈夫" },
+            { id: 108, category: "greetings", english: "Excuse me", romaji: "Sumimasen", japanese: "すみません" },
+            { id: 109, category: "dining", english: "Coeliac disease", romaji: "Seriakku-byou", japanese: "セリアック病" },
+            { id: 110, category: "dining", english: "Gluten-free", romaji: "Guruten furii", japanese: "グルテンフリー" },
+            { id: 111, category: "dining", english: "Wheat allergy", romaji: "Komugi arerugii", japanese: "小麦アレルギー" },
+            { id: 112, category: "dining", english: "Beer", romaji: "Biiru", japanese: "ビール" },
+            { id: 113, category: "dining", english: "Water", romaji: "Mizu", japanese: "水" },
+            { id: 114, category: "dining", english: "Tea", romaji: "Ocha", japanese: "お茶" },
+            { id: 115, category: "dining", english: "Please give me", romaji: "Kudasai", japanese: "ください" },
+            { id: 116, category: "dining", english: "Bill", romaji: "Okaikei", japanese: "お会計" },
+            { id: 117, category: "dining", english: "Cheers!", romaji: "Kanpai!", japanese: "乾杯！" },
+            { id: 118, category: "dining", english: "Bon appétit", romaji: "Itadakimasu", japanese: "いただきます" },
+            { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語" },
+            { id: 120, category: "about", english: "Japanese", romaji: "Nihongo", japanese: "日本語" },
+            { id: 121, category: "about", english: "British", romaji: "Igirisu-jin", japanese: "イギリス人" },
+            { id: 122, category: "travel", english: "Toilet", romaji: "Toire", japanese: "トイレ" },
+            { id: 123, category: "travel", english: "Where", romaji: "Doko", japanese: "どこ" },
+            { id: 124, category: "travel", english: "Train", romaji: "Densha", japanese: "電車" },
+            { id: 125, category: "travel", english: "Card", romaji: "Kaado", japanese: "カード" }
+        ];
+
+        let selectedCategoryFilter = "all";
+        let flashcardItems = [];
+        let currentFlashcardIndex = 0;
+        let quizQuestions = [];
+        let currentQuizQuestionIndex = 0;
+        let quizScore = 0;
+        let quizResults = [];
+        let speechRate = 0.85; // Default: slightly slower, comfortable natural cadence
+        let activeUtterances = new Set();
+        let cachedVoices = [];
+        let audioContext = null;
+        const studioAudioCache = new Map();
+        let currentPlayingAudio = null;
+
+        const mainContent = document.getElementById('main-content');
+        const navLearn = document.getElementById('nav-learn');
+        const navFlashcards = document.getElementById('nav-flashcards');
+        const navQuiz = document.getElementById('nav-quiz');
+        const quizModal = document.getElementById('quiz-modal');
+        const modalContainer = document.getElementById('modal-container');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const seeAnswersBtn = document.getElementById('see-answers-btn');
+        const answersBreakdown = document.getElementById('answers-breakdown');
+        const testAudioBtn = document.getElementById('test-audio-btn');
+        const speedComfortableBtn = document.getElementById('speed-comfortable');
+        const speedSlowBtn = document.getElementById('speed-slow');
+        const speedNormalBtn = document.getElementById('speed-normal');
+        const audioStatusText = document.getElementById('audio-status-text');
+        const audioToast = document.getElementById('audio-toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        const speakerIconSVG = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>`;
+
+        function initAudioContext() {
+            try {
+                if (!audioContext && (window.AudioContext || window.webkitAudioContext)) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            } catch (e) {
+                console.warn("AudioContext init handled:", e);
+            }
+        }
+
+        function playChime() {
+            try {
+                initAudioContext();
+                if (!audioContext) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioContext.currentTime); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.12); // A5
+                gain.gain.setValueAtTime(0.08, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + 0.2);
+            } catch (e) {
+                // Non-critical audio chime
+            }
+        }
+
+        function showToast(msg, duration = 1800) {
+            toastMessage.textContent = msg;
+            audioToast.classList.remove('opacity-0');
+            audioToast.classList.add('opacity-100');
+            clearTimeout(audioToast._timer);
+            audioToast._timer = setTimeout(() => {
+                audioToast.classList.remove('opacity-100');
+                audioToast.classList.add('opacity-0');
+            }, duration);
+        }
+
+        // --- STUDIO-GRADE GEMINI TTS HELPERS ---
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16, sampleRate = 24000, numChannels = 1) {
+            const buffer = new ArrayBuffer(44 + pcm16.length * 2);
+            const view = new DataView(buffer);
+
+            // RIFF chunk descriptor
+            writeAsciiString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + pcm16.length * 2, true);
+            writeAsciiString(view, 8, 'WAVE');
+
+            // "fmt " sub-chunk
+            writeAsciiString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true); // Subchunk1Size (16 for PCM)
+            view.setUint16(20, 1, true);  // AudioFormat (1 for PCM)
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * numChannels * 2, true); // ByteRate
+            view.setUint16(32, numChannels * 2, true);             // BlockAlign
+            view.setUint16(34, 16, true);                          // BitsPerSample
+
+            // "data" sub-chunk
+            writeAsciiString(view, 36, 'data');
+            view.setUint32(40, pcm16.length * 2, true);
+
+            // PCM samples
+            let offset = 44;
+            for (let i = 0; i < pcm16.length; i++, offset += 2) {
+                view.setInt16(offset, pcm16[i], true);
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        function writeAsciiString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        async function fetchStudioJapaneseAudio(text) {
+            const cacheKey = `${text}_${speechRate}`;
+            if (studioAudioCache.has(cacheKey)) {
+                return studioAudioCache.get(cacheKey);
+            }
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: `Speak clearly and at a gentle, comfortable, easy-to-follow pace with pleasant natural Japanese pronunciation: ${text}`
+                    }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: "Aoede" }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            // Exponential backoff fetch
+            let delay = 1000;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        const part = result?.candidates?.[0]?.content?.parts?.[0];
+                        const audioData = part?.inlineData?.data;
+                        const mimeType = part?.inlineData?.mimeType || "audio/L16;rate=24000";
+
+                        if (audioData) {
+                            const rateMatch = mimeType.match(/rate=(\d+)/);
+                            const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+                            const pcmBuffer = base64ToArrayBuffer(audioData);
+                            const pcm16 = new Int16Array(pcmBuffer);
+                            const wavBlob = pcmToWav(pcm16, sampleRate, 1);
+                            const audioUrl = URL.createObjectURL(wavBlob);
+                            studioAudioCache.set(cacheKey, audioUrl);
+                            return audioUrl;
+                        }
+                    }
+                } catch (e) {
+                    // Backoff retry without breaking console
+                }
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 2;
+            }
+            return null;
+        }
+
+        function populateVoices() {
+            if ('speechSynthesis' in window) {
+                try {
+                    cachedVoices = window.speechSynthesis.getVoices();
+                } catch (e) {
+                    console.warn("Voices fetch note:", e);
+                }
+            }
+        }
+
+        function getBestJapaneseVoice() {
+            if (!cachedVoices || cachedVoices.length === 0) {
+                populateVoices();
+            }
+            let match = cachedVoices.find(v => v.lang === 'ja-JP' || v.lang === 'ja_JP');
+            if (match) return match;
+            match = cachedVoices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja'));
+            if (match) return match;
+            match = cachedVoices.find(v => v.name && (v.name.toLowerCase().includes('japan') || v.name.includes('日本語')));
+            return match || null;
+        }
+
+        function playFallbackSpeechSynthesis(cleanText, triggerBtn) {
+            if (!('speechSynthesis' in window)) {
+                showToast("Audio playback not supported");
+                return;
+            }
+
+            try {
+                window.speechSynthesis.resume();
+                window.speechSynthesis.cancel();
+
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'ja-JP';
+                    utterance.rate = speechRate;
+                    utterance.pitch = 1.0;
+
+                    const voice = getBestJapaneseVoice();
+                    if (voice) utterance.voice = voice;
+
+                    activeUtterances.add(utterance);
+
+                    const cleanup = () => {
+                        activeUtterances.delete(utterance);
+                        if (triggerBtn) {
+                            triggerBtn.classList.remove('speaking-pulse', 'text-orange-600', 'bg-orange-100');
+                        }
+                    };
+
+                    utterance.onend = cleanup;
+                    utterance.onerror = cleanup;
+                    setTimeout(cleanup, 4500);
+
+                    window.speechSynthesis.speak(utterance);
+                    window.speechSynthesis.resume();
+                }, 20);
+            } catch (err) {
+                if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
+            }
+        }
+
+        function sanitizeJapaneseText(text) {
+            return text
+                .replace(/[\/\／]/g, '、')
+                .replace(/[\(\)（）]/g, '')
+                .replace(/[!！?？]/g, '。')
+                .trim();
+        }
+
+        async function playAudio(text, event, triggerBtn) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            initAudioContext();
+
+            if (triggerBtn) {
+                triggerBtn.classList.add('speaking-pulse', 'text-orange-600', 'bg-orange-100');
+            }
+
+            // Stop any currently playing audio track
+            if (currentPlayingAudio) {
+                try {
+                    currentPlayingAudio.pause();
+                    currentPlayingAudio.currentTime = 0;
+                } catch (e) {}
+            }
+
+            const cleanText = sanitizeJapaneseText(text);
+            showToast(`Speaking: ${cleanText}`);
+
+            try {
+                // Attempt high-definition native studio audio via Gemini TTS
+                const audioUrl = await fetchStudioJapaneseAudio(cleanText);
+
+                if (audioUrl) {
+                    const audio = new Audio(audioUrl);
+                    currentPlayingAudio = audio;
+                    audio.playbackRate = speechRate;
+
+                    const cleanup = () => {
+                        if (triggerBtn) {
+                            triggerBtn.classList.remove('speaking-pulse', 'text-orange-600', 'bg-orange-100');
+                        }
+                    };
+
+                    audio.onended = cleanup;
+                    audio.onerror = () => {
+                        cleanup();
+                        playFallbackSpeechSynthesis(cleanText, triggerBtn);
+                    };
+
+                    await audio.play();
+                    return;
+                }
+            } catch (err) {
+                // Seamlessly fallback to browser synthesis if offline
+            }
+
+            // Fallback to local synthesis if studio stream isn't available
+            playFallbackSpeechSynthesis(cleanText, triggerBtn);
+        }
+
+        function setActiveNav(button) {
+            [navLearn, navFlashcards, navQuiz].forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        }
+
+        function showLearnView() {
+            setActiveNav(navLearn);
+
+            // Category filter pills
+            const filterButtons = `
+                <div class="flex items-center space-x-2 overflow-x-auto pb-2 mb-5 no-scrollbar">
+                    <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'all' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="all">
+                        ✨ All (${phrases.length})
+                    </button>
+                    <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'greetings' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="greetings">
+                        🎌 Greetings
+                    </button>
+                    <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'dining' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="dining">
+                        🍱 Dining &amp; Coeliac
+                    </button>
+                    <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'about' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="about">
+                        👥 About Us
+                    </button>
+                    <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'travel' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="travel">
+                        🚆 Travel &amp; Pay
+                    </button>
+                </div>
+            `;
+
+            let content = `
+                <div class="mb-3 flex items-center justify-between px-1">
+                    <p class="text-xs md:text-sm font-semibold text-gray-700">Tap 🔊 to hear spoken pronunciation</p>
+                    <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full">25 Essential Phrases</span>
+                </div>
+                ${filterButtons}
+            `;
+
+            const sectionOrder = ["greetings", "dining", "about", "travel"];
+            const sectionsToRender = selectedCategoryFilter === "all" 
+                ? sectionOrder 
+                : [selectedCategoryFilter];
+
+            sectionsToRender.forEach(catKey => {
+                const cat = categories[catKey];
+                const catPhrases = phrases.filter(p => p.category === catKey);
+                if (catPhrases.length === 0) return;
+
+                content += `
+                    <section class="mb-7">
+                        <div class="flex items-center justify-between mb-3 px-2 border-b border-teal-200/60 pb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl">${cat.icon}</span>
+                                <div>
+                                    <h3 class="font-bold text-gray-900 text-lg md:text-xl">${cat.name}</h3>
+                                    <p class="text-xs font-semibold text-teal-800/80 jp-font">${cat.jp}</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-white/90 text-gray-600 font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                                ${catPhrases.length} phrases
+                            </span>
+                        </div>
+                        <div class="space-y-3">
+                `;
+
+                catPhrases.forEach(phrase => {
+                    content += `
+                        <div class="bg-white/95 backdrop-blur-sm p-4 md:p-5 rounded-2xl shadow-sm hover:shadow-md flex items-center justify-between transition-all duration-200 border border-white/80">
+                            <div class="pr-2 flex-grow">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <p class="font-bold text-base md:text-lg text-gray-800">${phrase.english}</p>
+                                </div>
+                                <p class="text-orange-600 font-semibold text-sm md:text-base mt-0.5">${phrase.romaji}</p>
+                                <div class="flex items-center mt-2">
+                                    <p class="jp-font text-gray-900 text-xl md:text-2xl font-bold tracking-wide">${phrase.japanese}</p>
+                                </div>
+                            </div>
+                            <button type="button" class="play-audio-btn p-3 rounded-full bg-orange-50 hover:bg-orange-100 text-orange-600 shadow-sm flex-shrink-0 border border-orange-100" data-text="${phrase.japanese}" aria-label="Listen to pronunciation">
+                                ${speakerIconSVG}
+                            </button>
+                        </div>
+                    `;
+                });
+
+                content += `
+                        </div>
+                    </section>
+                `;
+            });
+
+            mainContent.innerHTML = content;
+
+            // Bind audio buttons
+            mainContent.querySelectorAll('.play-audio-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    playAudio(button.dataset.text, e, button);
+                });
+            });
+
+            // Bind category filter tabs
+            mainContent.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    selectedCategoryFilter = e.currentTarget.dataset.category;
+                    showLearnView();
+                });
+            });
+        }
+
+        function showFlashcardsView() {
+            setActiveNav(navFlashcards);
+            flashcardItems = [...phrases, ...words];
+            // Fisher-Yates shuffle
+            for (let i = flashcardItems.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcardItems[i], flashcardItems[j]] = [flashcardItems[j], flashcardItems[i]];
+            }
+            currentFlashcardIndex = 0;
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            if (flashcardItems.length === 0) {
+                mainContent.innerHTML = `<p class="text-center text-gray-600 p-8">No flashcards available.</p>`;
+                return;
+            }
+            const item = flashcardItems[currentFlashcardIndex];
+            const catInfo = categories[item.category] || { name: "Vocabulary", icon: "📖" };
+
+            mainContent.innerHTML = `
+                <div class="text-center mb-3">
+                    <p class="text-xs md:text-sm text-gray-600 font-semibold">Tap card to flip • Tap 🔊 for audio pronunciation</p>
+                </div>
+                <div class="perspective-1000 h-80 max-w-xl mx-auto">
+                    <div id="flashcard" class="card relative w-full h-full mx-auto cursor-pointer">
+                        <!-- Front Face -->
+                        <div class="card-face absolute w-full h-full bg-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center border border-teal-50">
+                            <span class="text-xs uppercase font-extrabold tracking-widest text-teal-800 bg-teal-50 px-3.5 py-1.5 rounded-full mb-3 flex items-center space-x-1 border border-teal-100">
+                                <span>${catInfo.icon}</span>
+                                <span>${catInfo.name}</span>
+                            </span>
+                            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 leading-snug">${item.english}</h2>
+                            <span class="text-xs text-orange-500 font-bold mt-6 tracking-wide">Tap to reveal Japanese &rarr;</span>
+                        </div>
+                        <!-- Back Face -->
+                        <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-orange-500 via-rose-500 to-orange-600 text-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center">
+                            <span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/20 px-3 py-1 rounded-full mb-2">Japanese</span>
+                            <p class="text-xl md:text-2xl font-bold tracking-wide text-orange-100 mb-2">${item.romaji}</p>
+                            <p class="jp-font text-3xl md:text-4xl font-black mb-4">${item.japanese}</p>
+                            <button type="button" class="play-audio-btn p-3.5 bg-white text-orange-600 hover:text-orange-700 rounded-full shadow-lg" data-text="${item.japanese}" aria-label="Pronounce">
+                                ${speakerIconSVG}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center max-w-xl mx-auto mt-6 px-2">
+                    <button id="prev-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full flex items-center space-x-1">
+                        <span>&larr;</span><span>Prev</span>
+                    </button>
+                    <span class="font-bold text-gray-700 bg-white/90 px-4 py-1.5 rounded-full shadow-sm text-sm md:text-base border border-gray-100">
+                        ${currentFlashcardIndex + 1} / ${flashcardItems.length}
+                    </span>
+                    <button id="next-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full flex items-center space-x-1">
+                        <span>Next</span><span>&rarr;</span>
+                    </button>
+                </div>
+            `;
+
+            const flashcard = mainContent.querySelector('#flashcard');
+            flashcard.addEventListener('click', (e) => {
+                if (!e.target.closest('.play-audio-btn')) {
+                    flashcard.classList.toggle('is-flipped');
+                }
+            });
+
+            const audioBtn = mainContent.querySelector('.play-audio-btn');
+            if (audioBtn) {
+                audioBtn.addEventListener('click', (e) => {
+                    playAudio(audioBtn.dataset.text, e, audioBtn);
+                });
+            }
+
+            mainContent.querySelector('#prev-card').addEventListener('click', () => {
+                currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
+                renderFlashcard();
+            });
+
+            mainContent.querySelector('#next-card').addEventListener('click', () => {
+                currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
+                renderFlashcard();
+            });
+
+            // Touch Swipe Handler
+            let touchStartX = 0;
+            let touchEndX = 0;
+            flashcard.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            flashcard.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const swipeDist = touchEndX - touchStartX;
+                if (swipeDist > 55) {
+                    currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
+                    renderFlashcard();
+                } else if (swipeDist < -55) {
+                    currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
+                    renderFlashcard();
+                }
+            }, { passive: true });
+        }
+
+        function showQuizView() {
+            setActiveNav(navQuiz);
+            startQuiz();
+        }
+
+        function startQuiz() {
+            quizScore = 0;
+            currentQuizQuestionIndex = 0;
+            quizResults = [];
+            quizQuestions = generateQuizQuestions();
+            renderQuizQuestion();
+        }
+
+        function generateQuizQuestions() {
+            const shuffled = [...phrases].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 10).map(correctPhrase => {
+                const wrongPool = phrases
+                    .filter(p => p.id !== correctPhrase.id)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3);
+                
+                const options = [correctPhrase, ...wrongPool].sort(() => 0.5 - Math.random());
+                return {
+                    question: correctPhrase.english,
+                    options: options.map(p => ({ romaji: p.romaji, japanese: p.japanese })),
+                    answer: correctPhrase.romaji
+                };
+            });
+        }
+
+        function renderQuizQuestion() {
+            if (currentQuizQuestionIndex >= quizQuestions.length) {
+                showQuizResults();
+                return;
+            }
+            const q = quizQuestions[currentQuizQuestionIndex];
+            mainContent.innerHTML = `
+                <div class="bg-white/95 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-xl text-center flex flex-col justify-center min-h-[22rem] max-w-2xl mx-auto border border-orange-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Question ${currentQuizQuestionIndex + 1} of ${quizQuestions.length}</span>
+                        <span class="text-xs font-bold bg-orange-100 text-orange-700 px-3 py-1 rounded-full">Score: ${quizScore}</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-6 text-gray-900">${q.question}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                        ${q.options.map(option => `
+                            <div class="quiz-option-container flex items-center bg-gray-50 border-2 border-gray-200/80 rounded-2xl shadow-sm hover:border-orange-400 hover:bg-orange-50/50 transition-all duration-200 cursor-pointer overflow-hidden" data-answer="${option.romaji}">
+                                <span class="flex-grow p-4 text-base md:text-lg text-orange-700 font-bold text-center">${option.romaji}</span>
+                                <button type="button" class="play-audio-btn p-4 text-gray-400 hover:text-orange-600 flex-shrink-0" data-text="${option.japanese}" aria-label="Listen">
+                                    ${speakerIconSVG}
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            mainContent.querySelectorAll('.quiz-option-container').forEach(container => {
+                container.addEventListener('click', handleQuizAnswer);
+            });
+        }
+
+        function handleQuizAnswer(e) {
+            const container = e.target.closest('.quiz-option-container');
+            if (!container) return;
+
+            if (e.target.closest('.play-audio-btn')) {
+                const audioBtn = e.target.closest('.play-audio-btn');
+                playAudio(audioBtn.dataset.text, e, audioBtn);
+                return;
+            }
+
+            mainContent.querySelectorAll('.quiz-option-container').forEach(c => c.style.pointerEvents = 'none');
+
+            const selectedAnswer = container.dataset.answer;
+            const correctAnswer = quizQuestions[currentQuizQuestionIndex].answer;
+            const isCorrect = selectedAnswer === correctAnswer;
+
+            quizResults.push({
+                question: quizQuestions[currentQuizQuestionIndex].question,
+                selectedAnswer: selectedAnswer,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                quizScore++;
+                container.classList.remove('bg-gray-50', 'border-gray-200/80');
+                container.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+                const span = container.querySelector('span');
+                if (span) span.classList.add('text-white');
+            } else {
+                container.classList.remove('bg-gray-50', 'border-gray-200/80');
+                container.classList.add('bg-rose-500', 'border-rose-600', 'text-white');
+                const span = container.querySelector('span');
+                if (span) span.classList.add('text-white');
+            }
+
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                renderQuizQuestion();
+            }, 900);
+        }
+
+        function showQuizResults() {
+            const scorePercentage = Math.round((quizScore / quizQuestions.length) * 100);
+            document.getElementById('modal-score').textContent = `${scorePercentage}%`;
+
+            let feedback = "Good effort! Keep practicing Josey & Frankie's phrases.";
+            if (scorePercentage === 100) feedback = "Sugoi! 🌟 Perfect score! You're ready for Japan!";
+            else if (scorePercentage >= 80) feedback = "Brilliant job! You've got the essentials locked down.";
+            else if (scorePercentage >= 60) feedback = "Great work! Review your flashcards and try again.";
+            
+            document.getElementById('modal-feedback').textContent = feedback;
+            showQuizModal();
+        }
+
+        function showAnswersBreakdown() {
+            let breakdownHTML = '<ul class="space-y-2.5">';
+            quizResults.forEach(result => {
+                if (result.isCorrect) {
+                    breakdownHTML += `
+                        <li class="p-2.5 rounded-xl bg-emerald-50 border-l-4 border-emerald-500">
+                            <p class="font-bold text-gray-800">${result.question}</p>
+                            <p class="text-emerald-700 font-semibold">✓ ${result.selectedAnswer}</p>
+                        </li>
+                    `;
+                } else {
+                    breakdownHTML += `
+                        <li class="p-2.5 rounded-xl bg-rose-50 border-l-4 border-rose-500">
+                            <p class="font-bold text-gray-800">${result.question}</p>
+                            <p class="text-rose-600 font-semibold line-through">✗ ${result.selectedAnswer}</p>
+                            <p class="text-emerald-700 font-semibold">✓ Correct: ${result.correctAnswer}</p>
+                        </li>
+                    `;
+                }
+            });
+            breakdownHTML += '</ul>';
+            answersBreakdown.innerHTML = breakdownHTML;
+            answersBreakdown.classList.remove('hidden');
+            seeAnswersBtn.classList.add('hidden');
+        }
+
+        function showQuizModal() {
+            quizModal.classList.remove('hidden');
+            setTimeout(() => {
+                quizModal.classList.remove('opacity-0');
+                modalContainer.classList.remove('scale-95', 'opacity-0');
+                modalContainer.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function hideQuizModal() {
+            modalContainer.classList.remove('scale-100', 'opacity-100');
+            modalContainer.classList.add('scale-95', 'opacity-0');
+            quizModal.classList.add('opacity-0');
+            setTimeout(() => {
+                quizModal.classList.add('hidden');
+                answersBreakdown.classList.add('hidden');
+                seeAnswersBtn.classList.remove('hidden');
+            }, 250);
+        }
+
+        navLearn.addEventListener('click', showLearnView);
+        navFlashcards.addEventListener('click', showFlashcardsView);
+        navQuiz.addEventListener('click', showQuizView);
+
+        modalCloseBtn.addEventListener('click', () => {
+            hideQuizModal();
+            startQuiz();
+        });
+
+        seeAnswersBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAnswersBreakdown();
+        });
+
+        function updateSpeedButtonStates(activeBtn) {
+            [speedComfortableBtn, speedNormalBtn, speedSlowBtn].forEach(btn => {
+                if (btn === activeBtn) {
+                    btn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                    btn.classList.add('bg-orange-500', 'text-white');
+                } else {
+                    btn.classList.remove('bg-orange-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                }
+            });
+        }
+
+        // Speed Toggle Listeners
+        speedComfortableBtn.addEventListener('click', () => {
+            speechRate = 0.85; // Slightly slower, comfortable cadence
+            updateSpeedButtonStates(speedComfortableBtn);
+            showToast("Audio speed: 0.85x (Comfortable pace)");
+        });
+
+        speedNormalBtn.addEventListener('click', () => {
+            speechRate = 1.0; // Standard native speed
+            updateSpeedButtonStates(speedNormalBtn);
+            showToast("Audio speed: 1.0x (Standard speed)");
+        });
+
+        speedSlowBtn.addEventListener('click', () => {
+            speechRate = 0.7; // Slower for careful study
+            updateSpeedButtonStates(speedSlowBtn);
+            showToast("Audio speed: 0.7x (Slow practice)");
+        });
+
+        // Audio Test Button
+        testAudioBtn.addEventListener('click', (e) => {
+            initAudioContext();
+            playAudio("こんにちは。ありがとうございます！", e, testAudioBtn);
+        });
+
+        // App Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            populateVoices();
+            if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+                window.speechSynthesis.onvoiceschanged = populateVoices;
+            }
+            showLearnView();
+        });
+    </script>
+</body>
+</html>
