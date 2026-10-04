@@ -525,7 +525,7 @@
             setActiveNav(navLearn);
 
             const filterButtons = `
-                <div class="flex items-center space-x-2 overflow-x-auto pb-2 mb-5 no-scrollbar">
+                <div class="flex items-center space-x-2 overflow-x-auto md:justify-center pb-2 mb-6 no-scrollbar">
                     <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'all' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="all">
                         ✨ All (${phrases.length})
                     </button>
@@ -548,9 +548,9 @@
             `;
 
             let content = `
-                <div class="mb-3 flex items-center justify-between px-1">
+                <div class="mb-4 flex items-center justify-between px-1">
                     <p class="text-xs md:text-sm font-semibold text-gray-700">Tap 🔊 to hear spoken pronunciation</p>
-                    <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full">${phrases.length} Essential Phrases</span>
+                    <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full shadow-sm">${phrases.length} Essential Phrases</span>
                 </div>
                 ${filterButtons}
             `;
@@ -566,8 +566,8 @@
                 if (catPhrases.length === 0) return;
 
                 content += `
-                    <section class="mb-7">
-                        <div class="flex items-center justify-between mb-3 px-2 border-b border-teal-200/60 pb-2">
+                    <section class="mb-8">
+                        <div class="flex items-center justify-between mb-4 px-2 border-b border-teal-200/60 pb-2">
                             <div class="flex items-center space-x-2">
                                 <span class="text-2xl">${cat.icon}</span>
                                 <div>
@@ -584,9 +584,9 @@
                 if (catKey === "coeliac") {
                     content += `
                         <div class="mb-4">
-                            <button id="open-gf-card-btn" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white p-4 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.01] border-2 border-red-300 text-left">
+                            <button id="open-gf-card-btn" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white p-4 md:p-5 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.005] border-2 border-red-300 text-left">
                                 <div class="flex items-center space-x-3.5">
-                                    <span class="text-3xl bg-white/20 p-2 rounded-2xl backdrop-blur-sm flex-shrink-0">⚠️</span>
+                                    <span class="text-3xl bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm flex-shrink-0">⚠️️</span>
                                     <div>
                                         <div class="flex flex-wrap items-center gap-2">
                                             <span class="font-extrabold text-base md:text-lg tracking-tight">Show to Chef &amp; Staff (Coeliac Warning Card)</span>
@@ -600,15 +600,13 @@
                     `;
                 }
 
-                content += `<div class="space-y-3">`;
+                content += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-4">`;
 
                 catPhrases.forEach(phrase => {
                     content += `
-                        <div class="bg-white/95 backdrop-blur-sm p-4 md:p-5 rounded-2xl shadow-sm hover:shadow-md flex items-center justify-between transition-all duration-200 border border-white/80">
-                            <div class="pr-2 flex-grow">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <p class="font-bold text-base md:text-lg text-gray-800">${phrase.english}</p>
-                                </div>
+                        <div class="bg-white/95 backdrop-blur-sm p-4 md:p-5 rounded-2xl shadow-sm hover:shadow-md flex items-center justify-between transition-all duration-200 border border-white/80 h-full">
+                            <div class="pr-3 flex-grow">
+                                <p class="font-bold text-base md:text-lg text-gray-800 leading-snug">${phrase.english}</p>
                                 <p class="text-orange-600 font-semibold text-sm md:text-base mt-0.5">${phrase.romaji}</p>
                                 <div class="flex items-center mt-2">
                                     <p class="jp-font text-gray-900 text-xl md:text-2xl font-bold tracking-wide">${phrase.japanese}</p>
