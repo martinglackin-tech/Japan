@@ -192,6 +192,7 @@
             { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！" },
             { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Biiru/mizu/ocha kudasai", japanese: "ビール／水／お茶 ください。" },
             { id: 13, category: "dining", english: "Let's eat! / Bon appétit (before meal)", romaji: "Itadakimasu", japanese: "いただきます！" },
+            { id: 27, category: "dining", english: "It is delicious!", romaji: "Oishī desu", japanese: "美味しいです！" },
             { id: 17, category: "dining", english: "Can I get the bill, please?", romaji: "Okaikei onegaishimasu", japanese: "お会計お願いします。" },
             { id: 15, category: "dining", english: "Thank you for the meal (after eating)", romaji: "Gochisousama deshita", japanese: "ごちそうさまでした。" },
 
@@ -228,6 +229,7 @@
             { id: 116, category: "dining", english: "Bill", romaji: "Okaikei", japanese: "お会計" },
             { id: 117, category: "dining", english: "Cheers!", romaji: "Kanpai!", japanese: "乾杯！" },
             { id: 118, category: "dining", english: "Bon appétit", romaji: "Itadakimasu", japanese: "いただきます" },
+            { id: 126, category: "dining", english: "Delicious", romaji: "Oishii", japanese: "おいしい" },
             { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語" },
             { id: 120, category: "about", english: "Japanese", romaji: "Nihongo", japanese: "日本語" },
             { id: 121, category: "about", english: "British", romaji: "Igirisu-jin", japanese: "イギリス人" },
@@ -493,7 +495,7 @@
             let content = `
                 <div class="mb-3 flex items-center justify-between px-1">
                     <p class="text-xs md:text-sm font-semibold text-gray-700">Tap 🔊 to hear spoken pronunciation</p>
-                    <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full">25 Essential Phrases</span>
+                    <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full">${phrases.length} Essential Phrases</span>
                 </div>
                 ${filterButtons}
             `;
