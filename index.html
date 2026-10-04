@@ -16,11 +16,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Mochiy+Pop+One&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #e0f2f1 0%, #fff3e0 100%);
-            min-height: 100vh;
             color: #37474F;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .jp-font {
             font-family: 'Noto Sans JP', sans-serif;
@@ -109,11 +118,11 @@
 </head>
 <body class="text-gray-800 antialiased selection:bg-orange-200">
 
-    <div id="app-container" class="container mx-auto p-4 md:p-8 max-w-4xl">
+    <div id="app-container" class="w-full max-w-4xl mx-auto p-4 md:p-8 flex flex-col items-center">
 
         <!-- Header -->
-        <header class="text-center mb-6">
-            <div class="inline-block bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/80 max-w-lg w-full">
+        <header class="w-full flex justify-center mb-6">
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/80 max-w-lg w-full text-center">
                 <div class="flex items-center justify-center space-x-2 mb-2">
                     <span class="text-2xl" role="img" aria-label="Japan flag">🇯🇵</span>
                     <h1 class="title-font text-2xl md:text-3xl font-extrabold text-orange-600 tracking-tight">Josey &amp; Frankie's</h1>
@@ -125,14 +134,14 @@
         </header>
 
         <!-- Primary Navigation -->
-        <nav id="navigation" class="flex justify-center space-x-2 md:space-x-4 mb-8">
+        <nav id="navigation" class="w-full flex justify-center space-x-2 md:space-x-4 mb-8">
             <button id="nav-learn" class="btn-nav active bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Learn</button>
             <button id="nav-flashcards" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Flashcards</button>
             <button id="nav-quiz" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Quiz</button>
         </nav>
 
         <!-- Main Content Area -->
-        <main id="main-content">
+        <main id="main-content" class="w-full">
             <!-- Dynamically populated by JavaScript -->
         </main>
     </div>
@@ -525,7 +534,7 @@
             setActiveNav(navLearn);
 
             const filterButtons = `
-                <div class="flex items-center space-x-2 overflow-x-auto md:justify-center pb-2 mb-6 no-scrollbar">
+                <div class="w-full flex items-center space-x-2 overflow-x-auto justify-start md:justify-center pb-2 mb-6 no-scrollbar">
                     <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'all' ? 'bg-orange-600 text-white shadow-orange-300' : 'bg-white/90 text-gray-700 hover:bg-orange-50'}" data-category="all">
                         ✨ All (${phrases.length})
                     </button>
@@ -548,7 +557,7 @@
             `;
 
             let content = `
-                <div class="mb-4 flex items-center justify-between px-1">
+                <div class="w-full mb-4 flex items-center justify-between px-1">
                     <p class="text-xs md:text-sm font-semibold text-gray-700">Tap 🔊 to hear spoken pronunciation</p>
                     <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full shadow-sm">${phrases.length} Essential Phrases</span>
                 </div>
@@ -566,7 +575,7 @@
                 if (catPhrases.length === 0) return;
 
                 content += `
-                    <section class="mb-8">
+                    <section class="w-full mb-8">
                         <div class="flex items-center justify-between mb-4 px-2 border-b border-teal-200/60 pb-2">
                             <div class="flex items-center space-x-2">
                                 <span class="text-2xl">${cat.icon}</span>
@@ -583,10 +592,10 @@
 
                 if (catKey === "coeliac") {
                     content += `
-                        <div class="mb-4">
+                        <div class="mb-4 w-full">
                             <button id="open-gf-card-btn" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white p-4 md:p-5 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.005] border-2 border-red-300 text-left">
                                 <div class="flex items-center space-x-3.5">
-                                    <span class="text-3xl bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm flex-shrink-0">⚠️️</span>
+                                    <span class="text-3xl bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm flex-shrink-0">⚠</span>
                                     <div>
                                         <div class="flex flex-wrap items-center gap-2">
                                             <span class="font-extrabold text-base md:text-lg tracking-tight">Show to Chef &amp; Staff (Coeliac Warning Card)</span>
@@ -600,7 +609,7 @@
                     `;
                 }
 
-                content += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-4">`;
+                content += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-4 w-full">`;
 
                 catPhrases.forEach(phrase => {
                     content += `
