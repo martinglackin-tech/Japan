@@ -345,7 +345,7 @@
             <!-- Modal Header -->
             <div class="flex items-start justify-between border-b border-gray-100 pb-3 mb-4">
                 <div class="flex items-center space-x-2">
-                    <span class="text-3xl">⚠️️</span>
+                    <span class="text-3xl">⚠️</span>
                     <div>
                         <h2 class="title-font text-xl md:text-2xl font-black text-red-600">Coeliac Restaurant Card</h2>
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">シェフ・店員様へのご案内 (Show to staff / chef)</p>
@@ -794,7 +794,14 @@
                 await new Promise((resolve) => {
                     const audio = new Audio();
                     currentPlayingAudio = audio;
+                    audio.defaultPlaybackRate = speechRate;
                     audio.playbackRate = speechRate;
+                    audio.addEventListener('loadedmetadata', () => {
+                        audio.playbackRate = speechRate;
+                    });
+                    audio.addEventListener('play', () => {
+                        audio.playbackRate = speechRate;
+                    });
                     audio.onended = () => resolve();
                     audio.onerror = () => resolve();
                     audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(chunk)}`;
@@ -845,7 +852,14 @@
                 }
 
                 const audio = new Audio();
+                audio.defaultPlaybackRate = speechRate;
                 audio.playbackRate = speechRate;
+                audio.addEventListener('loadedmetadata', () => {
+                    audio.playbackRate = speechRate;
+                });
+                audio.addEventListener('play', () => {
+                    audio.playbackRate = speechRate;
+                });
                 currentPlayingAudio = audio;
 
                 let hasFallbackTriggered = false;
