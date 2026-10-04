@@ -941,6 +941,42 @@
             }, 250);
         }
 
+        function fitFsJapaneseText() {
+            const container = document.getElementById('gf-fs-text-container');
+            const textEl = document.getElementById('gf-fs-jp-text');
+            if (!container || !textEl || !gfFullscreenOverlay || gfFullscreenOverlay.classList.contains('hidden')) return;
+
+            const availWidth = container.clientWidth - 16;
+            const availHeight = container.clientHeight - 12;
+            if (availWidth <= 0 || availHeight <= 0) return;
+
+            const isLandscape = window.innerWidth > window.innerHeight;
+            
+            // Search boundaries for font size (px)
+            let minSize = 13;
+            let maxSize = isLandscape ? 36 : 48;
+            let optimalSize = minSize;
+
+            let low = minSize;
+            let high = maxSize;
+
+            while (low <= high) {
+                const mid = Math.floor((low + high) / 2);
+                textEl.style.fontSize = mid + 'px';
+                textEl.style.lineHeight = (mid <= 20 ? '1.45' : mid <= 28 ? '1.5' : '1.58');
+
+                if (textEl.scrollHeight <= availHeight && textEl.scrollWidth <= availWidth + 5) {
+                    optimalSize = mid;
+                    low = mid + 1; // Try larger
+                } else {
+                    high = mid - 1; // Too large, decrease
+                }
+            }
+
+            textEl.style.fontSize = optimalSize + 'px';
+            textEl.style.lineHeight = (optimalSize <= 20 ? '1.45' : optimalSize <= 28 ? '1.5' : '1.58');
+        }
+
         function showFullscreenChefCard() {
             if (gfFullscreenOverlay) {
                 gfFullscreenOverlay.classList.remove('hidden');
@@ -948,6 +984,11 @@
                 if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(() => {});
                 }
+                requestAnimationFrame(() => {
+                    fitFsJapaneseText();
+                    setTimeout(fitFsJapaneseText, 80);
+                    setTimeout(fitFsJapaneseText, 250);
+                });
             }
         }
 
@@ -959,6 +1000,19 @@
                 }
             }
         }
+
+        window.addEventListener('resize', () => {
+            if (gfFullscreenOverlay && !gfFullscreenOverlay.classList.contains('hidden')) {
+                fitFsJapaneseText();
+            }
+        });
+
+        window.addEventListener('orientationchange', () => {
+            if (gfFullscreenOverlay && !gfFullscreenOverlay.classList.contains('hidden')) {
+                setTimeout(fitFsJapaneseText, 150);
+                setTimeout(fitFsJapaneseText, 350);
+            }
+        });
 
         if (gfFullscreenTriggerBtn) {
             gfFullscreenTriggerBtn.addEventListener('click', showFullscreenChefCard);
