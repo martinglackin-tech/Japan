@@ -792,9 +792,9 @@
                     <h2 class="text-2xl md:text-3xl font-extrabold mb-6 text-gray-900">${q.question}</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative">
                         ${q.options.map(option => `
-                            <div class="quiz-option-container relative flex items-center bg-gray-50 border-2 border-gray-200/80 rounded-2xl shadow-sm hover:border-orange-400 hover:bg-orange-50/50 transition-all duration-200 cursor-pointer overflow-hidden" data-answer="${option.romaji}">
-                                <span class="flex-grow p-4 text-base md:text-lg text-orange-700 font-bold text-center">${option.romaji}</span>
-                                <button type="button" class="play-audio-btn p-4 text-gray-400 hover:text-orange-600 flex-shrink-0" data-text="${option.japanese}" aria-label="Listen">
+                            <div class="quiz-option-container relative flex items-center bg-gray-50 border-2 border-gray-200/80 rounded-2xl shadow-sm hover:border-orange-400 hover:bg-orange-50/50 transition-all duration-200 cursor-pointer overflow-hidden p-2.5" data-answer="${option.romaji}">
+                                <span class="flex-grow py-2 px-2 text-base md:text-lg text-orange-700 font-bold text-center pl-8">${option.romaji}</span>
+                                <button type="button" class="play-audio-btn w-10 h-10 rounded-full bg-orange-100/80 hover:bg-orange-200 text-orange-600 flex items-center justify-center flex-shrink-0 shadow-sm transition-transform active:scale-95 focus:outline-none" data-text="${option.japanese}" aria-label="Listen">
                                     ${speakerIconSVG}
                                 </button>
                             </div>
@@ -889,7 +889,7 @@
                 const span = container.querySelector('span');
                 if (span) span.classList.add('text-white');
                 const speakerBtn = container.querySelector('.play-audio-btn');
-                if (speakerBtn) speakerBtn.classList.add('text-white', 'hover:text-emerald-100');
+                if (speakerBtn) speakerBtn.classList.add('text-white', 'bg-white/20', 'hover:bg-white/30');
 
                 triggerQuizConfetti();
                 showQuizReactionBadge(container, true);
@@ -899,7 +899,7 @@
                 const span = container.querySelector('span');
                 if (span) span.classList.add('text-white');
                 const speakerBtn = container.querySelector('.play-audio-btn');
-                if (speakerBtn) speakerBtn.classList.add('text-white', 'hover:text-rose-100');
+                if (speakerBtn) speakerBtn.classList.add('text-white', 'bg-white/20', 'hover:bg-white/30');
 
                 showQuizReactionBadge(container, false);
 
