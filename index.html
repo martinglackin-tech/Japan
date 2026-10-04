@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
+    <!-- Explicitly tell Chrome, Safari, and Edge auto-translate engines never to translate this document -->
+    <meta name="google" content="notranslate">
+    <meta name="googlebot" content="notranslate">
     <title>Josey &amp; Frankie's Japanese Phrasebook</title>
     <!-- Japanese Flag Favicon (Inline SVG Data URI) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23ffffff' stroke='%23cbd5e1' stroke-width='1.5'/><circle cx='16' cy='16' r='9.6' fill='%23bc002d'/></svg>">
@@ -114,15 +117,19 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        ruby rt {
+            font-size: 0.58em;
+            color: #dc2626;
+            font-weight: 700;
+        }
     </style>
 </head>
-<body class="text-gray-800 antialiased selection:bg-orange-200">
-
+<body class="text-gray-800 antialiased selection:bg-orange-200 notranslate" translate="no">
     <div id="app-container" class="w-full max-w-4xl mx-auto p-4 md:p-8 flex flex-col items-center">
 
         <!-- Header -->
-        <header class="w-full flex justify-center mb-6">
-            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/80 max-w-lg w-full text-center">
+        <header class="w-full flex flex-col items-center mb-6">
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/80 max-w-lg w-full text-center relative">
                 <div class="flex items-center justify-center space-x-2 mb-2">
                     <span class="text-2xl" role="img" aria-label="Japan flag">🇯🇵</span>
                     <h1 class="title-font text-2xl md:text-3xl font-extrabold text-orange-600 tracking-tight">Josey &amp; Frankie's</h1>
@@ -130,6 +137,18 @@
                 </div>
                 <p class="text-xs uppercase tracking-widest text-teal-800 font-bold mb-1">Essential Japanese Phrasebook</p>
                 <p class="jp-font font-bold text-gray-700 text-lg md:text-xl">必須 日本語フレーズブック</p>
+                
+                <!-- Quick Access Floating Coeliac Badge & Voice Controls -->
+                <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2">
+                    <button id="header-emergency-gf-btn" class="inline-flex items-center space-x-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95" title="Open Coeliac Card Immediately">
+                        <span class="text-sm">⚠️</span>
+                        <span>Quick Coeliac Card (Show Staff)</span>
+                    </button>
+                    <button id="audio-engine-btn" class="inline-flex items-center space-x-1.5 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95" title="Cycle voice engine (Studio Neural vs Device Speech)">
+                        <span id="audio-engine-icon">✨</span>
+                        <span id="audio-engine-label">Voice: Studio Neural</span>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -173,9 +192,9 @@
                 <button id="gf-modal-close-icon" class="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 text-2xl leading-none">&times;</button>
             </div>
 
-            <!-- Primary Japanese Notice (Show directly to server/chef) -->
+            <!-- Primary Japanese Notice with Furigana & Critical Kitchen Warnings -->
             <div class="bg-red-50/80 border-2 border-red-300 rounded-2xl p-4 md:p-5 mb-4 shadow-inner">
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between mb-2.5">
                     <span class="inline-block bg-red-600 text-white text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider">
                         店員様・調理場へ提示
                     </span>
@@ -183,16 +202,22 @@
                         <span>🔊</span><span>Speak Notice</span>
                     </button>
                 </div>
-                <p id="chef-card-jp-text" class="jp-font text-base md:text-lg font-bold text-gray-900 leading-relaxed text-left">
-                    【重要】セリアック病（重度の小麦・グルテンアレルギー）があります。小麦、大麦、ライ麦、および普通の醤油や麦味噌など、グルテンを含む調味料も一切摂取できません。調理器具や揚げ油の使い回し（コンタミネーション）も避ける必要があります。食べられるものはありますか？
-                </p>
+                <div id="chef-card-jp-text" class="jp-font text-base md:text-lg font-bold text-gray-900 leading-relaxed text-left space-y-2">
+                    <p class="text-red-700 font-black">【重要】セリアック病（重度小麦・グルテンアレルギー）があります。</p>
+                    <p><ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。</p>
+                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base font-semibold text-gray-800">
+                        <li><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>、たれ、つゆ、麦味噌、だしの素も一切摂取できません。</li>
+                        <li><strong>コンタミネーション：</strong>揚げ油の共用、同じ茹で汁や調理器具の使い回しも避ける必要があります。</li>
+                    </ul>
+                    <p class="text-sm md:text-base pt-1 text-gray-900">小麦を含まない料理や、塩・素焼きなど調味料なしで提供できるものはありますか？</p>
+                </div>
             </div>
 
             <!-- English Translation -->
             <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 mb-5 text-left">
                 <p class="text-xs uppercase font-extrabold text-amber-800 tracking-wider mb-1">English Translation</p>
                 <p class="text-xs md:text-sm text-gray-700 leading-relaxed italic">
-                    "[Important] I have Coeliac disease (a severe wheat/gluten allergy). I cannot consume any wheat, barley, rye, or seasonings containing gluten such as regular soy sauce or barley miso. Cross-contamination from shared cooking utensils or frying oil must also be avoided. Is there anything I can eat?"
+                    "[Important] I have Coeliac disease (severe wheat/gluten allergy). I cannot consume any wheat, barley, or rye. This includes seasonings such as regular soy sauce, tare sauce, tsuyu, barley miso, and dashi bouillon powder. Cross-contamination from shared frying oil, boiling water, or shared utensils must also be avoided. Are there dishes without wheat, or can plain grilled/salted dishes be prepared?"
                 </p>
             </div>
 
@@ -234,9 +259,15 @@
             
             <!-- Dynamic Auto-Fit Text Container (Fits both tall portrait and wide landscape) -->
             <div id="gf-fs-text-container" class="flex-1 flex items-center justify-center overflow-y-auto my-auto py-2 w-full">
-                <p id="gf-fs-jp-text" class="jp-font font-black text-gray-900 text-left transition-all duration-150">
-                    【重要】セリアック病（重度の小麦・グルテンアレルギー）があります。小麦、大麦、ライ麦、および普通の醤油や麦味噌など、グルテンを含む調味料も一切摂取できません。調理器具や揚げ油の使い回し（コンタミネーション）も避ける必要があります。食べられるものはありますか？
-                </p>
+                <div id="gf-fs-jp-text" class="jp-font font-black text-gray-900 text-left transition-all duration-150 space-y-3 max-w-3xl">
+                    <p class="text-red-700 font-extrabold text-xl sm:text-2xl md:text-3xl">【重要】セリアック病（グルテンアレルギー）があります。</p>
+                    <p class="text-lg sm:text-xl md:text-2xl"><ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切口にできません。</p>
+                    <div class="border-l-4 border-red-400 pl-3 py-1 space-y-2 text-base sm:text-lg md:text-xl text-gray-800 font-bold">
+                        <p>・<strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も不可です。</p>
+                        <p>・<strong>油・器具：</strong>同じ揚げ油での調理や器具の使い回しも避ける必要があります。</p>
+                    </div>
+                    <p class="text-base sm:text-lg md:text-xl text-gray-900 pt-1">小麦を含まない料理、または塩・素焼きなど調味料なしで提供可能なものはありますか？</p>
+                </div>
             </div>
         </div>
     </div>
@@ -274,14 +305,20 @@
             { id: 1001, category: "coeliac", english: "I have a severe wheat and gluten allergy", romaji: "Komugi to guruten no arerugī ga arimasu", japanese: "小麦とグルテンのアレルギーがあります。" },
             { id: 1002, category: "coeliac", english: "I cannot eat wheat, barley, or rye", romaji: "Komugi, ōmugi, raimugi wa taberaremasen", japanese: "小麦、大麦、ライ麦は食べられません。" },
             { id: 1004, category: "coeliac", english: "Does this contain wheat or soy sauce?", romaji: "Kore ni komugi ya shōyu wa haitte imasu ka?", japanese: "これに小麦や醤油は入っていますか？" },
+            { id: 1005, category: "coeliac", english: "Do you have wheat-free tamari soy sauce?", romaji: "Tamari shōyu wa arimasu ka?", japanese: "たまり醤油はありますか？" },
+            { id: 1006, category: "coeliac", english: "Please do not add any sauce or broth", romaji: "Tare ya dashi wa tsukenaide kudasai", japanese: "タレや出汁はつけないでください。" },
+            { id: 1007, category: "coeliac", english: "Can you prepare it with just salt?", romaji: "Shio dake de chōri dekimasu ka?", japanese: "塩だけで調理できますか？" },
 
             // --- DRINKING & DINING ---
+            { id: 28, category: "dining", english: "Table for two, please", romaji: "Futari desu", japanese: "二人です。" },
+            { id: 29, category: "dining", english: "This one, please (pointing to menu)", romaji: "Kore o onegaishimasu", japanese: "これをお願いします。" },
             { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！" },
             { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Biiru / o-mizu / o-cha kudasai", japanese: "ビール／お水／お茶 ください。" },
             { id: 13, category: "dining", english: "Let's eat! / Bon appétit", romaji: "Itadakimasu", japanese: "いただきます！" },
             { id: 27, category: "dining", english: "It is delicious!", romaji: "Oishī desu", japanese: "美味しいです！" },
             { id: 17, category: "dining", english: "Can I get the bill, please? (Tip: cross index fingers into an 'X')", romaji: "Okaikei onegaishimasu", japanese: "お会計お願いします。" },
             { id: 15, category: "dining", english: "Thank you for the meal (after eating)", romaji: "Gochisousama deshita", japanese: "ごちそうさまでした。" },
+            { id: 30, category: "dining", english: "We'll be back!", romaji: "Mata kimasu!", japanese: "また来ます！" },
 
             // --- ABOUT US & INTRODUCTIONS ---
             { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョージーです。" },
@@ -315,6 +352,8 @@
             { id: 117, category: "dining", english: "Cheers!", romaji: "Kanpai!", japanese: "乾杯！" },
             { id: 118, category: "dining", english: "Bon appétit", romaji: "Itadakimasu", japanese: "いただきます" },
             { id: 126, category: "dining", english: "Delicious", romaji: "Oishii", japanese: "おいしい" },
+            { id: 128, category: "dining", english: "Two people", romaji: "Futari", japanese: "二人" },
+            { id: 129, category: "dining", english: "This one", romaji: "Kore", japanese: "これ" },
             { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語" },
             { id: 120, category: "about", english: "Japanese", romaji: "Nihongo", japanese: "日本語" },
             { id: 121, category: "about", english: "UK / Britain", romaji: "Igirisu", japanese: "イギリス" },
@@ -331,13 +370,13 @@
         let currentQuizQuestionIndex = 0;
         let quizScore = 0;
         let quizResults = [];
-        let speechRate = 0.85; // Default: comfortable natural pace
-        let activeUtterances = new Set();
+
+        // Voice Engine State: 'studio' (natural neural audio) or 'device' (offline SpeechSynthesis)
+        let voiceEngine = 'studio'; 
+        let speechRate = 0.9; // Clear, natural speed for learning
         let cachedVoices = [];
-        let audioContext = null;
         let currentPlayingAudio = null;
 
-        // DOM Elements
         const mainContent = document.getElementById('main-content');
         const navLearn = document.getElementById('nav-learn');
         const navFlashcards = document.getElementById('nav-flashcards');
@@ -359,24 +398,15 @@
         const gfFsBackBtn = document.getElementById('gf-fs-back-btn');
         const gfFsCardSpeakerBtn = document.getElementById('gf-fs-card-speaker-btn');
         const gfFsJpText = document.getElementById('gf-fs-jp-text');
+        const headerEmergencyGfBtn = document.getElementById('header-emergency-gf-btn');
+        const audioEngineBtn = document.getElementById('audio-engine-btn');
+        const audioEngineIcon = document.getElementById('audio-engine-icon');
+        const audioEngineLabel = document.getElementById('audio-engine-label');
 
         const speakerIconSVG = `
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
             </svg>`;
-
-        function initAudioContext() {
-            try {
-                if (!audioContext && (window.AudioContext || window.webkitAudioContext)) {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioContext && audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
-            } catch (e) {
-                console.warn("AudioContext note:", e);
-            }
-        }
 
         function showToast(msg, duration = 1800) {
             toastMessage.textContent = msg;
@@ -394,11 +424,12 @@
                 try {
                     cachedVoices = window.speechSynthesis.getVoices();
                 } catch (e) {
-                    console.warn("Voices fetch note:", e);
+                    console.warn("Voice list access note:", e);
                 }
             }
         }
 
+        // Deep prioritized voice scoring: Prefers natural Neural, Google Cloud Network, Kyoko/Otoya Enhanced, and Siri
         function getBestJapaneseVoice() {
             if (!cachedVoices || cachedVoices.length === 0) {
                 populateVoices();
@@ -413,13 +444,20 @@
             return jpVoices.sort((a, b) => {
                 const scoreVoice = (v) => {
                     const name = (v.name || '').toLowerCase();
+                    const uri = (v.voiceURI || '').toLowerCase();
                     let score = 0;
-                    if (name.includes('natural') || name.includes('neural') || name.includes('online')) score += 60;
-                    if (name.includes('google')) score += 40;
-                    if (name.includes('kyoko') || name.includes('nanami') || name.includes('haruka') || name.includes('ayumi') || name.includes('sayaka')) score += 30;
+                    // Android Neural / Google network voices (sound far more human)
+                    if (name.includes('network') || uri.includes('network') || name.includes('online')) score += 70;
+                    if (name.includes('neural') || name.includes('natural')) score += 60;
+                    if (name.includes('enhanced') || name.includes('premium')) score += 50;
+                    if (name.includes('siri') || name.includes('apple')) score += 40;
+                    if (name.includes('google')) score += 35;
+                    // Known high-quality Japanese voice talent names
+                    if (name.includes('kyoko') || name.includes('nanami') || name.includes('otoya') || name.includes('haruka') || name.includes('keita')) score += 30;
                     if (v.lang === 'ja-JP') score += 10;
-                    if (name.includes('ichiro')) score -= 50;
-                    if (name.includes('desktop')) score -= 20;
+                    // Penalize robotic legacy desktop voices
+                    if (name.includes('ichiro')) score -= 40;
+                    if (name.includes('desktop') && !name.includes('natural')) score -= 30;
                     return score;
                 };
                 return scoreVoice(b) - scoreVoice(a);
@@ -431,98 +469,163 @@
                 .replace(/[\/\／]/g, '、')
                 .replace(/[\(\)（）]/g, '')
                 .replace(/[!！?？]/g, '。')
+                .replace(/\s+/g, ' ')
                 .trim();
         }
 
-        function playFallbackSpeechSynthesis(cleanText, triggerBtn) {
+        // Offline Device SpeechSynthesis fallback
+        function playSpeechSynthesisFallback(cleanText, triggerBtn) {
             if (!('speechSynthesis' in window)) {
-                showToast("Audio playback not supported");
+                showToast("Audio playback not supported on this device");
+                if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
                 return;
             }
 
             try {
-                window.speechSynthesis.resume();
                 window.speechSynthesis.cancel();
 
-                setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(cleanText);
-                    utterance.lang = 'ja-JP';
-                    utterance.rate = speechRate;
-                    utterance.pitch = 1.0;
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'ja-JP';
+                utterance.rate = speechRate;
+                utterance.pitch = 1.0;
 
-                    const voice = getBestJapaneseVoice();
-                    if (voice) utterance.voice = voice;
+                const voice = getBestJapaneseVoice();
+                if (voice) utterance.voice = voice;
 
-                    activeUtterances.add(utterance);
+                const cleanup = () => {
+                    if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
+                };
 
-                    const cleanup = () => {
-                        activeUtterances.delete(utterance);
-                        if (triggerBtn) {
-                            triggerBtn.classList.remove('speaking-pulse');
-                        }
-                    };
+                utterance.onend = cleanup;
+                utterance.onerror = cleanup;
+                setTimeout(cleanup, 8000);
 
-                    utterance.onend = cleanup;
-                    utterance.onerror = cleanup;
-                    setTimeout(cleanup, 5000);
-
-                    window.speechSynthesis.speak(utterance);
-                    window.speechSynthesis.resume();
-                }, 20);
+                window.speechSynthesis.speak(utterance);
             } catch (err) {
+                console.warn("SpeechSynthesis error:", err);
                 if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
             }
         }
 
-        async function playAudio(text, event, triggerBtn) {
+        // Plays text chunks sequentially (essential for long Chef Card text via studio neural streams)
+        async function playAudioChunksSequentially(chunks, triggerBtn) {
+            for (let i = 0; i < chunks.length; i++) {
+                const chunk = chunks[i];
+                if (!chunk) continue;
+                await new Promise((resolve) => {
+                    const audio = new Audio();
+                    currentPlayingAudio = audio;
+                    audio.playbackRate = speechRate;
+                    audio.onended = () => resolve();
+                    audio.onerror = () => resolve(); // continue on minor chunk error
+                    audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(chunk)}`;
+                    audio.play().catch(() => resolve());
+                });
+            }
+            if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
+        }
+
+        // Master Audio Player: Synchronously unlocks iOS audio context and picks studio audio or device engine
+        function playAudio(text, event, triggerBtn) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
 
-            initAudioContext();
+            const cleanText = sanitizeJapaneseText(text);
+            if (!cleanText) return;
 
-            if (triggerBtn) {
-                triggerBtn.classList.add('speaking-pulse');
-            }
+            showToast(`Speaking: ${cleanText.slice(0, 22)}${cleanText.length > 22 ? '...' : ''}`);
 
+            // Stop any ongoing audio
             if (currentPlayingAudio) {
                 try {
                     currentPlayingAudio.pause();
                     currentPlayingAudio.currentTime = 0;
                 } catch (e) {}
             }
+            if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+            }
 
-            const cleanText = sanitizeJapaneseText(text);
-            showToast(`Speaking: ${cleanText}`);
+            if (triggerBtn) {
+                triggerBtn.classList.add('speaking-pulse');
+            }
 
+            // If user explicitly chose device voice or is offline, use SpeechSynthesis directly
+            if (voiceEngine === 'device' || !navigator.onLine) {
+                playSpeechSynthesisFallback(cleanText, triggerBtn);
+                return;
+            }
+
+            // Studio Natural Voice (Google WaveNet stream)
             try {
-                const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(cleanText)}`;
+                // Break long sentences into clauses so Google TTS never exceeds character limits
+                const chunks = cleanText.length > 70 
+                    ? cleanText.split(/[。、]/).map(s => s.trim()).filter(s => s.length > 0)
+                    : [cleanText];
+
+                if (chunks.length > 1) {
+                    playAudioChunksSequentially(chunks, triggerBtn);
+                    return;
+                }
+
+                // CRITICAL FOR IOS: Instantiate and start playback synchronously within the user event tick
                 const audio = new Audio();
                 audio.playbackRate = speechRate;
                 currentPlayingAudio = audio;
 
-                const cleanup = () => {
-                    if (triggerBtn) {
-                        triggerBtn.classList.remove('speaking-pulse');
-                    }
+                let hasFallbackTriggered = false;
+                const triggerFallback = () => {
+                    if (hasFallbackTriggered) return;
+                    hasFallbackTriggered = true;
+                    playSpeechSynthesisFallback(cleanText, triggerBtn);
                 };
 
-                const playPromise = new Promise((resolve, reject) => {
-                    audio.onended = () => { cleanup(); resolve(); };
-                    audio.onerror = (e) => reject(e);
-                    audio.src = audioUrl;
-                    audio.play().then(resolve).catch(reject);
-                });
+                // Fast timeout in case network is throttled or offline
+                const timeoutTimer = setTimeout(() => {
+                    if (audio.readyState === 0) {
+                        triggerFallback();
+                    }
+                }, 1200);
 
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 800));
-                await Promise.race([playPromise, timeoutPromise]);
-                return;
+                audio.onended = () => {
+                    clearTimeout(timeoutTimer);
+                    if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
+                };
+
+                audio.onerror = () => {
+                    clearTimeout(timeoutTimer);
+                    triggerFallback();
+                };
+
+                audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(cleanText)}`;
+                
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch((err) => {
+                        clearTimeout(timeoutTimer);
+                        triggerFallback();
+                    });
+                }
             } catch (err) {
-                // Fall back to SpeechSynthesis
+                playSpeechSynthesisFallback(cleanText, triggerBtn);
             }
+        }
 
-            playFallbackSpeechSynthesis(cleanText, triggerBtn);
+        // Toggle between Studio Neural and Device Speech
+        function toggleVoiceEngine() {
+            if (voiceEngine === 'studio') {
+                voiceEngine = 'device';
+                audioEngineIcon.textContent = '📱';
+                audioEngineLabel.textContent = 'Voice: Device (Offline)';
+                showToast("Switched to Device Offline Voice");
+            } else {
+                voiceEngine = 'studio';
+                audioEngineIcon.textContent = '✨';
+                audioEngineLabel.textContent = 'Voice: Studio Neural';
+                showToast("Switched to Studio Neural Voice");
+            }
         }
 
         function setActiveNav(button) {
@@ -558,7 +661,7 @@
 
             let content = `
                 <div class="w-full mb-4 flex items-center justify-between px-1">
-                    <p class="text-xs md:text-sm font-semibold text-gray-700">Tap 🔊 to hear spoken pronunciation</p>
+                    <p class="text-xs md:text-sm font-semibold text-gray-700">Tap 🔊 to hear native pronunciation</p>
                     <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full shadow-sm">${phrases.length} Essential Phrases</span>
                 </div>
                 ${filterButtons}
@@ -595,12 +698,12 @@
                         <div class="mb-4 w-full">
                             <button id="open-gf-card-btn" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white p-4 md:p-5 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.005] border-2 border-red-300 text-left">
                                 <div class="flex items-center space-x-3.5">
-                                    <span class="text-3xl bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm flex-shrink-0">⚠</span>
+                                    <span class="text-3xl bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm flex-shrink-0">⚠️</span>
                                     <div>
                                         <div class="flex flex-wrap items-center gap-2">
                                             <span class="font-extrabold text-base md:text-lg tracking-tight">Show to Chef &amp; Staff (Coeliac Warning Card)</span>
                                         </div>
-                                        <p class="text-xs text-red-100 font-medium mt-1">Tap to display full Japanese card &amp; allergy warnings (soy sauce, miso, cross-contamination)</p>
+                                        <p class="text-xs text-red-100 font-medium mt-1">Tap to display full Japanese card &amp; allergy warnings (soy sauce, dashi, miso, shared oil)</p>
                                     </div>
                                 </div>
                                 <span class="text-2xl font-bold ml-2 text-white/90 flex-shrink-0">➜</span>
@@ -618,7 +721,7 @@
                                 <p class="font-bold text-base md:text-lg text-gray-800 leading-snug">${phrase.english}</p>
                                 <p class="text-orange-600 font-semibold text-sm md:text-base mt-0.5">${phrase.romaji}</p>
                                 <div class="flex items-center mt-2">
-                                    <p class="jp-font text-gray-900 text-xl md:text-2xl font-bold tracking-wide">${phrase.japanese}</p>
+                                    <p class="jp-font text-gray-900 text-xl md:text-2xl font-bold tracking-wide notranslate" translate="no">${phrase.japanese}</p>
                                 </div>
                             </div>
                             <button type="button" class="play-audio-btn p-3 rounded-full bg-orange-50 hover:bg-orange-100 text-orange-600 shadow-sm flex-shrink-0 border border-orange-100" data-text="${phrase.japanese}" aria-label="Listen to pronunciation">
@@ -665,6 +768,14 @@
             renderFlashcard();
         }
 
+        function triggerHapticFeedback() {
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                try {
+                    navigator.vibrate(18);
+                } catch (e) {}
+            }
+        }
+
         function renderFlashcard() {
             if (flashcardItems.length === 0) {
                 mainContent.innerHTML = `<p class="text-center text-gray-600 p-8">No flashcards available.</p>`;
@@ -674,20 +785,21 @@
 
             mainContent.innerHTML = `
                 <div class="text-center mb-3">
-                    <p class="text-xs md:text-sm text-gray-600 font-semibold">Swipe for next card</p>
+                    <p class="text-xs md:text-sm text-gray-600 font-semibold">Swipe, tap, or use &larr; &rarr; arrow keys (Space to flip)</p>
                 </div>
                 <div class="perspective-1000 h-80 max-w-xl mx-auto">
-                    <div id="flashcard" class="card relative w-full h-full mx-auto cursor-pointer">
+                    <div id="flashcard" class="card relative w-full h-full mx-auto cursor-pointer select-none" tabindex="0" role="button" aria-label="Flashcard: ${item.english}">
                         <!-- Front Face -->
                         <div class="card-face absolute w-full h-full bg-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center border border-teal-50">
+                            <span class="text-xs uppercase font-extrabold tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full mb-3">English</span>
                             <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 leading-snug">${item.english}</h2>
-                            <span class="text-xs text-orange-500 font-bold mt-6 tracking-wide">Tap to reveal Japanese &rarr;</span>
+                            <span class="text-xs text-orange-500 font-bold mt-6 tracking-wide">Tap or press Space to reveal Japanese &rarr;</span>
                         </div>
-                        <!-- Back Face -->
-                        <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-orange-500 via-rose-500 to-orange-600 text-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center">
-                            <span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/20 px-3 py-1 rounded-full mb-2">Japanese</span>
-                            <p class="text-xl md:text-2xl font-bold tracking-wide text-orange-100 mb-2">${item.romaji}</p>
-                            <p class="jp-font text-3xl md:text-4xl font-black mb-4">${item.japanese}</p>
+                        <!-- Back Face (Japanese Characters & Romaji) -->
+                        <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-amber-600 via-orange-600 to-rose-700 text-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center">
+                            <span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/25 px-3 py-1 rounded-full mb-2">日本語 (Japanese)</span>
+                            <p class="text-xl md:text-2xl font-bold tracking-wide text-orange-100 mb-2 notranslate" translate="no">${item.romaji}</p>
+                            <p class="jp-font text-3xl md:text-4xl font-black mb-4 drop-shadow-sm notranslate" translate="no">${item.japanese}</p>
                             <button type="button" class="play-audio-btn p-3.5 bg-white text-orange-600 hover:text-orange-700 active:scale-95 rounded-full shadow-lg" data-text="${item.japanese}" aria-label="Pronounce">
                                 ${speakerIconSVG}
                             </button>
@@ -695,13 +807,13 @@
                     </div>
                 </div>
                 <div class="flex justify-between items-center max-w-xl mx-auto mt-6 px-2">
-                    <button id="prev-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full flex items-center space-x-1">
+                    <button id="prev-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full flex items-center space-x-1" aria-label="Previous card">
                         <span>&larr;</span><span>Prev</span>
                     </button>
                     <span class="font-bold text-gray-700 bg-white/90 px-4 py-1.5 rounded-full shadow-sm text-sm md:text-base border border-gray-100">
                         ${currentFlashcardIndex + 1} / ${flashcardItems.length}
                     </span>
-                    <button id="next-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full flex items-center space-x-1">
+                    <button id="next-card" class="btn-nav bg-white text-gray-700 font-bold py-3 px-6 rounded-full flex items-center space-x-1" aria-label="Next card">
                         <span>Next</span><span>&rarr;</span>
                     </button>
                 </div>
@@ -710,6 +822,7 @@
             const flashcard = mainContent.querySelector('#flashcard');
             flashcard.addEventListener('click', (e) => {
                 if (!e.target.closest('.play-audio-btn')) {
+                    triggerHapticFeedback();
                     flashcard.classList.toggle('is-flipped');
                 }
             });
@@ -763,19 +876,25 @@
             renderQuizQuestion();
         }
 
+        // Guaranteed duplicate-free options generator
         function generateQuizQuestions() {
             const eligiblePhrases = phrases.filter(p => p.category !== 'coeliac');
             const shuffled = [...eligiblePhrases].sort(() => 0.5 - Math.random());
+            
             return shuffled.slice(0, 10).map(correctPhrase => {
+                // Ensure wrong pool doesn't include matching romaji or japanese text strings
                 const wrongPool = eligiblePhrases
-                    .filter(p => p.id !== correctPhrase.id)
+                    .filter(p => p.id !== correctPhrase.id && 
+                                 p.romaji.toLowerCase().trim() !== correctPhrase.romaji.toLowerCase().trim() &&
+                                 p.japanese.trim() !== correctPhrase.japanese.trim())
                     .sort(() => 0.5 - Math.random())
                     .slice(0, 3);
                 
-                const options = [correctPhrase, ...wrongPool].sort(() => 0.5 - Math.random());
+                const rawOptions = [correctPhrase, ...wrongPool].sort(() => 0.5 - Math.random());
+                
                 return {
                     question: correctPhrase.english,
-                    options: options.map(p => ({ romaji: p.romaji, japanese: p.japanese })),
+                    options: rawOptions.map(p => ({ romaji: p.romaji, japanese: p.japanese })),
                     answer: correctPhrase.romaji
                 };
             });
@@ -793,12 +912,18 @@
                         <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Question ${currentQuizQuestionIndex + 1} of ${quizQuestions.length}</span>
                         <span class="text-xs font-bold bg-orange-100 text-orange-700 px-3 py-1 rounded-full">Score: ${quizScore}</span>
                     </div>
-                    <h2 class="text-2xl md:text-3xl font-extrabold mb-6 text-gray-900">${q.question}</h2>
+                    <div class="mb-6">
+                        <p class="text-xs font-bold uppercase tracking-wider text-orange-600 mb-1">Choose the Japanese for:</p>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">${q.question}</h2>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative">
                         ${q.options.map(option => `
-                            <div class="quiz-option-container relative flex items-center bg-gray-50 border-2 border-gray-200/80 rounded-2xl shadow-sm hover:border-orange-400 hover:bg-orange-50/50 transition-all duration-200 cursor-pointer overflow-hidden p-2.5" data-answer="${option.romaji}">
-                                <span class="flex-grow py-2 px-2 text-base md:text-lg text-orange-700 font-bold text-center pl-8">${option.romaji}</span>
-                                <button type="button" class="play-audio-btn w-10 h-10 rounded-full bg-orange-100/80 hover:bg-orange-200 text-orange-600 flex items-center justify-center flex-shrink-0 shadow-sm transition-transform active:scale-95 focus:outline-none" data-text="${option.japanese}" aria-label="Listen">
+                            <div class="quiz-option-container relative flex items-center justify-between bg-gray-50 border-2 border-gray-200/80 rounded-2xl shadow-sm hover:border-orange-400 hover:bg-orange-50/50 transition-all duration-200 cursor-pointer overflow-hidden p-3" data-answer="${option.romaji}">
+                                <div class="flex flex-col items-start text-left flex-grow pl-2 notranslate" translate="no">
+                                    <span class="jp-font font-black text-gray-900 text-lg md:text-xl option-jp leading-tight">${option.japanese}</span>
+                                    <span class="text-orange-700 font-bold text-xs md:text-sm option-romaji mt-0.5">${option.romaji}</span>
+                                </div>
+                                <button type="button" class="play-audio-btn w-10 h-10 rounded-full bg-orange-100/80 hover:bg-orange-200 text-orange-600 flex items-center justify-center flex-shrink-0 shadow-sm transition-transform active:scale-95 focus:outline-none ml-2" data-text="${option.japanese}" aria-label="Listen">
                                     ${speakerIconSVG}
                                 </button>
                             </div>
@@ -890,8 +1015,10 @@
                 quizScore++;
                 container.classList.remove('bg-gray-50', 'border-gray-200/80');
                 container.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white', 'shadow-lg', 'scale-[1.02]');
-                const span = container.querySelector('span');
-                if (span) span.classList.add('text-white');
+                const jp = container.querySelector('.option-jp');
+                const romaji = container.querySelector('.option-romaji');
+                if (jp) jp.classList.remove('text-gray-900'), jp.classList.add('text-white');
+                if (romaji) romaji.classList.remove('text-orange-700'), romaji.classList.add('text-emerald-100');
                 const speakerBtn = container.querySelector('.play-audio-btn');
                 if (speakerBtn) speakerBtn.classList.add('text-white', 'bg-white/20', 'hover:bg-white/30');
 
@@ -900,8 +1027,10 @@
             } else {
                 container.classList.remove('bg-gray-50', 'border-gray-200/80');
                 container.classList.add('bg-rose-500', 'border-rose-600', 'text-white', 'shadow-lg', 'animate-shake');
-                const span = container.querySelector('span');
-                if (span) span.classList.add('text-white');
+                const jp = container.querySelector('.option-jp');
+                const romaji = container.querySelector('.option-romaji');
+                if (jp) jp.classList.remove('text-gray-900'), jp.classList.add('text-white');
+                if (romaji) romaji.classList.remove('text-orange-700'), romaji.classList.add('text-rose-100');
                 const speakerBtn = container.querySelector('.play-audio-btn');
                 if (speakerBtn) speakerBtn.classList.add('text-white', 'bg-white/20', 'hover:bg-white/30');
 
@@ -911,8 +1040,10 @@
                     if (c.dataset.answer === correctAnswer && c !== container) {
                         c.classList.remove('border-gray-200/80');
                         c.classList.add('border-emerald-500', 'bg-emerald-50/80');
-                        const s = c.querySelector('span');
-                        if (s) s.classList.add('text-emerald-700');
+                        const sJp = c.querySelector('.option-jp');
+                        const sRomaji = c.querySelector('.option-romaji');
+                        if (sJp) sJp.classList.add('text-emerald-900');
+                        if (sRomaji) sRomaji.classList.add('text-emerald-700');
                     }
                 });
             }
@@ -1000,6 +1131,8 @@
             }, 250);
         }
 
+        // Debounced text resize fitting calculation for mobile orientations
+        let resizeDebounceTimer = null;
         function fitFsJapaneseText() {
             const container = document.getElementById('gf-fs-text-container');
             const textEl = document.getElementById('gf-fs-jp-text');
@@ -1012,7 +1145,7 @@
             const isLandscape = window.innerWidth > window.innerHeight;
             
             let minSize = 13;
-            let maxSize = isLandscape ? 36 : 48;
+            let maxSize = isLandscape ? 32 : 42;
             let optimalSize = minSize;
 
             let low = minSize;
@@ -1060,7 +1193,8 @@
 
         window.addEventListener('resize', () => {
             if (gfFullscreenOverlay && !gfFullscreenOverlay.classList.contains('hidden')) {
-                fitFsJapaneseText();
+                clearTimeout(resizeDebounceTimer);
+                resizeDebounceTimer = setTimeout(fitFsJapaneseText, 60);
             }
         });
 
@@ -1085,9 +1219,40 @@
             });
         }
 
+        if (headerEmergencyGfBtn) {
+            headerEmergencyGfBtn.addEventListener('click', showGfChefModal);
+        }
+
+        if (audioEngineBtn) {
+            audioEngineBtn.addEventListener('click', toggleVoiceEngine);
+        }
+
+        // Keyboard hotkeys for accessibility
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && gfFullscreenOverlay && !gfFullscreenOverlay.classList.contains('hidden')) {
-                hideFullscreenChefCard();
+            if (e.key === 'Escape') {
+                if (gfFullscreenOverlay && !gfFullscreenOverlay.classList.contains('hidden')) {
+                    hideFullscreenChefCard();
+                } else if (gfChefModal && !gfChefModal.classList.contains('hidden')) {
+                    hideGfChefModal();
+                } else if (quizModal && !quizModal.classList.contains('hidden')) {
+                    hideQuizModal();
+                }
+            }
+
+            // Flashcards navigation hotkeys
+            const flashcard = document.getElementById('flashcard');
+            if (flashcard && !navFlashcards.classList.contains('hidden') && navFlashcards.classList.contains('active')) {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    triggerHapticFeedback();
+                    flashcard.classList.toggle('is-flipped');
+                } else if (e.key === 'ArrowRight') {
+                    currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
+                    renderFlashcard();
+                } else if (e.key === 'ArrowLeft') {
+                    currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
+                    renderFlashcard();
+                }
             }
         });
 
