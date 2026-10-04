@@ -129,10 +129,6 @@
                     <button id="speed-normal" class="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold transition-colors">1.0x (Standard)</button>
                     <button id="speed-slow" class="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold transition-colors">0.7x (Slow)</button>
                 </span>
-                <button id="test-audio-btn" class="bg-orange-100 hover:bg-orange-200 text-orange-800 px-3.5 py-1.5 rounded-full shadow-sm border border-orange-200 flex items-center space-x-1.5 transition-all">
-                    <span>🔊</span>
-                    <span>Test Sound</span>
-                </button>
             </div>
         </header>
 
@@ -362,7 +358,6 @@
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const seeAnswersBtn = document.getElementById('see-answers-btn');
         const answersBreakdown = document.getElementById('answers-breakdown');
-        const testAudioBtn = document.getElementById('test-audio-btn');
         const speedComfortableBtn = document.getElementById('speed-comfortable');
         const speedSlowBtn = document.getElementById('speed-slow');
         const speedNormalBtn = document.getElementById('speed-normal');
@@ -1173,11 +1168,6 @@
             speechRate = 0.7;
             updateSpeedButtonStates(speedSlowBtn);
             showToast("Audio speed: 0.7x (Slow practice)");
-        });
-
-        testAudioBtn.addEventListener('click', (e) => {
-            initAudioContext();
-            playAudio("こんにちは。ありがとうございます！", e, testAudioBtn);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
