@@ -111,7 +111,7 @@
 
         <!-- Header -->
         <header class="text-center mb-6">
-            <div class="inline-block bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/80 mb-3 max-w-lg w-full">
+            <div class="inline-block bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/80 max-w-lg w-full">
                 <div class="flex items-center justify-center space-x-2 mb-2">
                     <span class="text-2xl" role="img" aria-label="Japan flag">🇯🇵</span>
                     <h1 class="title-font text-2xl md:text-3xl font-extrabold text-orange-600 tracking-tight">Josey &amp; Frankie's</h1>
@@ -119,16 +119,6 @@
                 </div>
                 <p class="text-xs uppercase tracking-widest text-teal-800 font-bold mb-1">Essential Japanese Phrasebook</p>
                 <p class="jp-font font-bold text-gray-700 text-lg md:text-xl">必須 日本語フレーズブック</p>
-            </div>
-
-            <!-- Audio Settings Toolbar -->
-            <div class="flex flex-wrap items-center justify-center gap-2 mt-3 text-xs font-semibold text-gray-700">
-                <span class="flex items-center space-x-1.5 bg-white/80 px-3 py-1.5 rounded-full shadow-sm border border-gray-100">
-                    <span class="text-gray-500">Speed:</span>
-                    <button id="speed-comfortable" class="px-2.5 py-0.5 rounded-full bg-orange-500 text-white font-bold transition-colors">0.85x (Comfortable)</button>
-                    <button id="speed-normal" class="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold transition-colors">1.0x (Standard)</button>
-                    <button id="speed-slow" class="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold transition-colors">0.7x (Slow)</button>
-                </span>
             </div>
         </header>
 
@@ -306,11 +296,6 @@
             { id: 106, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
             { id: 107, category: "greetings", english: "Okay / Fine (polite)", romaji: "Daijoubu desu", japanese: "大丈夫です" },
             { id: 108, category: "greetings", english: "Excuse me", romaji: "Sumimasen", japanese: "すみません" },
-            { id: 111, category: "coeliac", english: "Wheat allergy", romaji: "Komugi arerugii", japanese: "小麦アレルギー" },
-            { id: 128, category: "coeliac", english: "Wheat", romaji: "Komugi", japanese: "小麦" },
-            { id: 129, category: "coeliac", english: "Soy sauce", romaji: "Shōyu", japanese: "醤油" },
-            { id: 130, category: "coeliac", english: "Barley", romaji: "Ōmugi", japanese: "大麦" },
-            { id: 131, category: "coeliac", english: "Cannot eat", romaji: "Taberaremasen", japanese: "食べられません" },
             { id: 112, category: "dining", english: "Beer", romaji: "Biiru", japanese: "ビール" },
             { id: 113, category: "dining", english: "Water", romaji: "O-mizu", japanese: "お水" },
             { id: 114, category: "dining", english: "Tea", romaji: "Ocha", japanese: "お茶" },
@@ -327,9 +312,6 @@
             { id: 124, category: "travel", english: "Train", romaji: "Densha", japanese: "電車" },
             { id: 125, category: "travel", english: "Card", romaji: "Kaado", japanese: "カード" }
         ];
-
-        // Complex chef notice phrases excluded from practice cards/quizzes
-        const excludedPracticeIds = [1001, 1002, 1004];
 
         let selectedCategoryFilter = "all";
         let flashcardItems = [];
@@ -354,9 +336,6 @@
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const seeAnswersBtn = document.getElementById('see-answers-btn');
         const answersBreakdown = document.getElementById('answers-breakdown');
-        const speedComfortableBtn = document.getElementById('speed-comfortable');
-        const speedSlowBtn = document.getElementById('speed-slow');
-        const speedNormalBtn = document.getElementById('speed-normal');
         const audioToast = document.getElementById('audio-toast');
         const toastMessage = document.getElementById('toast-message');
         const gfChefModal = document.getElementById('gf-chef-modal');
@@ -666,8 +645,9 @@
 
         function showFlashcardsView() {
             setActiveNav(navFlashcards);
-            const eligiblePhrases = phrases.filter(p => !excludedPracticeIds.includes(p.id));
-            flashcardItems = [...eligiblePhrases, ...words];
+            const eligiblePhrases = phrases.filter(p => p.category !== 'coeliac');
+            const eligibleWords = words.filter(w => w.category !== 'coeliac');
+            flashcardItems = [...eligiblePhrases, ...eligibleWords];
             for (let i = flashcardItems.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [flashcardItems[i], flashcardItems[j]] = [flashcardItems[j], flashcardItems[i]];
@@ -780,7 +760,7 @@
         }
 
         function generateQuizQuestions() {
-            const eligiblePhrases = phrases.filter(p => !excludedPracticeIds.includes(p.id));
+            const eligiblePhrases = phrases.filter(p => p.category !== 'coeliac');
             const shuffled = [...eligiblePhrases].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, 10).map(correctPhrase => {
                 const wrongPool = eligiblePhrases
@@ -1134,36 +1114,6 @@
         seeAnswersBtn.addEventListener('click', (e) => {
             e.preventDefault();
             showAnswersBreakdown();
-        });
-
-        function updateSpeedButtonStates(activeBtn) {
-            [speedComfortableBtn, speedNormalBtn, speedSlowBtn].forEach(btn => {
-                if (btn === activeBtn) {
-                    btn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-                    btn.classList.add('bg-orange-500', 'text-white');
-                } else {
-                    btn.classList.remove('bg-orange-500', 'text-white');
-                    btn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-                }
-            });
-        }
-
-        speedComfortableBtn.addEventListener('click', () => {
-            speechRate = 0.85;
-            updateSpeedButtonStates(speedComfortableBtn);
-            showToast("Audio speed: 0.85x (Comfortable pace)");
-        });
-
-        speedNormalBtn.addEventListener('click', () => {
-            speechRate = 1.0;
-            updateSpeedButtonStates(speedNormalBtn);
-            showToast("Audio speed: 1.0x (Standard speed)");
-        });
-
-        speedSlowBtn.addEventListener('click', () => {
-            speechRate = 0.7;
-            updateSpeedButtonStates(speedSlowBtn);
-            showToast("Audio speed: 0.7x (Slow practice)");
         });
 
         document.addEventListener('DOMContentLoaded', () => {
