@@ -447,7 +447,7 @@
                     const cleanup = () => {
                         activeUtterances.delete(utterance);
                         if (triggerBtn) {
-                            triggerBtn.classList.remove('speaking-pulse', 'text-orange-600', 'bg-orange-100');
+                            triggerBtn.classList.remove('speaking-pulse');
                         }
                     };
 
@@ -472,7 +472,7 @@
             initAudioContext();
 
             if (triggerBtn) {
-                triggerBtn.classList.add('speaking-pulse', 'text-orange-600', 'bg-orange-100');
+                triggerBtn.classList.add('speaking-pulse');
             }
 
             if (currentPlayingAudio) {
@@ -493,7 +493,7 @@
 
                 const cleanup = () => {
                     if (triggerBtn) {
-                        triggerBtn.classList.remove('speaking-pulse', 'text-orange-600', 'bg-orange-100');
+                        triggerBtn.classList.remove('speaking-pulse');
                     }
                 };
 
@@ -684,7 +684,7 @@
                             <span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/20 px-3 py-1 rounded-full mb-2">Japanese</span>
                             <p class="text-xl md:text-2xl font-bold tracking-wide text-orange-100 mb-2">${item.romaji}</p>
                             <p class="jp-font text-3xl md:text-4xl font-black mb-4">${item.japanese}</p>
-                            <button type="button" class="play-audio-btn p-3.5 bg-white text-orange-600 hover:text-orange-700 rounded-full shadow-lg" data-text="${item.japanese}" aria-label="Pronounce">
+                            <button type="button" class="play-audio-btn p-3.5 bg-white text-orange-600 hover:text-orange-700 active:scale-95 rounded-full shadow-lg" data-text="${item.japanese}" aria-label="Pronounce">
                                 ${speakerIconSVG}
                             </button>
                         </div>
