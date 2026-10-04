@@ -804,9 +804,9 @@
                         <span class="text-xs font-bold bg-orange-100 text-orange-700 px-3 py-1 rounded-full">Score: ${quizScore}</span>
                     </div>
                     <h2 class="text-2xl md:text-3xl font-extrabold mb-6 text-gray-900">${q.question}</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative">
                         ${q.options.map(option => `
-                            <div class="quiz-option-container flex items-center bg-gray-50 border-2 border-gray-200/80 rounded-2xl shadow-sm hover:border-orange-400 hover:bg-orange-50/50 transition-all duration-200 cursor-pointer overflow-hidden" data-answer="${option.romaji}">
+                            <div class="quiz-option-container relative flex items-center bg-gray-50 border-2 border-gray-200/80 rounded-2xl shadow-sm hover:border-orange-400 hover:bg-orange-50/50 transition-all duration-200 cursor-pointer overflow-hidden" data-answer="${option.romaji}">
                                 <span class="flex-grow p-4 text-base md:text-lg text-orange-700 font-bold text-center">${option.romaji}</span>
                                 <button type="button" class="play-audio-btn p-4 text-gray-400 hover:text-orange-600 flex-shrink-0" data-text="${option.japanese}" aria-label="Listen">
                                     ${speakerIconSVG}
@@ -820,6 +820,57 @@
             mainContent.querySelectorAll('.quiz-option-container').forEach(container => {
                 container.addEventListener('click', handleQuizAnswer);
             });
+        }
+
+        function triggerQuizConfetti() {
+            if (typeof confetti === 'function') {
+                try {
+                    confetti({
+                        particleCount: 50,
+                        spread: 70,
+                        origin: { y: 0.65 },
+                        colors: ['#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6']
+                    });
+                    setTimeout(() => {
+                        confetti({
+                            particleCount: 30,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 }
+                        });
+                        confetti({
+                            particleCount: 30,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 }
+                        });
+                    }, 150);
+                } catch (e) {
+                    console.warn("Confetti effect note:", e);
+                }
+            }
+        }
+
+        function showQuizReactionBadge(container, isCorrect) {
+            const badge = document.createElement('div');
+            badge.className = 'absolute inset-0 flex items-center justify-center pointer-events-none z-20';
+            
+            if (isCorrect) {
+                badge.innerHTML = `
+                    <div class="animate-pop-bounce flex items-center space-x-1.5 bg-emerald-600 text-white font-extrabold px-4 py-2 rounded-full shadow-2xl border-2 border-white text-base md:text-lg">
+                        <span class="text-xl">🎉</span>
+                        <span>Correct! ✓</span>
+                    </div>
+                `;
+            } else {
+                badge.innerHTML = `
+                    <div class="animate-pop-bounce flex items-center space-x-1.5 bg-rose-600 text-white font-extrabold px-4 py-2 rounded-full shadow-2xl border-2 border-white text-base md:text-lg">
+                        <span class="text-2xl">👎</span>
+                        <span>Incorrect</span>
+                    </div>
+                `;
+            }
+            container.appendChild(badge);
         }
 
         function handleQuizAnswer(e) {
@@ -847,21 +898,44 @@
 
             if (isCorrect) {
                 quizScore++;
+                // Green background on correct answer
                 container.classList.remove('bg-gray-50', 'border-gray-200/80');
-                container.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+                container.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white', 'shadow-lg', 'scale-[1.02]');
                 const span = container.querySelector('span');
                 if (span) span.classList.add('text-white');
+                const speakerBtn = container.querySelector('.play-audio-btn');
+                if (speakerBtn) speakerBtn.classList.add('text-white', 'hover:text-emerald-100');
+
+                // Confetti & Celebration reaction
+                triggerQuizConfetti();
+                showQuizReactionBadge(container, true);
             } else {
+                // Red background & shake on incorrect answer
                 container.classList.remove('bg-gray-50', 'border-gray-200/80');
-                container.classList.add('bg-rose-500', 'border-rose-600', 'text-white');
+                container.classList.add('bg-rose-500', 'border-rose-600', 'text-white', 'shadow-lg', 'animate-shake');
                 const span = container.querySelector('span');
                 if (span) span.classList.add('text-white');
+                const speakerBtn = container.querySelector('.play-audio-btn');
+                if (speakerBtn) speakerBtn.classList.add('text-white', 'hover:text-rose-100');
+
+                // Thumbs down reaction
+                showQuizReactionBadge(container, false);
+
+                // Gently outline the correct option so user sees what it was
+                mainContent.querySelectorAll('.quiz-option-container').forEach(c => {
+                    if (c.dataset.answer === correctAnswer && c !== container) {
+                        c.classList.remove('border-gray-200/80');
+                        c.classList.add('border-emerald-500', 'bg-emerald-50/80');
+                        const s = c.querySelector('span');
+                        if (s) s.classList.add('text-emerald-700');
+                    }
+                });
             }
 
             setTimeout(() => {
                 currentQuizQuestionIndex++;
                 renderQuizQuestion();
-            }, 900);
+            }, 1300);
         }
 
         function showQuizResults() {
