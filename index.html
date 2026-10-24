@@ -2,195 +2,46 @@
 <html lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="referrer" content="no-referrer">
     <meta name="google" content="notranslate">
-    <meta name="googlebot" content="notranslate">
-    
-    <!-- PWA & Mobile Web App Meta Tags -->
+
+    <!-- PWA & mobile web app -->
+    <link rel="manifest" href="manifest.webmanifest">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="J&F Japan">
+    <meta name="apple-mobile-web-app-title" content="J&amp;F Japan">
     <meta name="theme-color" content="#ea580c" id="meta-theme-color">
-    
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
     <title>Josey &amp; Frankie's Japanese Phrasebook</title>
-    
-    <!-- Japanese Flag Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23ffffff' stroke='%23cbd5e1' stroke-width='1.5'/><circle cx='16' cy='16' r='9.6' fill='%23bc002d'/></svg>">
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        izakaya: {
-                            bg: '#141416',
-                            card: '#1e1e24',
-                            border: '#2e2e38',
-                            amber: '#f59e0b',
-                            text: '#f3f4f6'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Canvas Confetti CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    
-    <!-- Google Fonts -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Mochiy+Pop+One&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            overflow-x: hidden;
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #e0f2f1 0%, #fff3e0 100%);
-            color: #37474F;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        body.dark-mode {
-            background: radial-gradient(circle at top, #1f1f28 0%, #121215 100%);
-            color: #e4e4e7;
-        }
-        .jp-font {
-            font-family: 'Noto Sans JP', sans-serif;
-        }
-        .title-font {
-            font-family: 'Mochiy Pop One', cursive, sans-serif;
-        }
-        .card {
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .card.is-flipped {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        .card-back {
-            transform: rotateY(180deg);
-        }
-        .btn-nav {
-            transition: all 0.25s ease;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.06);
-        }
-        .btn-nav:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
-        }
-        .btn-nav.active {
-            background-color: #ea580c !important;
-            color: #ffffff !important;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(234, 88, 12, 0.35);
-        }
-        .modal {
-            transition: opacity 0.3s ease;
-        }
-        .play-audio-btn {
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .play-audio-btn:hover {
-            transform: scale(1.08);
-        }
-        .play-audio-btn:active {
-            transform: scale(0.95);
-        }
-        .fav-star-btn {
-            cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .fav-star-btn:hover {
-            transform: scale(1.2);
-        }
-        .fav-star-btn:active {
-            transform: scale(0.9);
-        }
-        .speaking-pulse {
-            animation: pulse-ring 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse-ring {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.6);
-            }
-            50% {
-                transform: scale(1.06);
-                box-shadow: 0 0 0 10px rgba(234, 88, 12, 0);
-            }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
-        }
-        .animate-shake {
-            animation: shake 0.4s ease-in-out;
-        }
-        @keyframes pop-bounce {
-            0% { transform: scale(0.6); opacity: 0; }
-            70% { transform: scale(1.12); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-pop-bounce {
-            animation: pop-bounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        ruby rt {
-            font-size: 0.6em;
-            color: #dc2626;
-            font-weight: 800;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Mochiy+Pop+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Built from src/input.css with `npm run build:css` -->
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="text-gray-800 antialiased selection:bg-orange-200 notranslate" translate="no">
+<body class="antialiased selection:bg-orange-200 notranslate" translate="no">
     <div id="app-container" class="w-full max-w-4xl mx-auto p-3 sm:p-5 md:p-8 flex flex-col items-center">
 
-        <!-- Top Utilities Bar (Dark Mode, Voice & Speed) -->
+        <!-- Top utilities bar -->
         <div class="w-full max-w-lg flex items-center justify-between gap-2 mb-3 px-1 text-xs">
-            <!-- Izakaya / Low Light Toggle -->
-            <button id="izakaya-mode-btn" class="inline-flex items-center space-x-1.5 bg-white/80 dark-item py-1.5 px-3 rounded-full font-bold shadow-sm border border-gray-200 transition-all hover:scale-105 active:scale-95 text-gray-700">
-                <span id="izakaya-mode-icon">🏮</span>
+            <button id="izakaya-mode-btn" type="button" class="toolbar-btn">
+                <span id="izakaya-mode-icon" aria-hidden="true">🏮</span>
                 <span id="izakaya-mode-label">Izakaya Mode</span>
             </button>
 
             <div class="flex items-center gap-1.5">
-                <!-- Audio Speed Toggle -->
-                <button id="audio-speed-btn" class="inline-flex items-center space-x-1 bg-white/80 dark-item py-1.5 px-3 rounded-full font-bold shadow-sm border border-gray-200 transition-all hover:scale-105 active:scale-95 text-gray-700" title="Audio Playback Speed">
-                    <span id="audio-speed-icon">⚡</span>
+                <button id="audio-speed-btn" type="button" class="toolbar-btn" title="Audio playback speed">
+                    <span id="audio-speed-icon" aria-hidden="true">⚡</span>
                     <span id="audio-speed-label">1.0x</span>
                 </button>
-
-                <!-- Voice Engine Button -->
-                <button id="audio-engine-btn" class="inline-flex items-center space-x-1 bg-white/80 dark-item py-1.5 px-3 rounded-full font-bold shadow-sm border border-gray-200 transition-all hover:scale-105 active:scale-95 text-gray-700" title="Toggle Studio Neural vs Offline Voice">
-                    <span id="audio-engine-icon">✨</span>
+                <button id="audio-engine-btn" type="button" class="toolbar-btn" title="Switch between the natural voice (recorded or online) and this device's built-in voice">
+                    <span id="audio-engine-icon" aria-hidden="true">✨</span>
                     <span id="audio-engine-label">Studio</span>
                 </button>
             </div>
@@ -198,66 +49,59 @@
 
         <!-- Header -->
         <header class="w-full flex flex-col items-center mb-6">
-            <div id="header-box" class="bg-white/95 backdrop-blur-md rounded-3xl p-5 md:p-6 shadow-xl border border-white/80 max-w-lg w-full text-center relative transition-colors duration-300">
+            <div class="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl p-5 md:p-6 shadow-xl border border-white/80 dark:border-zinc-800 max-w-lg w-full text-center">
                 <div class="flex items-center justify-center space-x-2 mb-1.5">
                     <span class="text-2xl" role="img" aria-label="Japan flag">🇯🇵</span>
                     <h1 class="title-font text-2xl md:text-3xl font-extrabold text-orange-600 tracking-tight">Josey &amp; Frankie's</h1>
                     <span class="text-2xl" role="img" aria-label="Lantern">🏮</span>
                 </div>
-                <p id="header-sub" class="text-xs uppercase tracking-widest text-teal-800 font-bold mb-1">Essential Japanese Phrasebook</p>
-                <p class="jp-font font-bold text-gray-700 header-jp-text text-lg md:text-xl">必須 日本語フレーズブック</p>
-                
-                <!-- Quick Access Floating Coeliac Warning & Guide -->
+                <p class="text-xs uppercase tracking-widest text-teal-800 dark:text-teal-300 font-bold mb-1">Essential Japanese Phrasebook</p>
+                <p lang="ja" class="jp-font font-bold text-gray-700 dark:text-zinc-300 text-lg md:text-xl">必須 日本語フレーズブック</p>
+
                 <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2">
-                    <button id="header-emergency-gf-btn" class="inline-flex items-center space-x-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95" title="Open Coeliac Card Immediately">
-                        <span class="text-sm">⚠️</span>
+                    <button id="header-emergency-gf-btn" type="button" class="inline-flex items-center space-x-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 dark:bg-red-950/60 dark:hover:bg-red-900/60 dark:text-red-200 dark:border-red-900 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95">
+                        <span class="text-sm" aria-hidden="true">⚠️</span>
                         <span>Coeliac Chef Card (Show Staff)</span>
                     </button>
-                    <button id="header-gf-safety-guide-btn" class="inline-flex items-center space-x-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95" title="Safe vs Unsafe Japanese Foods Cheat Sheet">
-                        <span class="text-sm">🔍</span>
+                    <button id="header-gf-safety-guide-btn" type="button" class="inline-flex items-center space-x-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 dark:text-amber-200 dark:border-amber-900 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95">
+                        <span class="text-sm" aria-hidden="true">🔍</span>
                         <span>Food Safety Cheat Sheet</span>
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- Primary Navigation -->
-        <nav id="navigation" class="w-full flex justify-center space-x-2 md:space-x-4 mb-6">
-            <button id="nav-learn" class="btn-nav active bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Learn</button>
-            <button id="nav-flashcards" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Flashcards</button>
-            <button id="nav-quiz" class="btn-nav bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700">Quiz</button>
+        <!-- Primary navigation -->
+        <nav class="w-full flex justify-center space-x-2 md:space-x-4 mb-6" aria-label="Sections">
+            <button id="nav-learn" type="button" class="btn-nav active">Learn</button>
+            <button id="nav-flashcards" type="button" class="btn-nav">Flashcards</button>
+            <button id="nav-quiz" type="button" class="btn-nav">Quiz</button>
         </nav>
 
-        <!-- Main Content Area -->
-        <main id="main-content" class="w-full">
-            <!-- Dynamically populated by JavaScript -->
-        </main>
+        <main id="main-content" class="w-full"></main>
     </div>
 
-    <!-- Coeliac Food Safety Cheat Sheet Modal (Safe vs Unsafe Foods + Kanji Scanner) -->
-    <div id="gf-safety-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 md:p-6 hidden z-50 overflow-y-auto">
-        <div id="gf-safety-modal-container" class="bg-white rounded-3xl shadow-2xl p-5 md:p-7 max-w-2xl w-full transform transition-all scale-95 opacity-0 border-2 border-amber-300 my-auto">
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between border-b border-gray-100 pb-3 mb-4">
+    <!-- Coeliac food safety cheat sheet -->
+    <div id="gf-safety-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 md:p-6 hidden z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="gf-safety-title">
+        <div class="modal-box bg-white dark:bg-zinc-900 dark:text-zinc-100 rounded-3xl shadow-2xl p-5 md:p-7 max-w-2xl w-full transition-all scale-95 opacity-0 border-2 border-amber-300 dark:border-amber-800 my-auto" tabindex="-1">
+            <div class="flex items-start justify-between border-b border-gray-100 dark:border-zinc-800 pb-3 mb-4">
                 <div class="flex items-center space-x-2.5">
-                    <span class="text-3xl">🌾</span>
+                    <span class="text-3xl" aria-hidden="true">🌾</span>
                     <div>
-                        <h2 class="title-font text-xl md:text-2xl font-black text-amber-700">Coeliac Safe vs. Unsafe Food Guide</h2>
-                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Frankie's Japan Dining &amp; Menu Cheat Sheet</p>
+                        <h2 id="gf-safety-title" class="title-font text-xl md:text-2xl font-black text-amber-700 dark:text-amber-400">Coeliac Safe vs. Unsafe Food Guide</h2>
+                        <p class="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Frankie's Japan Dining &amp; Menu Cheat Sheet</p>
                     </div>
                 </div>
-                <button id="gf-safety-modal-close-icon" class="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 text-2xl leading-none">&times;</button>
+                <button type="button" data-modal-close class="text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-2xl leading-none" aria-label="Close">&times;</button>
             </div>
 
-            <!-- Scrollable Guide Content -->
             <div class="space-y-4 text-left max-h-[68vh] overflow-y-auto pr-1">
-                <!-- Safe Bets Card -->
-                <div class="bg-emerald-50/80 border-2 border-emerald-300 rounded-2xl p-4 shadow-sm">
+                <div class="bg-emerald-50/80 dark:bg-emerald-950/40 border-2 border-emerald-300 dark:border-emerald-800 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-center space-x-2 mb-2">
-                        <span class="text-xl">✅</span>
-                        <h3 class="font-extrabold text-emerald-900 text-base md:text-lg">Generally Safer Bets (Specify NO tare / sauce)</h3>
+                        <span class="text-xl" aria-hidden="true">✅</span>
+                        <h3 class="font-extrabold text-emerald-900 dark:text-emerald-200 text-base md:text-lg">Generally Safer Bets (Specify NO tare / sauce)</h3>
                     </div>
-                    <ul class="text-xs md:text-sm text-emerald-950 space-y-1.5 font-medium pl-6 list-disc">
+                    <ul class="text-xs md:text-sm text-emerald-950 dark:text-emerald-100 space-y-1.5 font-medium pl-6 list-disc">
                         <li><strong>Sashimi (刺身):</strong> Plain raw fish is usually fine. Skip the table soy sauce and bring your own certified gluten-free soy sauce (many tamari brands still contain wheat).</li>
                         <li><strong>Shio Yakitori (塩焼き鳥):</strong> Skewered chicken grilled with <em>salt only</em> (ask for <em>"Shio dake"</em>, strictly avoid <em>Tare</em> sauce).</li>
                         <li><strong>Edamame (枝豆):</strong> Salt-boiled soybeans. Safe &amp; naturally GF.</li>
@@ -266,13 +110,12 @@
                     </ul>
                 </div>
 
-                <!-- Red Flags Card -->
-                <div class="bg-rose-50/80 border-2 border-rose-300 rounded-2xl p-4 shadow-sm">
+                <div class="bg-rose-50/80 dark:bg-rose-950/40 border-2 border-rose-300 dark:border-rose-800 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-center space-x-2 mb-2">
-                        <span class="text-xl">❌</span>
-                        <h3 class="font-extrabold text-rose-900 text-base md:text-lg">Strict Red Flags (Contains Gluten)</h3>
+                        <span class="text-xl" aria-hidden="true">❌</span>
+                        <h3 class="font-extrabold text-rose-900 dark:text-rose-200 text-base md:text-lg">Strict Red Flags (Contains Gluten)</h3>
                     </div>
-                    <ul class="text-xs md:text-sm text-rose-950 space-y-1.5 font-medium pl-6 list-disc">
+                    <ul class="text-xs md:text-sm text-rose-950 dark:text-rose-100 space-y-1.5 font-medium pl-6 list-disc">
                         <li><strong>Soy Sauce (醤油 Shoyu):</strong> Brewed with equal parts wheat and soybeans. Found in almost all pre-seasoned broths, tares, and glazes.</li>
                         <li><strong>Tempura, Katsu &amp; Fried Food (天ぷら / カツ):</strong> Coated in wheat flour/panko and fried in shared fryers.</li>
                         <li><strong>Ramen, Udon &amp; Soba (ラーメン / うどん / 蕎麦):</strong> Ramen/Udon are pure wheat noodles. Most Soba noodles also blend 20-30% wheat flour unless 100% <em>Juwari</em> (十割). Broths contain wheat soy sauce.</li>
@@ -284,103 +127,74 @@
                     </ul>
                 </div>
 
-                <!-- Package Kanji Scanner -->
-                <div class="bg-amber-50/80 border-2 border-amber-300 rounded-2xl p-4 shadow-sm">
+                <div class="bg-amber-50/80 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-center space-x-2 mb-2">
-                        <span class="text-xl">🔍</span>
-                        <h3 class="font-extrabold text-amber-950 text-base md:text-lg">Konbini / Store Ingredient Kanji Scanner</h3>
+                        <span class="text-xl" aria-hidden="true">🔍</span>
+                        <h3 class="font-extrabold text-amber-950 dark:text-amber-200 text-base md:text-lg">Konbini / Store Ingredient Kanji Scanner</h3>
                     </div>
-                    <p class="text-xs text-amber-900 mb-3 font-semibold">Inspect the allergen table (原材料名 / アレルギー物質) on packaged food for these characters:</p>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-red-300 text-center shadow-xs mb-2">
-                        <span class="jp-font font-black text-xl md:text-2xl text-red-600 block">（一部に小麦を含む）</span>
+                    <p class="text-xs text-amber-900 dark:text-amber-100 mb-3 font-semibold">Inspect the allergen table (原材料名 / アレルギー物質) on packaged food for these characters:</p>
+                    <div class="kanji-tile border-2 border-red-300 mb-2">
+                        <span lang="ja" class="jp-font font-black text-xl md:text-2xl text-red-600 block">（一部に小麦を含む）</span>
                         <span class="text-xs font-bold text-gray-800">Ichibu ni komugi o fukumu</span>
                         <span class="text-[10px] text-gray-500 block uppercase font-bold">"Contains some wheat": the standard allergen label wording</span>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
-                            <span class="jp-font font-black text-2xl text-red-600 block">小麦</span>
-                            <span class="text-xs font-bold text-gray-800">Komugi</span>
-                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat</span>
-                        </div>
-                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
-                            <span class="jp-font font-black text-2xl text-red-600 block">小麦粉</span>
-                            <span class="text-xs font-bold text-gray-800">Komugiko</span>
-                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat Flour</span>
-                        </div>
-                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
-                            <span class="jp-font font-black text-2xl text-red-600 block">大麦</span>
-                            <span class="text-xs font-bold text-gray-800">Ōmugi</span>
-                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Barley</span>
-                        </div>
-                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
-                            <span class="jp-font font-black text-2xl text-red-600 block">ライ麦</span>
-                            <span class="text-xs font-bold text-gray-800">Raimugi</span>
-                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Rye</span>
-                        </div>
-                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
-                            <span class="jp-font font-black text-2xl text-red-600 block">麦芽</span>
-                            <span class="text-xs font-bold text-gray-800">Bakuga</span>
-                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Malt (Barley)</span>
-                        </div>
-                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
-                            <span class="jp-font font-black text-2xl text-red-600 block">醤油</span>
-                            <span class="text-xs font-bold text-gray-800">Shōyu</span>
-                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Soy Sauce</span>
-                        </div>
+                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">小麦</span><span class="text-xs font-bold text-gray-800">Komugi</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">小麦粉</span><span class="text-xs font-bold text-gray-800">Komugiko</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat Flour</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">大麦</span><span class="text-xs font-bold text-gray-800">Ōmugi</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Barley</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">ライ麦</span><span class="text-xs font-bold text-gray-800">Raimugi</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Rye</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">麦芽</span><span class="text-xs font-bold text-gray-800">Bakuga</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Malt (Barley)</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">醤油</span><span class="text-xs font-bold text-gray-800">Shōyu</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Soy Sauce</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Footer Action Button -->
-            <div class="mt-4 pt-3 border-t border-gray-100 flex gap-2">
-                <button id="gf-safety-open-card-btn" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-full font-bold text-xs md:text-sm transition-all shadow-sm">
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-zinc-800 flex gap-2">
+                <button id="gf-safety-open-card-btn" type="button" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-full font-bold text-xs md:text-sm transition-all shadow-sm">
                     Open Coeliac Card for Staff ➜
                 </button>
-                <button id="gf-safety-modal-close-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-5 rounded-full font-bold text-xs md:text-sm transition-all">
+                <button type="button" data-modal-close class="bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 py-2.5 px-5 rounded-full font-bold text-xs md:text-sm transition-all">
                     Close
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Quiz Results Modal -->
-    <div id="quiz-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div id="modal-container" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 text-center max-w-md w-full transform transition-all scale-95 opacity-0 border border-orange-100">
+    <!-- Quiz results -->
+    <div id="quiz-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-box bg-white dark:bg-zinc-900 dark:text-zinc-100 rounded-3xl shadow-2xl p-6 md:p-8 text-center max-w-md w-full transition-all scale-95 opacity-0 border border-orange-100 dark:border-zinc-800" tabindex="-1">
             <h2 id="modal-title" class="title-font text-2xl md:text-3xl font-bold mb-3 text-orange-600">Quiz Complete!</h2>
-            <p id="modal-score" class="text-4xl md:text-5xl font-black mb-2 text-gray-800">100%</p>
-            <p id="modal-feedback" class="text-sm md:text-base text-gray-600 mb-4"></p>
-            <button id="see-answers-btn" class="text-orange-600 font-semibold hover:underline mb-4 text-xs md:text-sm block mx-auto">See answers breakdown</button>
-            <div id="answers-breakdown" class="hidden text-left max-h-60 overflow-y-auto mb-4 p-3 bg-gray-50 rounded-2xl border border-gray-100 text-xs md:text-sm"></div>
-            <button id="modal-close-btn" class="w-full bg-orange-600 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-700 transition-all duration-200 shadow-md">Practice Again</button>
+            <p id="modal-score" class="text-4xl md:text-5xl font-black mb-2 text-gray-800 dark:text-zinc-100">100%</p>
+            <p id="modal-feedback" class="text-sm md:text-base text-gray-600 dark:text-zinc-300 mb-4"></p>
+            <button id="see-answers-btn" type="button" class="text-orange-700 dark:text-orange-400 font-semibold hover:underline mb-4 text-xs md:text-sm block mx-auto">See answers breakdown</button>
+            <div id="answers-breakdown" class="hidden text-left max-h-60 overflow-y-auto mb-4 p-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl border border-gray-100 dark:border-zinc-700 text-xs md:text-sm"></div>
+            <button type="button" data-modal-close class="w-full bg-orange-600 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-700 transition-all duration-200 shadow-md">Practice Again</button>
         </div>
     </div>
 
-    <!-- Coeliac & Gluten-Free Chef Warning Modal -->
-    <div id="gf-chef-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 md:p-6 hidden z-50 overflow-y-auto">
-        <div id="gf-modal-container" class="bg-white rounded-3xl shadow-2xl p-5 md:p-7 max-w-xl w-full transform transition-all scale-95 opacity-0 border-2 border-red-200 my-auto">
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between border-b border-gray-100 pb-3 mb-4">
+    <!-- Coeliac chef card -->
+    <div id="gf-chef-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 md:p-6 hidden z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="gf-chef-title">
+        <div class="modal-box bg-white dark:bg-zinc-900 dark:text-zinc-100 rounded-3xl shadow-2xl p-5 md:p-7 max-w-xl w-full transition-all scale-95 opacity-0 border-2 border-red-200 dark:border-red-900 my-auto" tabindex="-1">
+            <div class="flex items-start justify-between border-b border-gray-100 dark:border-zinc-800 pb-3 mb-4">
                 <div class="flex items-center space-x-2">
-                    <span class="text-3xl">⚠️</span>
+                    <span class="text-3xl" aria-hidden="true">⚠️</span>
                     <div>
-                        <h2 class="title-font text-xl md:text-2xl font-black text-red-600">Coeliac Restaurant Card</h2>
-                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">シェフ・店員様へのご案内 (Show to staff / chef)</p>
+                        <h2 id="gf-chef-title" class="title-font text-xl md:text-2xl font-black text-red-600">Coeliac Restaurant Card</h2>
+                        <p class="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">シェフ・店員様へのご案内 (Show to staff / chef)</p>
                     </div>
                 </div>
-                <button id="gf-modal-close-icon" class="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 text-2xl leading-none">&times;</button>
+                <button type="button" data-modal-close class="text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-2xl leading-none" aria-label="Close">&times;</button>
             </div>
 
-            <!-- Primary Japanese Notice with Furigana & Critical Kitchen Warnings -->
-            <div class="bg-red-50/80 border-2 border-red-300 rounded-2xl p-4 md:p-5 mb-4 shadow-inner">
+            <!-- Kept on a light background in both themes: this is what staff read. -->
+            <div class="bg-red-50 border-2 border-red-300 rounded-2xl p-4 md:p-5 mb-4 shadow-inner">
                 <div class="flex items-center justify-between mb-2.5">
-                    <span class="inline-block bg-red-600 text-white text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider">
-                        店員様・調理場へ提示
-                    </span>
-                    <button id="speak-chef-card-btn" class="flex items-center space-x-1 text-xs font-bold text-red-700 bg-white px-2.5 py-1 rounded-full shadow-sm border border-red-200 hover:bg-red-50">
-                        <span>🔊</span><span>Speak Notice</span>
+                    <span lang="ja" class="inline-block bg-red-600 text-white text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider">店員様・調理場へ提示</span>
+                    <button id="speak-chef-card-btn" type="button" class="flex items-center space-x-1 text-xs font-bold text-red-700 bg-white px-2.5 py-1 rounded-full shadow-sm border border-red-200 hover:bg-red-50">
+                        <span aria-hidden="true">🔊</span><span>Speak Notice</span>
                     </button>
                 </div>
-                <div id="chef-card-jp-text" class="jp-font text-base md:text-lg font-bold text-gray-900 leading-relaxed text-left space-y-2">
+                <div lang="ja" class="jp-font text-base md:text-lg font-bold text-gray-900 leading-relaxed text-left space-y-2">
                     <p class="text-red-700 font-black">【重要】セリアック病（重度小麦・グルテンアレルギー）があります。</p>
                     <p><ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。</p>
                     <ul class="list-disc pl-5 space-y-1 text-sm md:text-base font-semibold text-gray-800">
@@ -391,53 +205,49 @@
                 </div>
             </div>
 
-            <!-- English Translation -->
-            <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 mb-4 text-left">
-                <p class="text-xs uppercase font-extrabold text-amber-800 tracking-wider mb-1">English Translation</p>
-                <p class="text-xs md:text-sm text-gray-700 leading-relaxed italic">
+            <div class="bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-xl p-3.5 mb-4 text-left">
+                <p class="text-xs uppercase font-extrabold text-amber-800 dark:text-amber-300 tracking-wider mb-1">English Translation</p>
+                <p class="text-xs md:text-sm text-gray-700 dark:text-zinc-300 leading-relaxed italic">
                     "[Important] I have Coeliac disease (severe wheat/gluten allergy). I cannot consume any wheat, barley, or rye. Seasonings: I also cannot have regular soy sauce, tare, tsuyu, barley miso, or dashi stock powder. Cooking: please avoid shared frying oil, shared boiling water, and shared utensils. Are there dishes without wheat, or anything you can serve with salt only / plain grilled?"
                 </p>
             </div>
 
-            <!-- Action Buttons inside Modal -->
             <div class="space-y-2.5">
-                <button id="gf-fullscreen-trigger-btn" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white px-5 py-3 rounded-full font-bold shadow-md hover:shadow-lg flex items-center justify-center space-x-2 transition-all duration-200 hover:scale-[1.01]">
-                    <span class="text-lg">⛶</span>
+                <button id="gf-fullscreen-trigger-btn" type="button" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white px-5 py-3 rounded-full font-bold shadow-md hover:shadow-lg flex items-center justify-center space-x-2 transition-all duration-200 hover:scale-[1.01]">
+                    <span class="text-lg" aria-hidden="true">⛶</span>
                     <span>Full Screen Japanese View (Show to Staff)</span>
                 </button>
-                <button id="gf-modal-close-btn" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-full font-bold transition-all duration-200">
+                <button type="button" data-modal-close class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 px-6 py-2.5 rounded-full font-bold transition-all duration-200">
                     Close
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Fullscreen Dedicated Japanese Card Overlay (Optimized for Mobile Portrait & Landscape) -->
-    <div id="gf-fullscreen-overlay" class="fixed inset-0 w-full h-[100dvh] bg-red-50/98 z-[99999] hidden flex flex-col justify-between p-3 sm:p-5 select-none overflow-hidden border-4 border-red-500">
-        <!-- Minimal, Unobtrusive Top Controls Bar -->
-        <div class="w-full flex items-center justify-between pb-2 border-b-2 border-red-300 flex-shrink-0">
-            <span class="inline-flex items-center space-x-1.5 bg-red-600 text-white text-xs sm:text-sm font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                <span>⚠️</span>
+    <!-- Full screen chef card (always light, for staff to read) -->
+    <div id="gf-fullscreen-overlay" class="fixed inset-0 w-full h-[100dvh] bg-red-50 z-[100] hidden flex-col justify-between p-3 sm:p-5 select-none overflow-hidden border-4 border-red-500" role="dialog" aria-modal="true" aria-label="Coeliac card, full screen">
+        <div class="w-full flex items-center justify-between gap-2 pb-2 border-b-2 border-red-300 flex-shrink-0">
+            <span lang="ja" class="inline-flex items-center space-x-1.5 bg-red-600 text-white text-xs sm:text-sm font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                <span aria-hidden="true">⚠️</span>
                 <span>店員様・調理場へ提示 (FOR STAFF)</span>
             </span>
-            
-            <div class="flex items-center space-x-2">
-                <button id="gf-fs-card-speaker-btn" class="inline-flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-red-100 text-red-700 active:scale-95 rounded-full shadow-sm border border-red-300 font-bold text-xs sm:text-sm transition-all" aria-label="Play Japanese audio" title="Play pronunciation">
-                    <span class="text-base leading-none">🔊</span>
-                    <span>読み上げ</span>
+            <div class="flex items-center gap-2">
+                <button id="gf-fs-card-speaker-btn" type="button" class="overlay-btn" aria-label="Read the card aloud in Japanese">
+                    <span class="text-base leading-none" aria-hidden="true">🔊</span>
+                    <span lang="ja">読み上げ</span>
                 </button>
-                
-                <button id="gf-fs-back-btn" class="inline-flex items-center space-x-1 px-3.5 py-1.5 bg-gray-900 hover:bg-gray-800 active:scale-95 text-white font-extrabold rounded-full text-xs sm:text-sm shadow transition-all">
-                    <span>✕ 戻る (Back)</span>
+                <button type="button" data-overlay-rotate class="overlay-btn" aria-label="Turn the card upside down for someone opposite you">
+                    <span class="text-base leading-none" aria-hidden="true">🔄</span>
+                </button>
+                <button type="button" data-overlay-close class="overlay-btn bg-gray-900 hover:bg-gray-800 text-white border-gray-900">
+                    <span lang="ja">✕ 戻る</span><span>(Back)</span>
                 </button>
             </div>
         </div>
-        
-        <!-- Dynamic Auto-Fit Text Container -->
-        <div id="gf-fs-text-container" class="flex-1 w-full flex items-center justify-center min-h-0 py-2 sm:py-3 overflow-y-auto">
-            <div id="gf-fs-jp-text" class="jp-font font-black text-gray-900 w-full max-w-4xl text-left transition-all duration-150 leading-snug portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly">
+
+        <div data-overlay-content class="flex-1 w-full flex items-center justify-center min-h-0 py-2 sm:py-3 overflow-y-auto transition-transform duration-300">
+            <div lang="ja" class="jp-font font-black text-gray-900 w-full max-w-4xl text-left leading-snug portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly">
                 <div class="space-y-4 portrait:space-y-0 portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly landscape:grid landscape:grid-cols-2 landscape:gap-4 landscape:space-y-0 landscape:items-center">
-                    <!-- Section 1: Diagnosis & Forbidden Grains -->
                     <div class="space-y-3 portrait:space-y-4 landscape:space-y-2 sm:landscape:space-y-3">
                         <p class="text-red-700 font-black text-xl portrait:text-2xl sm:portrait:text-4xl landscape:text-xl sm:landscape:text-2xl md:landscape:text-3xl leading-tight">
                             【重要】セリアック病<br>
@@ -447,16 +257,10 @@
                             <ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。
                         </p>
                     </div>
-
-                    <!-- Section 2: Seasonings, Contamination & Question -->
                     <div class="space-y-3 portrait:space-y-4 landscape:space-y-2.5 sm:landscape:space-y-3">
-                        <div class="bg-red-50/80 border-2 border-red-300 rounded-2xl p-2.5 portrait:p-4 sm:portrait:p-5 space-y-1.5 portrait:space-y-3 shadow-sm text-sm portrait:text-base sm:portrait:text-2xl landscape:text-sm sm:landscape:text-base md:landscape:text-lg">
-                            <p class="text-red-700 font-bold">
-                                ❌ <strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。
-                            </p>
-                            <p class="text-red-700 font-bold">
-                                ❌ <strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。
-                            </p>
+                        <div class="bg-red-50 border-2 border-red-300 rounded-2xl p-2.5 portrait:p-4 sm:portrait:p-5 space-y-1.5 portrait:space-y-3 shadow-sm text-sm portrait:text-base sm:portrait:text-2xl landscape:text-sm sm:landscape:text-base md:landscape:text-lg">
+                            <p class="text-red-700 font-bold">❌ <strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</p>
+                            <p class="text-red-700 font-bold">❌ <strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</p>
                         </div>
                         <p class="text-base portrait:text-xl sm:portrait:text-3xl font-black text-gray-900 leading-snug portrait:leading-relaxed landscape:text-base sm:landscape:text-lg md:landscape:text-xl">
                             小麦を含まない料理、または「塩のみ・素焼き」で提供できるものはありますか？
@@ -467,1441 +271,34 @@
         </div>
     </div>
 
-    <!-- Audio Notification Toast -->
-    <div id="audio-toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900/95 text-white text-xs md:text-sm px-4 py-2 rounded-full shadow-2xl backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center space-x-2">
-        <span id="toast-icon">🔊</span>
-        <span id="toast-message">Playing audio...</span>
+    <!-- Any phrase, full screen (always light, for staff to read) -->
+    <div id="phrase-overlay" class="fixed inset-0 w-full h-[100dvh] bg-white z-[100] hidden flex-col p-3 sm:p-5 select-none overflow-hidden border-4 border-orange-500" role="dialog" aria-modal="true" aria-label="Phrase, full screen">
+        <div class="w-full flex items-center justify-end gap-2 pb-2 flex-shrink-0">
+            <button id="phrase-overlay-speaker-btn" type="button" class="overlay-btn" aria-label="Play pronunciation">
+                <span class="text-base leading-none" aria-hidden="true">🔊</span>
+                <span lang="ja">読み上げ</span>
+            </button>
+            <button type="button" data-overlay-rotate class="overlay-btn" aria-label="Turn the phrase upside down for someone opposite you">
+                <span class="text-base leading-none" aria-hidden="true">🔄</span>
+            </button>
+            <button type="button" data-overlay-close class="overlay-btn bg-gray-900 hover:bg-gray-800 text-white border-gray-900">
+                <span lang="ja">✕ 戻る</span><span>(Back)</span>
+            </button>
+        </div>
+        <div data-overlay-content class="flex-1 flex flex-col items-center justify-center text-center min-h-0 overflow-y-auto px-2 transition-transform duration-300">
+            <p id="phrase-overlay-jp" lang="ja" class="jp-font font-black text-gray-900 leading-tight break-words max-w-full"></p>
+            <p id="phrase-overlay-romaji" class="mt-6 text-lg sm:text-2xl font-bold text-orange-700"></p>
+            <p id="phrase-overlay-en" class="mt-2 text-base sm:text-xl font-semibold text-gray-600"></p>
+        </div>
     </div>
 
-    <script>
-        // --- DATASET PRESERVED EXACTLY AS REQUESTED (NO VOCAB ADDED OR REMOVED) ---
-        const categories = {
-            greetings: { id: "greetings", name: "Greetings & Polite Essentials", icon: "🎌", jp: "挨拶と基本表現" },
-            coeliac: { id: "coeliac", name: "Coeliac & Gluten-Free", icon: "🌾", jp: "セリアック・グルテンフリー" },
-            dining: { id: "dining", name: "Drinking & Dining", icon: "🍱", jp: "飲食・レストラン" },
-            about: { id: "about", name: "About Us & Introductions", icon: "👥", jp: "自己紹介と会話" },
-            travel: { id: "travel", name: "Getting Around & Paying", icon: "🚆", jp: "移動・お会計・便利表現" }
-        };
-
-        const phrases = [
-            // --- GREETINGS & POLITE ESSENTIALS ---
-            { id: 1, category: "greetings", english: "Hello / Good day", romaji: "Konnichiwa", japanese: "こんにちは。" },
-            { id: 2, category: "greetings", english: "Good morning", romaji: "Ohayō gozaimasu", japanese: "おはようございます。" },
-            { id: 3, category: "greetings", english: "Good evening", romaji: "Konbanwa", japanese: "こんばんは。" },
-            { id: 4, category: "greetings", english: "Thank you", romaji: "Arigatō gozaimasu", japanese: "ありがとうございます。" },
-            { id: 5, category: "greetings", english: "Thank you very much (upon leaving)", romaji: "Arigatō gozaimashita", japanese: "ありがとうございました。" },
-            { id: 6, category: "greetings", english: "Excuse me / Sorry", romaji: "Sumimasen", japanese: "すみません。" },
-            { id: 7, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします。" },
-            { id: 8, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
-            { id: 9, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
-            { id: 10, category: "greetings", english: "Don't worry, it's okay, I'm fine", romaji: "Daijōbu desu", japanese: "大丈夫です。" },
-
-            // --- COELIAC & GLUTEN-FREE ---
-            { id: 1001, category: "coeliac", english: "I have a severe wheat and gluten allergy", romaji: "Komugi to guruten no arerugī ga arimasu", japanese: "小麦とグルテンのアレルギーがあります。" },
-            { id: 1002, category: "coeliac", english: "I cannot eat wheat, barley, or rye", romaji: "Komugi, ōmugi, raimugi wa taberaremasen", japanese: "小麦、大麦、ライ麦は食べられません。" },
-            { id: 1004, category: "coeliac", english: "Does this contain wheat or soy sauce?", romaji: "Kore ni komugi ya shōyu wa haitte imasu ka?", japanese: "これに小麦や醤油は入っていますか？" },
-            { id: 1005, category: "coeliac", english: "Do you have soy sauce made without wheat?", romaji: "Komugi fushiyō no shōyu wa arimasu ka?", japanese: "小麦不使用の醤油はありますか？" },
-            { id: 1006, category: "coeliac", english: "Please do not add any sauce or broth", romaji: "Tare ya dashi wa tsukenaide kudasai", japanese: "タレや出汁はつけないでください。" },
-            { id: 1007, category: "coeliac", english: "Can you prepare it with just salt?", romaji: "Shio dake de chōri dekimasu ka?", japanese: "塩だけで調理できますか？" },
-
-            // --- DRINKING & DINING ---
-            { id: 28, category: "dining", english: "Table for two, please", romaji: "Futari desu", japanese: "二人です。" },
-            { id: 29, category: "dining", english: "This one, please (pointing to menu)", romaji: "Kore o onegaishimasu", japanese: "これをお願いします。" },
-            { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！" },
-            { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Bīru / o-mizu / o-cha kudasai", japanese: "ビール／お水／お茶 ください。" },
-            { id: 13, category: "dining", english: "Let's eat! / Bon appétit", romaji: "Itadakimasu", japanese: "いただきます！" },
-            { id: 27, category: "dining", english: "It is delicious!", romaji: "Oishī desu", japanese: "美味しいです！" },
-            { id: 17, category: "dining", english: "Can I get the bill, please? (Tip: cross index fingers into an 'X')", romaji: "Okaikei onegaishimasu", japanese: "お会計お願いします。" },
-            { id: 15, category: "dining", english: "Thank you for the meal (after eating)", romaji: "Gochisōsama deshita", japanese: "ごちそうさまでした。" },
-            { id: 30, category: "dining", english: "We'll be back!", romaji: "Mata kimasu!", japanese: "また来ます！" },
-
-            // --- ABOUT US & INTRODUCTIONS ---
-            { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョーズィーです。" },
-            { id: 19, category: "about", english: "My name is Frankie", romaji: "Watashi no namae wa Furankī desu", japanese: "私の名前はフランキーです。" },
-            { id: 20, category: "about", english: "I am from the UK", romaji: "Watashi wa Igirisu kara kimashita", japanese: "私はイギリスから来ました。" },
-            { id: 21, category: "about", english: "Do you understand English?", romaji: "Eigo wakarimasu ka?", japanese: "英語分かりますか？" },
-            { id: 22, category: "about", english: "I don't understand Japanese", romaji: "Nihongo wakarimasen", japanese: "日本語分かりません。" },
-            { id: 23, category: "about", english: "Cool, pretty, cute", romaji: "Kakkoī, kirei, kawaī", japanese: "かっこいい、きれい、かわいい。" },
-
-            // --- GETTING AROUND & PAYING ---
-            { id: 24, category: "travel", english: "Where is the toilet?", romaji: "Toire wa doko desu ka?", japanese: "トイレはどこですか？" },
-            { id: 25, category: "travel", english: "Can I use card?", romaji: "Kādo wa tsukaemasu ka?", japanese: "カードは使えますか？" },
-            { id: 26, category: "travel", english: "Excuse me, where does this train depart from?", romaji: "Sumimasen, kono densha wa doko kara demasu ka?", japanese: "すみません、この電車はどこから出ますか？" }
-        ];
-
-        const words = [
-            { id: 101, category: "greetings", english: "Hello", romaji: "Konnichiwa", japanese: "こんにちは" },
-            { id: 102, category: "greetings", english: "Good morning", romaji: "Ohayō", japanese: "おはよう" },
-            { id: 103, category: "greetings", english: "Good evening", romaji: "Konbanwa", japanese: "こんばんは" },
-            { id: 104, category: "greetings", english: "Thank you", romaji: "Arigatō", japanese: "ありがとう" },
-            { id: 127, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします" },
-            { id: 105, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
-            { id: 106, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
-            { id: 107, category: "greetings", english: "Okay / Fine (polite)", romaji: "Daijōbu desu", japanese: "大丈夫です" },
-            { id: 108, category: "greetings", english: "Excuse me", romaji: "Sumimasen", japanese: "すみません" },
-            { id: 112, category: "dining", english: "Beer", romaji: "Bīru", japanese: "ビール" },
-            { id: 113, category: "dining", english: "Water", romaji: "O-mizu", japanese: "お水" },
-            { id: 114, category: "dining", english: "Tea", romaji: "Ocha", japanese: "お茶" },
-            { id: 115, category: "dining", english: "Please give me", romaji: "Kudasai", japanese: "ください" },
-            { id: 116, category: "dining", english: "Bill", romaji: "Okaikei", japanese: "お会計" },
-            { id: 117, category: "dining", english: "Cheers!", romaji: "Kanpai!", japanese: "乾杯！" },
-            { id: 118, category: "dining", english: "Bon appétit", romaji: "Itadakimasu", japanese: "いただきます" },
-            { id: 126, category: "dining", english: "Delicious", romaji: "Oishī", japanese: "おいしい" },
-            { id: 128, category: "dining", english: "Two people", romaji: "Futari", japanese: "二人" },
-            { id: 129, category: "dining", english: "This one", romaji: "Kore", japanese: "これ" },
-            { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語" },
-            { id: 120, category: "about", english: "Japanese", romaji: "Nihongo", japanese: "日本語" },
-            { id: 121, category: "about", english: "UK / Britain", romaji: "Igirisu", japanese: "イギリス" },
-            { id: 122, category: "travel", english: "Toilet", romaji: "Toire", japanese: "トイレ" },
-            { id: 123, category: "travel", english: "Where", romaji: "Doko", japanese: "どこ" },
-            { id: 124, category: "travel", english: "Train", romaji: "Densha", japanese: "電車" },
-            { id: 125, category: "travel", english: "Card", romaji: "Kādo", japanese: "カード" }
-        ];
-
-        // --- STATE MANAGEMENT ---
-        let searchQuery = "";
-        let selectedCategoryFilter = "all";
-        
-        // Favorites (Saved Phrases)
-        let savedPhraseIds = JSON.parse(localStorage.getItem('jf_japan_favorites') || '[]');
-        
-        // Theme Mode ('day' or 'izakaya')
-        let currentTheme = localStorage.getItem('jf_japan_theme') || 'day';
-        
-        // Audio Engine & Speed
-        let voiceEngine = localStorage.getItem('jf_japan_voice_engine') || 'studio'; // 'studio' or 'device'
-        let speechRate = parseFloat(localStorage.getItem('jf_japan_speech_rate') || '1.0');
-        let cachedVoices = [];
-        let currentPlayingAudio = null;
-
-        // Flashcards state
-        let flashcardItems = [];
-        let flashcardMasteredIds = new Set();
-        let currentFlashcardIndex = 0;
-        let flashcardStudyMode = 'en_to_jp'; // 'en_to_jp', 'jp_to_en', 'audio_listen'
-
-        // Quiz state
-        let quizMode = 'standard'; // 'standard' or 'listening'
-        let quizQuestions = [];
-        let currentQuizQuestionIndex = 0;
-        let quizScore = 0;
-        let quizResults = [];
-
-        // DOM elements
-        const mainContent = document.getElementById('main-content');
-        const navLearn = document.getElementById('nav-learn');
-        const navFlashcards = document.getElementById('nav-flashcards');
-        const navQuiz = document.getElementById('nav-quiz');
-        const quizModal = document.getElementById('quiz-modal');
-        const modalContainer = document.getElementById('modal-container');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        const seeAnswersBtn = document.getElementById('see-answers-btn');
-        const answersBreakdown = document.getElementById('answers-breakdown');
-        const audioToast = document.getElementById('audio-toast');
-        const toastMessage = document.getElementById('toast-message');
-        const gfChefModal = document.getElementById('gf-chef-modal');
-        const gfModalContainer = document.getElementById('gf-modal-container');
-        const gfModalCloseBtn = document.getElementById('gf-modal-close-btn');
-        const gfModalCloseIcon = document.getElementById('gf-modal-close-icon');
-        const speakChefCardBtn = document.getElementById('speak-chef-card-btn');
-        const gfFullscreenTriggerBtn = document.getElementById('gf-fullscreen-trigger-btn');
-        const gfFullscreenOverlay = document.getElementById('gf-fullscreen-overlay');
-        const gfFsBackBtn = document.getElementById('gf-fs-back-btn');
-        const gfFsCardSpeakerBtn = document.getElementById('gf-fs-card-speaker-btn');
-        const headerEmergencyGfBtn = document.getElementById('header-emergency-gf-btn');
-        const headerGfSafetyGuideBtn = document.getElementById('header-gf-safety-guide-btn');
-        const gfSafetyModal = document.getElementById('gf-safety-modal');
-        const gfSafetyModalContainer = document.getElementById('gf-safety-modal-container');
-        const gfSafetyModalCloseBtn = document.getElementById('gf-safety-modal-close-btn');
-        const gfSafetyModalCloseIcon = document.getElementById('gf-safety-modal-close-icon');
-        const gfSafetyOpenCardBtn = document.getElementById('gf-safety-open-card-btn');
-        const audioEngineBtn = document.getElementById('audio-engine-btn');
-        const audioEngineIcon = document.getElementById('audio-engine-icon');
-        const audioEngineLabel = document.getElementById('audio-engine-label');
-        const audioSpeedBtn = document.getElementById('audio-speed-btn');
-        const audioSpeedIcon = document.getElementById('audio-speed-icon');
-        const audioSpeedLabel = document.getElementById('audio-speed-label');
-        const izakayaModeBtn = document.getElementById('izakaya-mode-btn');
-        const izakayaModeIcon = document.getElementById('izakaya-mode-icon');
-        const izakayaModeLabel = document.getElementById('izakaya-mode-label');
-
-        const speakerIconSVG = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-            </svg>`;
-
-        function showToast(msg, duration = 1800) {
-            toastMessage.textContent = msg;
-            audioToast.classList.remove('opacity-0');
-            audioToast.classList.add('opacity-100');
-            clearTimeout(audioToast._timer);
-            audioToast._timer = setTimeout(() => {
-                audioToast.classList.remove('opacity-100');
-                audioToast.classList.add('opacity-0');
-            }, duration);
-        }
-
-        // --- THEME / IZAKAYA MODE ---
-        function applyTheme() {
-            const body = document.body;
-            const headerBox = document.getElementById('header-box');
-            const metaTheme = document.getElementById('meta-theme-color');
-
-            if (currentTheme === 'izakaya') {
-                body.classList.add('dark-mode');
-                izakayaModeIcon.textContent = '☀️';
-                izakayaModeLabel.textContent = 'Day Mode';
-                metaTheme.setAttribute('content', '#141416');
-                if (headerBox) {
-                    headerBox.classList.remove('bg-white/95', 'border-white/80');
-                    headerBox.classList.add('bg-zinc-900/95', 'border-zinc-800', 'text-zinc-100');
-                }
-            } else {
-                body.classList.remove('dark-mode');
-                izakayaModeIcon.textContent = '🏮';
-                izakayaModeLabel.textContent = 'Izakaya Mode';
-                metaTheme.setAttribute('content', '#ea580c');
-                if (headerBox) {
-                    headerBox.classList.add('bg-white/95', 'border-white/80');
-                    headerBox.classList.remove('bg-zinc-900/95', 'border-zinc-800', 'text-zinc-100');
-                }
-            }
-        }
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'izakaya' ? 'day' : 'izakaya';
-            localStorage.setItem('jf_japan_theme', currentTheme);
-            applyTheme();
-            if (navLearn.classList.contains('active')) showLearnView();
-            else if (navFlashcards.classList.contains('active')) renderFlashcard();
-            else if (navQuiz.classList.contains('active')) renderQuizQuestion();
-            showToast(currentTheme === 'izakaya' ? '🏮 Izakaya Low-Light Mode Enabled' : '☀️ Day Mode Enabled');
-        }
-
-        // --- AUDIO ENGINE & SPEED ---
-        function updateSpeedButtonUI() {
-            if (speechRate <= 0.75) {
-                audioSpeedIcon.textContent = '🐢';
-                audioSpeedLabel.textContent = '0.75x';
-            } else {
-                audioSpeedIcon.textContent = '⚡';
-                audioSpeedLabel.textContent = '1.0x';
-            }
-        }
-
-        function toggleAudioSpeed() {
-            speechRate = speechRate === 1.0 ? 0.75 : 1.0;
-            localStorage.setItem('jf_japan_speech_rate', speechRate);
-            updateSpeedButtonUI();
-            showToast(`Audio speed: ${speechRate}x ${speechRate < 1 ? '(Slow & Clear)' : '(Normal)'}`);
-        }
-
-        function updateVoiceEngineUI() {
-            if (voiceEngine === 'device') {
-                audioEngineIcon.textContent = '📱';
-                audioEngineLabel.textContent = 'Device';
-            } else {
-                audioEngineIcon.textContent = '✨';
-                audioEngineLabel.textContent = 'Studio';
-            }
-        }
-
-        function toggleVoiceEngine() {
-            if (voiceEngine === 'studio') {
-                voiceEngine = 'device';
-                localStorage.setItem('jf_japan_voice_engine', 'device');
-                updateVoiceEngineUI();
-                showToast("Switched to Device Offline Voice");
-            } else {
-                voiceEngine = 'studio';
-                localStorage.setItem('jf_japan_voice_engine', 'studio');
-                updateVoiceEngineUI();
-                showToast("Switched to Studio Neural Voice");
-            }
-        }
-
-        function populateVoices() {
-            if ('speechSynthesis' in window) {
-                try {
-                    cachedVoices = window.speechSynthesis.getVoices();
-                } catch (e) {
-                    console.warn("Voice list access note:", e);
-                }
-            }
-        }
-
-        function getBestJapaneseVoice() {
-            if (!cachedVoices || cachedVoices.length === 0) {
-                populateVoices();
-            }
-            const jpVoices = cachedVoices.filter(v => 
-                (v.lang && (v.lang === 'ja-JP' || v.lang === 'ja_JP' || v.lang.toLowerCase().startsWith('ja'))) ||
-                (v.name && (v.name.toLowerCase().includes('japan') || v.name.includes('日本語')))
-            );
-
-            if (jpVoices.length === 0) return null;
-
-            return jpVoices.sort((a, b) => {
-                const scoreVoice = (v) => {
-                    const name = (v.name || '').toLowerCase();
-                    const uri = (v.voiceURI || '').toLowerCase();
-                    let score = 0;
-                    if (name.includes('network') || uri.includes('network') || name.includes('online')) score += 70;
-                    if (name.includes('neural') || name.includes('natural')) score += 60;
-                    if (name.includes('enhanced') || name.includes('premium')) score += 50;
-                    if (name.includes('siri') || name.includes('apple')) score += 40;
-                    if (name.includes('google')) score += 35;
-                    if (name.includes('kyoko') || name.includes('nanami') || name.includes('otoya') || name.includes('haruka') || name.includes('keita')) score += 30;
-                    if (v.lang === 'ja-JP') score += 10;
-                    if (name.includes('ichiro')) score -= 40;
-                    if (name.includes('desktop') && !name.includes('natural')) score -= 30;
-                    return score;
-                };
-                return scoreVoice(b) - scoreVoice(a);
-            })[0];
-        }
-
-        // Plain text for reading the chef card aloud. Scraping the card's innerText
-        // would also read the <rt> furigana, so each grain word was spoken twice.
-        const CHEF_CARD_SPEECH = "重要。セリアック病、重度の小麦・グルテンアレルギーがあります。小麦、大麦、ライ麦を一切摂取できません。普通の醤油、たれ、つゆ、麦味噌、だしの素も摂取できません。揚げ油、茹で汁、調理器具の共用も避けてください。小麦を含まない料理、または塩のみ、素焼きで提供できるものはありますか？";
-
-        // Google's TTS endpoint rejects text much over 200 characters.
-        const MAX_TTS_CHUNK_LENGTH = 180;
-
-        // Bumped on every new playback so stale async work can tell it has been superseded.
-        let playbackToken = 0;
-        let currentTriggerBtn = null;
-
-        function sanitizeJapaneseText(text) {
-            // Keep ？ and ！ so voices use question / exclamation intonation.
-            return text
-                .replace(/[\/\／]/g, '、')
-                .replace(/[\(\)（）【】「」]/g, '')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        // Split on sentence ends only, packing sentences into chunks under the TTS limit.
-        function splitIntoTtsChunks(text) {
-            if (text.length <= MAX_TTS_CHUNK_LENGTH) return [text];
-            const sentences = text.match(/[^。？！]+[。？！]?/g) || [text];
-            const chunks = [];
-            let current = '';
-            sentences.forEach(sentence => {
-                if (current && (current + sentence).length > MAX_TTS_CHUNK_LENGTH) {
-                    chunks.push(current);
-                    current = '';
-                }
-                current += sentence;
-            });
-            if (current) chunks.push(current);
-            return chunks.map(s => s.trim()).filter(s => s.length > 0);
-        }
-
-        function stopPlayback() {
-            playbackToken++;
-            if (currentPlayingAudio) {
-                try {
-                    currentPlayingAudio.onended = null;
-                    currentPlayingAudio.onerror = null;
-                    currentPlayingAudio.pause();
-                    currentPlayingAudio.removeAttribute('src');
-                    currentPlayingAudio.load();
-                } catch (e) {}
-                currentPlayingAudio = null;
-            }
-            if ('speechSynthesis' in window) {
-                try { window.speechSynthesis.cancel(); } catch (e) {}
-            }
-            if (currentTriggerBtn) {
-                currentTriggerBtn.classList.remove('speaking-pulse');
-                currentTriggerBtn = null;
-            }
-        }
-
-        function finishPlayback(token) {
-            if (token !== playbackToken) return;
-            if (currentTriggerBtn) currentTriggerBtn.classList.remove('speaking-pulse');
-            currentTriggerBtn = null;
-            currentPlayingAudio = null;
-        }
-
-        function playSpeechSynthesisFallback(cleanText, token) {
-            if (token !== playbackToken) return;
-            if (!('speechSynthesis' in window)) {
-                showToast("Audio playback not supported on this device");
-                finishPlayback(token);
-                return;
-            }
-
-            try {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(cleanText);
-                utterance.lang = 'ja-JP';
-                utterance.rate = speechRate;
-                utterance.pitch = 1.0;
-
-                const voice = getBestJapaneseVoice();
-                if (voice) utterance.voice = voice;
-
-                utterance.onend = () => finishPlayback(token);
-                utterance.onerror = () => finishPlayback(token);
-
-                window.speechSynthesis.speak(utterance);
-            } catch (err) {
-                console.warn("SpeechSynthesis error:", err);
-                finishPlayback(token);
-            }
-        }
-
-        // Resolves true when the chunk played to the end, false if it failed or was stopped.
-        function playTtsChunk(chunk, token) {
-            return new Promise((resolve) => {
-                if (token !== playbackToken) return resolve(false);
-
-                const audio = new Audio();
-                currentPlayingAudio = audio;
-                audio.defaultPlaybackRate = speechRate;
-                audio.playbackRate = speechRate;
-                audio.addEventListener('loadedmetadata', () => {
-                    audio.playbackRate = speechRate;
-                });
-                audio.addEventListener('play', () => {
-                    audio.playbackRate = speechRate;
-                });
-
-                let settled = false;
-                const settle = (ok) => {
-                    if (settled) return;
-                    settled = true;
-                    clearTimeout(loadTimer);
-                    if (!ok) {
-                        // Silence this element so a late load can't play over the fallback voice.
-                        try {
-                            audio.onended = null;
-                            audio.onerror = null;
-                            audio.pause();
-                            audio.removeAttribute('src');
-                            audio.load();
-                        } catch (e) {}
-                    }
-                    resolve(ok);
-                };
-
-                // Slow connections: give up on the network voice if nothing has loaded yet.
-                const loadTimer = setTimeout(() => {
-                    if (audio.readyState === 0) settle(false);
-                }, 2500);
-
-                audio.onended = () => settle(true);
-                audio.onerror = () => settle(false);
-                // pause() fires no ended/error event, so watch for it to avoid hanging.
-                audio.addEventListener('pause', () => {
-                    if (!audio.ended) settle(false);
-                });
-
-                audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(chunk)}`;
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => settle(false));
-                }
-            });
-        }
-
-        async function playStudioAudio(chunks, token) {
-            for (let i = 0; i < chunks.length; i++) {
-                const ok = await playTtsChunk(chunks[i], token);
-                if (token !== playbackToken) return;
-                if (!ok) {
-                    // Hand whatever hasn't been spoken yet to the device voice.
-                    playSpeechSynthesisFallback(chunks.slice(i).join(''), token);
-                    return;
-                }
-            }
-            finishPlayback(token);
-        }
-
-        function playAudio(text, event, triggerBtn) {
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-
-            const cleanText = sanitizeJapaneseText(text);
-            if (!cleanText) return;
-
-            showToast(`Speaking: ${cleanText.slice(0, 22)}${cleanText.length > 22 ? '...' : ''} (${speechRate}x)`);
-
-            stopPlayback();
-            const token = playbackToken;
-
-            if (triggerBtn) {
-                currentTriggerBtn = triggerBtn;
-                triggerBtn.classList.add('speaking-pulse');
-            }
-
-            if (voiceEngine === 'device' || !navigator.onLine) {
-                playSpeechSynthesisFallback(cleanText, token);
-                return;
-            }
-
-            playStudioAudio(splitIntoTtsChunks(cleanText), token);
-        }
-
-        // --- FAVORITES SYSTEM ---
-        function toggleFavorite(phraseId) {
-            const index = savedPhraseIds.indexOf(phraseId);
-            if (index > -1) {
-                savedPhraseIds.splice(index, 1);
-                showToast("Removed from Saved ⭐");
-            } else {
-                savedPhraseIds.push(phraseId);
-                showToast("Saved to Quick-Access ⭐");
-            }
-            localStorage.setItem('jf_japan_favorites', JSON.stringify(savedPhraseIds));
-            showLearnView();
-        }
-
-        function setActiveNav(button) {
-            [navLearn, navFlashcards, navQuiz].forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-        }
-
-        // --- LEARN VIEW (WITH REAL-TIME SEARCH & FAVORITES) ---
-        function showLearnView() {
-            setActiveNav(navLearn);
-
-            const isDark = currentTheme === 'izakaya';
-            const cardBg = isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-white/95 border-white/80 text-gray-800';
-            const inputBg = isDark ? 'bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400' : 'bg-white border-gray-200 text-gray-800 placeholder-gray-400';
-
-            // Filter phrases by category and search term
-            let filteredPhrases = phrases.filter(p => {
-                if (selectedCategoryFilter === 'saved') {
-                    if (!savedPhraseIds.includes(p.id)) return false;
-                } else if (selectedCategoryFilter !== 'all') {
-                    if (p.category !== selectedCategoryFilter) return false;
-                }
-
-                if (!searchQuery.trim()) return true;
-                const q = searchQuery.toLowerCase().trim();
-                return p.english.toLowerCase().includes(q) ||
-                       p.romaji.toLowerCase().includes(q) ||
-                       p.japanese.includes(q);
-            });
-
-            // Instant Search Bar
-            const searchBarHTML = `
-                <div class="w-full mb-4 relative">
-                    <div class="relative flex items-center">
-                        <span class="absolute left-4 text-gray-400 text-lg">🔍</span>
-                        <input 
-                            type="text" 
-                            id="phrase-search-input" 
-                            value="${searchQuery}" 
-                            placeholder="Instant search by English, Romaji, or Japanese..." 
-                            class="w-full pl-11 pr-10 py-3 rounded-2xl border shadow-sm text-sm md:text-base font-medium transition-all focus:outline-none focus:ring-2 focus:ring-orange-500 ${inputBg}"
-                        />
-                        ${searchQuery ? `
-                            <button id="clear-search-btn" class="absolute right-3.5 text-gray-400 hover:text-gray-600 font-bold text-lg p-1">&times;</button>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-
-            // Filter Pills - FIXED HORIZONTAL SCROLL SO "All (34)" IS NEVER CLIPPED
-            const filterButtons = `
-                <div class="w-full overflow-x-auto pb-2 mb-6 no-scrollbar">
-                    <div class="flex items-center space-x-2 w-max min-w-full justify-start md:justify-center px-1">
-                        <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'all' ? 'bg-orange-600 text-white shadow-orange-300' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-700')}" data-category="all">
-                            ✨ All (${phrases.length})
-                        </button>
-                        <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'saved' ? 'bg-amber-500 text-white shadow-amber-300' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-700')}" data-category="saved">
-                            ⭐ Saved (${savedPhraseIds.length})
-                        </button>
-                        <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'greetings' ? 'bg-orange-600 text-white shadow-orange-300' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-700')}" data-category="greetings">
-                            🎌 Greetings
-                        </button>
-                        <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'coeliac' ? 'bg-orange-600 text-white shadow-orange-300' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-700')}" data-category="coeliac">
-                            🌾 Coeliac &amp; GF
-                        </button>
-                        <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'dining' ? 'bg-orange-600 text-white shadow-orange-300' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-700')}" data-category="dining">
-                            🍱 Dining &amp; Drinks
-                        </button>
-                        <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'about' ? 'bg-orange-600 text-white shadow-orange-300' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-700')}" data-category="about">
-                            👥 About Us
-                        </button>
-                        <button class="cat-filter-btn px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap ${selectedCategoryFilter === 'travel' ? 'bg-orange-600 text-white shadow-orange-300' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-700')}" data-category="travel">
-                            🚆 Travel &amp; Pay
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            let content = `
-                ${searchBarHTML}
-                <div class="w-full mb-3 flex items-center justify-between px-1">
-                    <p class="text-xs md:text-sm font-semibold ${isDark ? 'text-zinc-400' : 'text-gray-600'}">Tap 🔊 to hear • Star ⭐ to save to top</p>
-                    <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full shadow-sm">${filteredPhrases.length} ${filteredPhrases.length === 1 ? 'Phrase' : 'Phrases'}</span>
-                </div>
-                ${filterButtons}
-            `;
-
-            if (filteredPhrases.length === 0) {
-                content += `
-                    <div class="text-center py-12 px-4 rounded-3xl ${cardBg} border shadow-sm">
-                        <span class="text-4xl block mb-2">${selectedCategoryFilter === 'saved' ? '⭐' : '🔎'}</span>
-                        <h3 class="text-lg font-bold mb-1">${selectedCategoryFilter === 'saved' ? 'No Saved Phrases Yet' : 'No Matching Phrases'}</h3>
-                        <p class="text-xs md:text-sm text-gray-500 max-w-sm mx-auto">
-                            ${selectedCategoryFilter === 'saved' 
-                                ? 'Tap the star icon (☆) on any phrase card to pin your daily essentials right here for instant access!' 
-                                : 'Try searching for words like "bill", "two", "soy sauce", "mizu", or "すみません".'}
-                        </p>
-                    </div>
-                `;
-                mainContent.innerHTML = content;
-                attachLearnViewEvents();
-                return;
-            }
-
-            // Categorized rendering
-            const sectionOrder = ["greetings", "coeliac", "dining", "about", "travel"];
-            
-            sectionOrder.forEach(catKey => {
-                const cat = categories[catKey];
-                const catPhrases = filteredPhrases.filter(p => p.category === catKey);
-                if (catPhrases.length === 0) return;
-
-                content += `
-                    <section class="w-full mb-8">
-                        <div class="flex items-center justify-between mb-4 px-2 border-b ${isDark ? 'border-zinc-800' : 'border-teal-200/60'} pb-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-2xl">${cat.icon}</span>
-                                <div>
-                                    <h3 class="font-bold text-lg md:text-xl ${isDark ? 'text-zinc-100' : 'text-gray-900'}">${cat.name}</h3>
-                                    <p class="text-xs font-semibold ${isDark ? 'text-amber-400' : 'text-teal-800/80'} jp-font">${cat.jp}</p>
-                                </div>
-                            </div>
-                            <span class="text-xs ${isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white/90 text-gray-600'} font-semibold px-2.5 py-1 rounded-full shadow-sm">
-                                ${catPhrases.length}
-                            </span>
-                        </div>
-                `;
-
-                if (catKey === "coeliac") {
-                    content += `
-                        <div class="mb-4 w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button id="open-gf-card-btn" class="bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white p-3.5 md:p-4 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.01] border border-red-300 text-left">
-                                <div class="flex items-center space-x-3">
-                                    <span class="text-2xl bg-white/20 p-2 rounded-xl backdrop-blur-sm flex-shrink-0">⚠️</span>
-                                    <div>
-                                        <p class="font-extrabold text-sm md:text-base leading-tight">Show Staff (Coeliac Card)</p>
-                                        <p class="text-[11px] text-red-100 font-medium mt-0.5">Fullscreen Japanese Chef Allergy Notice</p>
-                                    </div>
-                                </div>
-                                <span class="text-lg font-bold ml-2">➜</span>
-                            </button>
-
-                            <button id="open-gf-safety-guide-btn" class="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white p-3.5 md:p-4 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.01] border border-amber-300 text-left">
-                                <div class="flex items-center space-x-3">
-                                    <span class="text-2xl bg-white/20 p-2 rounded-xl backdrop-blur-sm flex-shrink-0">🔍</span>
-                                    <div>
-                                        <p class="font-extrabold text-sm md:text-base leading-tight">Food Safety Cheat Sheet</p>
-                                        <p class="text-[11px] text-amber-100 font-medium mt-0.5">Safe vs Danger Foods + Kanji Scanner</p>
-                                    </div>
-                                </div>
-                                <span class="text-lg font-bold ml-2">➜</span>
-                            </button>
-                        </div>
-                    `;
-                }
-
-                content += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-4 w-full">`;
-
-                catPhrases.forEach(phrase => {
-                    const isStarred = savedPhraseIds.includes(phrase.id);
-                    content += `
-                        <div class="${cardBg} backdrop-blur-sm p-4 md:p-5 rounded-2xl shadow-sm hover:shadow-md flex items-center justify-between transition-all duration-200 border h-full relative group">
-                            <div class="pr-2 flex-grow">
-                                <div class="flex items-center space-x-2">
-                                    <button class="fav-star-btn text-lg leading-none ${isStarred ? 'text-amber-400' : 'text-gray-300 hover:text-amber-300'}" data-id="${phrase.id}" title="${isStarred ? 'Remove from saved' : 'Save to favorites'}">
-                                        ${isStarred ? '★' : '☆'}
-                                    </button>
-                                    <p class="font-bold text-base md:text-lg leading-snug ${isDark ? 'text-zinc-100' : 'text-gray-900'}">${phrase.english}</p>
-                                </div>
-                                <p class="text-orange-500 font-semibold text-sm md:text-base mt-0.5 pl-6">${phrase.romaji}</p>
-                                <div class="flex items-center mt-2 pl-6">
-                                    <p class="jp-font ${isDark ? 'text-zinc-200' : 'text-gray-900'} text-xl md:text-2xl font-bold tracking-wide notranslate" translate="no">${phrase.japanese}</p>
-                                </div>
-                            </div>
-                            <button type="button" class="play-audio-btn p-3 rounded-full ${isDark ? 'bg-zinc-800 hover:bg-zinc-700 text-orange-400 border-zinc-700' : 'bg-orange-50 hover:bg-orange-100 text-orange-600 border-orange-100'} shadow-sm flex-shrink-0 border" data-text="${phrase.japanese}" aria-label="Listen to pronunciation">
-                                ${speakerIconSVG}
-                            </button>
-                        </div>
-                    `;
-                });
-
-                content += `</div></section>`;
-            });
-
-            mainContent.innerHTML = content;
-            attachLearnViewEvents();
-        }
-
-        function attachLearnViewEvents() {
-            // Audio button click
-            mainContent.querySelectorAll('.play-audio-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    playAudio(button.dataset.text, e, button);
-                });
-            });
-
-            // Star favorite click
-            mainContent.querySelectorAll('.fav-star-btn').forEach(starBtn => {
-                starBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const id = parseInt(starBtn.dataset.id, 10);
-                    toggleFavorite(id);
-                });
-            });
-
-            // Category filter click
-            mainContent.querySelectorAll('.cat-filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    selectedCategoryFilter = e.currentTarget.dataset.category;
-                    showLearnView();
-                });
-            });
-
-            // Search input live handler
-            const searchInput = mainContent.querySelector('#phrase-search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    searchQuery = e.target.value;
-                    clearTimeout(searchInput._searchTimer);
-                    searchInput._searchTimer = setTimeout(() => {
-                        showLearnView();
-                        const refreshedInput = document.getElementById('phrase-search-input');
-                        if (refreshedInput) {
-                            refreshedInput.focus();
-                            refreshedInput.setSelectionRange(refreshedInput.value.length, refreshedInput.value.length);
-                        }
-                    }, 120);
-                });
-            }
-
-            const clearSearchBtn = mainContent.querySelector('#clear-search-btn');
-            if (clearSearchBtn) {
-                clearSearchBtn.addEventListener('click', () => {
-                    searchQuery = "";
-                    showLearnView();
-                });
-            }
-
-            const openGfBtn = mainContent.querySelector('#open-gf-card-btn');
-            if (openGfBtn) {
-                openGfBtn.addEventListener('click', showGfChefModal);
-            }
-
-            const openGfSafetyBtn = mainContent.querySelector('#open-gf-safety-guide-btn');
-            if (openGfSafetyBtn) {
-                openGfSafetyBtn.addEventListener('click', showGfSafetyModal);
-            }
-        }
-
-        // --- FLASHCARDS VIEW (WITH STUDY MODES & MASTERY SORTING) ---
-        function showFlashcardsView() {
-            setActiveNav(navFlashcards);
-            const eligiblePhrases = phrases.filter(p => p.category !== 'coeliac');
-            const eligibleWords = words.filter(w => w.category !== 'coeliac');
-            flashcardItems = [...eligiblePhrases, ...eligibleWords];
-            for (let i = flashcardItems.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [flashcardItems[i], flashcardItems[j]] = [flashcardItems[j], flashcardItems[i]];
-            }
-            currentFlashcardIndex = 0;
-            renderFlashcard();
-        }
-
-        function triggerHapticFeedback() {
-            if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                try {
-                    navigator.vibrate(18);
-                } catch (e) {}
-            }
-        }
-
-        function renderFlashcard() {
-            const isDark = currentTheme === 'izakaya';
-            const cardBg = isDark ? 'bg-zinc-800 border-zinc-700 text-zinc-100' : 'bg-white border-teal-50 text-gray-800';
-
-            if (flashcardItems.length === 0) {
-                mainContent.innerHTML = `
-                    <div class="text-center p-8 ${cardBg} rounded-3xl max-w-md mx-auto shadow-md">
-                        <span class="text-5xl block mb-3">🎉</span>
-                        <h3 class="text-xl font-black mb-2 text-emerald-600">Deck Complete!</h3>
-                        <p class="text-sm text-gray-500 mb-6">Sugoi! You've mastered all cards in this practice session.</p>
-                        <button id="reset-flashcards-btn" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-full shadow-md transition-all">
-                            Shuffle &amp; Restart
-                        </button>
-                    </div>
-                `;
-                mainContent.querySelector('#reset-flashcards-btn').addEventListener('click', showFlashcardsView);
-                return;
-            }
-
-            if (currentFlashcardIndex >= flashcardItems.length) {
-                currentFlashcardIndex = 0;
-            }
-
-            const item = flashcardItems[currentFlashcardIndex];
-
-            // Render Study Mode Pill Bar
-            const modeSelectorHTML = `
-                <div class="w-full flex items-center justify-center space-x-1 sm:space-x-2 mb-4 overflow-x-auto no-scrollbar">
-                    <button class="fc-mode-btn text-xs font-bold px-3 py-1.5 rounded-full transition-all ${flashcardStudyMode === 'en_to_jp' ? 'bg-orange-600 text-white' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white text-gray-700 shadow-sm')}" data-mode="en_to_jp">
-                        EN ➜ JP (Recall)
-                    </button>
-                    <button class="fc-mode-btn text-xs font-bold px-3 py-1.5 rounded-full transition-all ${flashcardStudyMode === 'jp_to_en' ? 'bg-orange-600 text-white' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white text-gray-700 shadow-sm')}" data-mode="jp_to_en">
-                        JP ➜ EN (Reading)
-                    </button>
-                    <button class="fc-mode-btn text-xs font-bold px-3 py-1.5 rounded-full transition-all ${flashcardStudyMode === 'audio_listen' ? 'bg-orange-600 text-white' : (isDark ? 'bg-zinc-800 text-zinc-300' : 'bg-white text-gray-700 shadow-sm')}" data-mode="audio_listen">
-                        🎧 Audio ➜ Reveal
-                    </button>
-                </div>
-            `;
-
-            // Front Content based on mode
-            let frontHTML = '';
-            let backHTML = '';
-
-            if (flashcardStudyMode === 'en_to_jp') {
-                frontHTML = `
-                    <span class="text-xs uppercase font-extrabold tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full mb-3">English</span>
-                    <h2 class="text-2xl md:text-3xl font-extrabold leading-snug">${item.english}</h2>
-                    <span class="text-xs text-orange-500 font-bold mt-6 tracking-wide">Tap or press Space to reveal Japanese &rarr;</span>
-                `;
-                backHTML = `
-                    <span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/25 px-3 py-1 rounded-full mb-2">日本語 (Japanese)</span>
-                    <p class="text-xl md:text-2xl font-bold tracking-wide text-orange-100 mb-2 notranslate" translate="no">${item.romaji}</p>
-                    <p class="jp-font text-3xl md:text-4xl font-black mb-3 drop-shadow-sm notranslate" translate="no">${item.japanese}</p>
-                    <button type="button" class="play-audio-btn p-3 bg-white text-orange-600 hover:text-orange-700 active:scale-95 rounded-full shadow-lg" data-text="${item.japanese}" aria-label="Pronounce">
-                        ${speakerIconSVG}
-                    </button>
-                `;
-            } else if (flashcardStudyMode === 'jp_to_en') {
-                frontHTML = `
-                    <span class="text-xs uppercase font-extrabold tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full mb-3">日本語 (Read)</span>
-                    <p class="jp-font text-3xl md:text-4xl font-black mb-2 notranslate" translate="no">${item.japanese}</p>
-                    <p class="text-base md:text-lg font-bold text-orange-500 notranslate" translate="no">${item.romaji}</p>
-                    <span class="text-xs text-orange-500 font-bold mt-5 tracking-wide">Tap to reveal English meaning &rarr;</span>
-                `;
-                backHTML = `
-                    <span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/25 px-3 py-1 rounded-full mb-3">English Translation</span>
-                    <h2 class="text-2xl md:text-3xl font-black text-white leading-snug mb-4">${item.english}</h2>
-                    <button type="button" class="play-audio-btn p-3 bg-white text-orange-600 hover:text-orange-700 active:scale-95 rounded-full shadow-lg" data-text="${item.japanese}" aria-label="Pronounce">
-                        ${speakerIconSVG}
-                    </button>
-                `;
-            } else { // audio_listen
-                frontHTML = `
-                    <span class="text-xs uppercase font-extrabold tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full mb-4">Listening Challenge</span>
-                    <button type="button" class="play-audio-btn p-5 bg-orange-600 text-white hover:bg-orange-700 active:scale-95 rounded-full shadow-xl mb-3" data-text="${item.japanese}">
-                        ${speakerIconSVG}
-                    </button>
-                    <span class="text-xs text-gray-500 font-bold mt-3">Listen, test your memory, then tap to reveal</span>
-                `;
-                backHTML = `
-                    <span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/25 px-3 py-1 rounded-full mb-2">Answer</span>
-                    <h2 class="text-xl md:text-2xl font-black text-white leading-snug mb-1">${item.english}</h2>
-                    <p class="text-base text-orange-200 font-bold mb-1">${item.romaji}</p>
-                    <p class="jp-font text-2xl md:text-3xl font-black mb-3">${item.japanese}</p>
-                    <button type="button" class="play-audio-btn p-2.5 bg-white text-orange-600 hover:text-orange-700 active:scale-95 rounded-full shadow-lg" data-text="${item.japanese}">
-                        ${speakerIconSVG}
-                    </button>
-                `;
-            }
-
-            mainContent.innerHTML = `
-                ${modeSelectorHTML}
-                <div class="text-center mb-2">
-                    <p class="text-xs text-gray-500 font-semibold">Swipe, tap, or press Space to flip card</p>
-                </div>
-                <div class="perspective-1000 h-80 max-w-xl mx-auto">
-                    <div id="flashcard" class="card relative w-full h-full mx-auto cursor-pointer select-none" tabindex="0" role="button" aria-label="Flashcard">
-                        <!-- Front Face -->
-                        <div class="card-face absolute w-full h-full ${cardBg} rounded-3xl shadow-xl flex flex-col items-center justify-center p-6 text-center border">
-                            ${frontHTML}
-                        </div>
-                        <!-- Back Face -->
-                        <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-amber-600 via-orange-600 to-rose-700 text-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-6 text-center">
-                            ${backHTML}
-                            
-                            <!-- Spaced Repetition / Mastery Action Buttons -->
-                            <div class="mt-4 flex items-center space-x-2 z-10">
-                                <button id="fc-again-btn" class="bg-black/30 hover:bg-black/50 text-white text-xs font-bold py-1.5 px-3 rounded-full border border-white/30 transition-all flex items-center space-x-1">
-                                    <span>🔁</span><span>Practice Again</span>
-                                </button>
-                                <button id="fc-gotit-btn" class="bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-black py-1.5 px-3 rounded-full shadow-md transition-all flex items-center space-x-1">
-                                    <span>✅</span><span>Got It!</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Navigation Controls -->
-                <div class="flex justify-between items-center max-w-xl mx-auto mt-5 px-2">
-                    <button id="prev-card" class="btn-nav ${isDark ? 'bg-zinc-800 text-zinc-200' : 'bg-white text-gray-700'} font-bold py-2.5 px-5 rounded-full flex items-center space-x-1 text-sm">
-                        <span>&larr;</span><span>Prev</span>
-                    </button>
-                    <div class="flex flex-col items-center">
-                        <span class="font-bold ${isDark ? 'text-zinc-200 bg-zinc-800' : 'text-gray-700 bg-white/90'} px-3.5 py-1 rounded-full shadow-sm text-xs sm:text-sm border ${isDark ? 'border-zinc-700' : 'border-gray-100'}">
-                            ${currentFlashcardIndex + 1} / ${flashcardItems.length}
-                        </span>
-                        <span class="text-[10px] text-emerald-600 font-bold mt-0.5">Mastered: ${flashcardMasteredIds.size}</span>
-                    </div>
-                    <button id="next-card" class="btn-nav ${isDark ? 'bg-zinc-800 text-zinc-200' : 'bg-white text-gray-700'} font-bold py-2.5 px-5 rounded-full flex items-center space-x-1 text-sm">
-                        <span>Next</span><span>&rarr;</span>
-                    </button>
-                </div>
-            `;
-
-            // Auto-play front audio in audio_listen mode
-            if (flashcardStudyMode === 'audio_listen') {
-                setTimeout(() => {
-                    playAudio(item.japanese, null, null);
-                }, 300);
-            }
-
-            // Mode Selector buttons
-            mainContent.querySelectorAll('.fc-mode-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    flashcardStudyMode = e.currentTarget.dataset.mode;
-                    renderFlashcard();
-                });
-            });
-
-            const flashcard = mainContent.querySelector('#flashcard');
-            flashcard.addEventListener('click', (e) => {
-                if (!e.target.closest('.play-audio-btn') && !e.target.closest('#fc-gotit-btn') && !e.target.closest('#fc-again-btn')) {
-                    triggerHapticFeedback();
-                    flashcard.classList.toggle('is-flipped');
-                }
-            });
-
-            mainContent.querySelectorAll('.play-audio-btn').forEach(audioBtn => {
-                audioBtn.addEventListener('click', (e) => {
-                    playAudio(audioBtn.dataset.text, e, audioBtn);
-                });
-            });
-
-            // "Got it" vs "Practice Again" buttons
-            const gotItBtn = mainContent.querySelector('#fc-gotit-btn');
-            if (gotItBtn) {
-                gotItBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    flashcardMasteredIds.add(item.id);
-                    flashcardItems.splice(currentFlashcardIndex, 1);
-                    showToast("Card mastered! 🎉");
-                    renderFlashcard();
-                });
-            }
-
-            const againBtn = mainContent.querySelector('#fc-again-btn');
-            if (againBtn) {
-                againBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
-                    showToast("Keep practicing! 🔁");
-                    renderFlashcard();
-                });
-            }
-
-            mainContent.querySelector('#prev-card').addEventListener('click', () => {
-                currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
-                renderFlashcard();
-            });
-
-            mainContent.querySelector('#next-card').addEventListener('click', () => {
-                currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
-                renderFlashcard();
-            });
-
-            let touchStartX = 0;
-            let touchEndX = 0;
-            flashcard.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-
-            flashcard.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                const swipeDist = touchEndX - touchStartX;
-                if (swipeDist > 55) {
-                    currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
-                    renderFlashcard();
-                } else if (swipeDist < -55) {
-                    currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
-                    renderFlashcard();
-                }
-            }, { passive: true });
-        }
-
-        // --- QUIZ VIEW (STANDARD & LISTENING MODES) ---
-        function showQuizView() {
-            setActiveNav(navQuiz);
-            startQuiz();
-        }
-
-        function startQuiz() {
-            quizScore = 0;
-            currentQuizQuestionIndex = 0;
-            quizResults = [];
-            quizQuestions = generateQuizQuestions();
-            renderQuizQuestion();
-        }
-
-        function generateQuizQuestions() {
-            const eligiblePhrases = phrases.filter(p => p.category !== 'coeliac');
-            const shuffled = [...eligiblePhrases].sort(() => 0.5 - Math.random());
-            
-            return shuffled.slice(0, 10).map((correctPhrase, index) => {
-                const wrongPool = eligiblePhrases
-                    .filter(p => p.id !== correctPhrase.id && 
-                                 p.romaji.toLowerCase().trim() !== correctPhrase.romaji.toLowerCase().trim() &&
-                                 p.japanese.trim() !== correctPhrase.japanese.trim())
-                    .sort(() => 0.5 - Math.random())
-                    .slice(0, 3);
-                
-                const rawOptions = [correctPhrase, ...wrongPool].sort(() => 0.5 - Math.random());
-                
-                return {
-                    question: correctPhrase.english,
-                    isListening: quizMode === 'listening' || (index % 3 === 2),
-                    options: rawOptions.map(p => ({ romaji: p.romaji, japanese: p.japanese })),
-                    answer: correctPhrase.romaji,
-                    correctJapanese: correctPhrase.japanese
-                };
-            });
-        }
-
-        function renderQuizQuestion() {
-            const isDark = currentTheme === 'izakaya';
-            const cardBg = isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : 'bg-white/95 border-orange-100 text-gray-900';
-            const optBg = isDark ? 'bg-zinc-800 border-zinc-700 hover:border-orange-500' : 'bg-gray-50 border-gray-200/80 hover:border-orange-400 hover:bg-orange-50/50';
-
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
-                showQuizResults();
-                return;
-            }
-            const q = quizQuestions[currentQuizQuestionIndex];
-
-            // Question Header prompt
-            let questionPromptHTML = '';
-            if (q.isListening) {
-                questionPromptHTML = `
-                    <div class="mb-4">
-                        <span class="inline-block bg-teal-100 text-teal-800 font-extrabold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-2">🎧 Listening Question</span>
-                        <div class="flex items-center justify-center space-x-2 my-2">
-                            <button id="quiz-audio-prompt-btn" class="p-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full shadow-lg transition-transform active:scale-95 flex items-center space-x-2 font-bold" data-text="${q.correctJapanese}">
-                                ${speakerIconSVG}
-                                <span>Tap to Replay Sound</span>
-                            </button>
-                        </div>
-                        <p class="text-sm ${isDark ? 'text-zinc-400' : 'text-gray-500'} font-semibold mt-1">What did native speaker say?</p>
-                    </div>
-                `;
-            } else {
-                questionPromptHTML = `
-                    <div class="mb-5">
-                        <p class="text-xs font-bold uppercase tracking-wider text-orange-600 mb-1">Choose the Japanese for:</p>
-                        <h2 class="text-2xl md:text-3xl font-extrabold">${q.question}</h2>
-                    </div>
-                `;
-            }
-
-            mainContent.innerHTML = `
-                <div class="${cardBg} backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-xl text-center flex flex-col justify-center min-h-[22rem] max-w-2xl mx-auto border transition-colors">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Question ${currentQuizQuestionIndex + 1} of ${quizQuestions.length}</span>
-                        <span class="text-xs font-bold bg-orange-100 text-orange-700 px-3 py-1 rounded-full">Score: ${quizScore}</span>
-                    </div>
-                    
-                    ${questionPromptHTML}
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative">
-                        ${q.options.map(option => `
-                            <div class="quiz-option-container relative flex items-center justify-between ${optBg} border-2 rounded-2xl shadow-sm transition-all duration-200 cursor-pointer overflow-hidden p-3" data-answer="${option.romaji}">
-                                <div class="flex flex-col items-start text-left flex-grow pl-2 notranslate" translate="no">
-                                    <span class="jp-font font-black ${isDark ? 'text-zinc-100' : 'text-gray-900'} text-lg md:text-xl option-jp leading-tight">${option.japanese}</span>
-                                    <span class="text-orange-500 font-bold text-xs md:text-sm option-romaji mt-0.5">${option.romaji}</span>
-                                </div>
-                                <button type="button" class="play-audio-btn w-10 h-10 rounded-full bg-orange-100/80 hover:bg-orange-200 text-orange-600 flex items-center justify-center flex-shrink-0 shadow-sm transition-transform active:scale-95 focus:outline-none ml-2" data-text="${option.japanese}" aria-label="Listen">
-                                    ${speakerIconSVG}
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-
-            // Auto-play audio if listening question
-            if (q.isListening) {
-                setTimeout(() => {
-                    playAudio(q.correctJapanese, null, null);
-                }, 300);
-
-                const promptBtn = mainContent.querySelector('#quiz-audio-prompt-btn');
-                if (promptBtn) {
-                    promptBtn.addEventListener('click', (e) => {
-                        playAudio(promptBtn.dataset.text, e, promptBtn);
-                    });
-                }
-            }
-
-            mainContent.querySelectorAll('.quiz-option-container').forEach(container => {
-                container.addEventListener('click', handleQuizAnswer);
-            });
-        }
-
-        function triggerQuizConfetti() {
-            if (typeof confetti === 'function') {
-                try {
-                    confetti({
-                        particleCount: 50,
-                        spread: 70,
-                        origin: { y: 0.65 },
-                        colors: ['#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6']
-                    });
-                } catch (e) {
-                    console.warn("Confetti note:", e);
-                }
-            }
-        }
-
-        function showQuizReactionBadge(container, isCorrect) {
-            const badge = document.createElement('div');
-            badge.className = 'absolute inset-0 flex items-center justify-center pointer-events-none z-20';
-            badge.innerHTML = isCorrect ? `
-                <div class="animate-pop-bounce flex items-center space-x-1.5 bg-emerald-600 text-white font-extrabold px-4 py-2 rounded-full shadow-2xl border-2 border-white text-base md:text-lg">
-                    <span class="text-xl">🎉</span>
-                    <span>Correct! ✓</span>
-                </div>
-            ` : `
-                <div class="animate-pop-bounce flex items-center space-x-1.5 bg-rose-600 text-white font-extrabold px-4 py-2 rounded-full shadow-2xl border-2 border-white text-base md:text-lg">
-                    <span class="text-2xl">👎</span>
-                    <span>Incorrect</span>
-                </div>
-            `;
-            container.appendChild(badge);
-        }
-
-        function handleQuizAnswer(e) {
-            const container = e.target.closest('.quiz-option-container');
-            if (!container) return;
-
-            if (e.target.closest('.play-audio-btn')) {
-                const audioBtn = e.target.closest('.play-audio-btn');
-                playAudio(audioBtn.dataset.text, e, audioBtn);
-                return;
-            }
-
-            mainContent.querySelectorAll('.quiz-option-container').forEach(c => c.style.pointerEvents = 'none');
-
-            const selectedAnswer = container.dataset.answer;
-            const currentQ = quizQuestions[currentQuizQuestionIndex];
-            const correctAnswer = currentQ.answer;
-            const isCorrect = selectedAnswer === correctAnswer;
-
-            quizResults.push({
-                question: currentQ.isListening ? `[Audio Question] "${currentQ.correctJapanese}"` : currentQ.question,
-                selectedAnswer: selectedAnswer,
-                correctAnswer: correctAnswer,
-                isCorrect: isCorrect
-            });
-
-            if (isCorrect) {
-                quizScore++;
-                container.classList.remove('bg-gray-50', 'border-gray-200/80', 'bg-zinc-800', 'border-zinc-700');
-                container.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white', 'shadow-lg', 'scale-[1.02]');
-                const jp = container.querySelector('.option-jp');
-                const romaji = container.querySelector('.option-romaji');
-                if (jp) jp.classList.remove('text-gray-900', 'text-zinc-100'), jp.classList.add('text-white');
-                if (romaji) romaji.classList.remove('text-orange-500'), romaji.classList.add('text-emerald-100');
-                const speakerBtn = container.querySelector('.play-audio-btn');
-                if (speakerBtn) speakerBtn.classList.add('text-white', 'bg-white/20');
-
-                triggerQuizConfetti();
-                showQuizReactionBadge(container, true);
-            } else {
-                container.classList.remove('bg-gray-50', 'border-gray-200/80', 'bg-zinc-800', 'border-zinc-700');
-                container.classList.add('bg-rose-500', 'border-rose-600', 'text-white', 'shadow-lg', 'animate-shake');
-                const jp = container.querySelector('.option-jp');
-                const romaji = container.querySelector('.option-romaji');
-                if (jp) jp.classList.remove('text-gray-900', 'text-zinc-100'), jp.classList.add('text-white');
-                if (romaji) romaji.classList.remove('text-orange-500'), romaji.classList.add('text-rose-100');
-                const speakerBtn = container.querySelector('.play-audio-btn');
-                if (speakerBtn) speakerBtn.classList.add('text-white', 'bg-white/20');
-
-                showQuizReactionBadge(container, false);
-
-                mainContent.querySelectorAll('.quiz-option-container').forEach(c => {
-                    if (c.dataset.answer === correctAnswer && c !== container) {
-                        c.classList.remove('border-gray-200/80', 'border-zinc-700');
-                        c.classList.add('border-emerald-500', 'bg-emerald-50/80');
-                        const sJp = c.querySelector('.option-jp');
-                        const sRomaji = c.querySelector('.option-romaji');
-                        if (sJp) sJp.classList.add('text-emerald-900');
-                        if (sRomaji) sRomaji.classList.add('text-emerald-700');
-                    }
-                });
-            }
-
-            setTimeout(() => {
-                currentQuizQuestionIndex++;
-                renderQuizQuestion();
-            }, 1300);
-        }
-
-        function showQuizResults() {
-            const scorePercentage = Math.round((quizScore / quizQuestions.length) * 100);
-            document.getElementById('modal-score').textContent = `${scorePercentage}%`;
-
-            let feedback = "Good effort! Keep practicing Josey & Frankie's phrases.";
-            if (scorePercentage === 100) feedback = "Sugoi! 🌟 Perfect score! You're ready for Japan!";
-            else if (scorePercentage >= 80) feedback = "Brilliant job! You've got the essentials locked down.";
-            else if (scorePercentage >= 60) feedback = "Great work! Review your flashcards and try again.";
-            
-            document.getElementById('modal-feedback').textContent = feedback;
-            showQuizModal();
-        }
-
-        function showAnswersBreakdown() {
-            let breakdownHTML = '<ul class="space-y-2.5">';
-            quizResults.forEach(result => {
-                if (result.isCorrect) {
-                    breakdownHTML += `
-                        <li class="p-2.5 rounded-xl bg-emerald-50 border-l-4 border-emerald-500">
-                            <p class="font-bold text-gray-800">${result.question}</p>
-                            <p class="text-emerald-700 font-semibold">✓ ${result.selectedAnswer}</p>
-                        </li>
-                    `;
-                } else {
-                    breakdownHTML += `
-                        <li class="p-2.5 rounded-xl bg-rose-50 border-l-4 border-rose-500">
-                            <p class="font-bold text-gray-800">${result.question}</p>
-                            <p class="text-rose-600 font-semibold line-through">✗ ${result.selectedAnswer}</p>
-                            <p class="text-emerald-700 font-semibold">✓ Correct: ${result.correctAnswer}</p>
-                        </li>
-                    `;
-                }
-            });
-            breakdownHTML += '</ul>';
-            answersBreakdown.innerHTML = breakdownHTML;
-            answersBreakdown.classList.remove('hidden');
-            seeAnswersBtn.classList.add('hidden');
-        }
-
-        function showQuizModal() {
-            quizModal.classList.remove('hidden');
-            setTimeout(() => {
-                quizModal.classList.remove('opacity-0');
-                modalContainer.classList.remove('scale-95', 'opacity-0');
-                modalContainer.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function hideQuizModal() {
-            modalContainer.classList.remove('scale-100', 'opacity-100');
-            modalContainer.classList.add('scale-95', 'opacity-0');
-            quizModal.classList.add('opacity-0');
-            setTimeout(() => {
-                quizModal.classList.add('hidden');
-                answersBreakdown.classList.add('hidden');
-                seeAnswersBtn.classList.remove('hidden');
-            }, 250);
-        }
-
-        // --- COELIAC SAFETY CHEAT SHEET MODAL ---
-        function showGfSafetyModal() {
-            gfSafetyModal.classList.remove('hidden');
-            setTimeout(() => {
-                gfSafetyModal.classList.remove('opacity-0');
-                gfSafetyModalContainer.classList.remove('scale-95', 'opacity-0');
-                gfSafetyModalContainer.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function hideGfSafetyModal() {
-            gfSafetyModalContainer.classList.remove('scale-100', 'opacity-100');
-            gfSafetyModalContainer.classList.add('scale-95', 'opacity-0');
-            gfSafetyModal.classList.add('opacity-0');
-            setTimeout(() => {
-                gfSafetyModal.classList.add('hidden');
-            }, 250);
-        }
-
-        // --- COELIAC CHEF CARD MODAL & FULLSCREEN ---
-        function showGfChefModal() {
-            gfChefModal.classList.remove('hidden');
-            setTimeout(() => {
-                gfChefModal.classList.remove('opacity-0');
-                gfModalContainer.classList.remove('scale-95', 'opacity-0');
-                gfModalContainer.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function hideGfChefModal() {
-            gfModalContainer.classList.remove('scale-100', 'opacity-100');
-            gfModalContainer.classList.add('scale-95', 'opacity-0');
-            gfChefModal.classList.add('opacity-0');
-            setTimeout(() => {
-                gfChefModal.classList.add('hidden');
-            }, 250);
-        }
-
-        function showFullscreenChefCard() {
-            hideGfChefModal();
-            if (gfChefModal) gfChefModal.classList.add('hidden');
-
-            const appContainer = document.getElementById('app-container');
-            if (appContainer) appContainer.style.display = 'none';
-
-            if (gfFullscreenOverlay) {
-                gfFullscreenOverlay.classList.remove('hidden');
-                if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(() => {});
-                }
-            }
-        }
-
-        function hideFullscreenChefCard() {
-            const appContainer = document.getElementById('app-container');
-            if (appContainer) appContainer.style.display = '';
-
-            if (gfFullscreenOverlay) {
-                gfFullscreenOverlay.classList.add('hidden');
-                if (document.fullscreenElement && document.exitFullscreen) {
-                    document.exitFullscreen().catch(() => {});
-                }
-            }
-        }
-
-        // --- GLOBAL EVENT ATTACHMENTS ---
-        if (izakayaModeBtn) izakayaModeBtn.addEventListener('click', toggleTheme);
-        if (audioSpeedBtn) audioSpeedBtn.addEventListener('click', toggleAudioSpeed);
-        if (audioEngineBtn) audioEngineBtn.addEventListener('click', toggleVoiceEngine);
-        if (headerEmergencyGfBtn) headerEmergencyGfBtn.addEventListener('click', showGfChefModal);
-        if (headerGfSafetyGuideBtn) headerGfSafetyGuideBtn.addEventListener('click', showGfSafetyModal);
-        if (gfFullscreenTriggerBtn) gfFullscreenTriggerBtn.addEventListener('click', showFullscreenChefCard);
-        if (gfFsBackBtn) gfFsBackBtn.addEventListener('click', hideFullscreenChefCard);
-        if (gfFsCardSpeakerBtn) {
-            gfFsCardSpeakerBtn.addEventListener('click', (e) => {
-                playAudio(CHEF_CARD_SPEECH, e, gfFsCardSpeakerBtn);
-            });
-        }
-
-        if (gfModalCloseBtn) gfModalCloseBtn.addEventListener('click', hideGfChefModal);
-        if (gfModalCloseIcon) gfModalCloseIcon.addEventListener('click', hideGfChefModal);
-        if (gfChefModal) {
-            gfChefModal.addEventListener('click', (e) => {
-                if (e.target === gfChefModal) hideGfChefModal();
-            });
-        }
-
-        if (gfSafetyModalCloseBtn) gfSafetyModalCloseBtn.addEventListener('click', hideGfSafetyModal);
-        if (gfSafetyModalCloseIcon) gfSafetyModalCloseIcon.addEventListener('click', hideGfSafetyModal);
-        if (gfSafetyModal) {
-            gfSafetyModal.addEventListener('click', (e) => {
-                if (e.target === gfSafetyModal) hideGfSafetyModal();
-            });
-        }
-        if (gfSafetyOpenCardBtn) {
-            gfSafetyOpenCardBtn.addEventListener('click', () => {
-                hideGfSafetyModal();
-                showGfChefModal();
-            });
-        }
-
-        if (speakChefCardBtn) {
-            speakChefCardBtn.addEventListener('click', (e) => {
-                playAudio(CHEF_CARD_SPEECH, e, speakChefCardBtn);
-            });
-        }
-
-        navLearn.addEventListener('click', showLearnView);
-        navFlashcards.addEventListener('click', showFlashcardsView);
-        navQuiz.addEventListener('click', showQuizView);
-
-        modalCloseBtn.addEventListener('click', () => {
-            hideQuizModal();
-            startQuiz();
-        });
-
-        seeAnswersBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            showAnswersBreakdown();
-        });
-
-        // Hotkeys for accessibility
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (gfFullscreenOverlay && !gfFullscreenOverlay.classList.contains('hidden')) {
-                    hideFullscreenChefCard();
-                } else if (gfChefModal && !gfChefModal.classList.contains('hidden')) {
-                    hideGfChefModal();
-                } else if (gfSafetyModal && !gfSafetyModal.classList.contains('hidden')) {
-                    hideGfSafetyModal();
-                } else if (quizModal && !quizModal.classList.contains('hidden')) {
-                    hideQuizModal();
-                }
-            }
-
-            const flashcard = document.getElementById('flashcard');
-            if (flashcard && !navFlashcards.classList.contains('hidden') && navFlashcards.classList.contains('active')) {
-                if (e.key === ' ' || e.key === 'Enter') {
-                    e.preventDefault();
-                    triggerHapticFeedback();
-                    flashcard.classList.toggle('is-flipped');
-                } else if (e.key === 'ArrowRight') {
-                    currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardItems.length;
-                    renderFlashcard();
-                } else if (e.key === 'ArrowLeft') {
-                    currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardItems.length) % flashcardItems.length;
-                    renderFlashcard();
-                }
-            }
-        });
-
-        // Offline PWA Service Worker Registration via Blob
-        if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-            const swCode = `
-                const CACHE_NAME = 'jf-japan-v1';
-                self.addEventListener('install', e => { self.skipWaiting(); });
-                self.addEventListener('activate', e => { clients.claim(); });
-                self.addEventListener('fetch', e => {
-                    e.respondWith(
-                        caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => cached))
-                    );
-                });
-            `;
-            try {
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-            } catch (e) {}
-        }
-
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', () => {
-            populateVoices();
-            if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
-                window.speechSynthesis.onvoiceschanged = populateVoices;
-            }
-            applyTheme();
-            updateSpeedButtonUI();
-            updateVoiceEngineUI();
-            showLearnView();
-        });
-    </script>
+    <!-- Toast -->
+    <div id="audio-toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900/95 text-white text-xs md:text-sm px-4 py-2 rounded-full shadow-2xl backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 z-[110]" role="status" aria-live="polite">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="vendor/confetti.browser.js" defer></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
