@@ -258,11 +258,11 @@
                         <h3 class="font-extrabold text-emerald-900 text-base md:text-lg">Generally Safer Bets (Specify NO tare / sauce)</h3>
                     </div>
                     <ul class="text-xs md:text-sm text-emerald-950 space-y-1.5 font-medium pl-6 list-disc">
-                        <li><strong>Sashimi (刺身):</strong> Plain raw fish. Safe! (Bring your own wheat-free Tamari; avoid soy sauce on plate).</li>
+                        <li><strong>Sashimi (刺身):</strong> Plain raw fish is usually fine. Skip the table soy sauce and bring your own certified gluten-free soy sauce (many tamari brands still contain wheat).</li>
                         <li><strong>Shio Yakitori (塩焼き鳥):</strong> Skewered chicken grilled with <em>salt only</em> (ask for <em>"Shio dake"</em>, strictly avoid <em>Tare</em> sauce).</li>
                         <li><strong>Edamame (枝豆):</strong> Salt-boiled soybeans. Safe &amp; naturally GF.</li>
                         <li><strong>Plain Onigiri (おにぎり):</strong> Look for plain salted (塩 <em>Shio</em>) or plain salmon (鮭 <em>Sake</em>). Double check for soy sauce seasoning.</li>
-                        <li><strong>Yakiniku (焼肉):</strong> Plain grilled beef/meats seasoned with fresh lemon and salt only.</li>
+                        <li><strong>Shio Yakiniku (塩焼肉):</strong> Yakiniku meat is usually marinated in tare, so ask for unmarinated <em>shio</em> (salt) cuts with lemon, and watch for shared grills.</li>
                     </ul>
                 </div>
 
@@ -278,6 +278,7 @@
                         <li><strong>Ramen, Udon &amp; Soba (ラーメン / うどん / 蕎麦):</strong> Ramen/Udon are pure wheat noodles. Most Soba noodles also blend 20-30% wheat flour unless 100% <em>Juwari</em> (十割). Broths contain wheat soy sauce.</li>
                         <li><strong>Barley Miso &amp; Tea (麦味噌 / 麦茶 Mugi-cha):</strong> Barley contains gluten. Request rice/soy miso or green tea (Sencha/Ryokucha).</li>
                         <li><strong>Japanese Curry (カレー):</strong> Traditional curry roux is thickened with wheat flour.</li>
+                        <li><strong>Beer &amp; Malt (ビール / 麦芽 Bakuga):</strong> Regular beer is brewed from barley malt. Choose sake, shochu (check it isn't barley <em>mugi</em>-shochu), wine or a highball made with gluten-free spirits.</li>
                         <li><strong>Okonomiyaki &amp; Takoyaki:</strong> Wheat flour batter and Worcestershire/katsu sauces containing gluten.</li>
                         <li><strong>Chikuwa &amp; Kamaboko (練り物):</strong> Processed fish cakes usually use wheat starch as a binder.</li>
                     </ul>
@@ -290,11 +291,21 @@
                         <h3 class="font-extrabold text-amber-950 text-base md:text-lg">Konbini / Store Ingredient Kanji Scanner</h3>
                     </div>
                     <p class="text-xs text-amber-900 mb-3 font-semibold">Inspect the allergen table (原材料名 / アレルギー物質) on packaged food for these characters:</p>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-red-300 text-center shadow-xs mb-2">
+                        <span class="jp-font font-black text-xl md:text-2xl text-red-600 block">（一部に小麦を含む）</span>
+                        <span class="text-xs font-bold text-gray-800">Ichibu ni komugi o fukumu</span>
+                        <span class="text-[10px] text-gray-500 block uppercase font-bold">"Contains some wheat": the standard allergen label wording</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
                             <span class="jp-font font-black text-2xl text-red-600 block">小麦</span>
                             <span class="text-xs font-bold text-gray-800">Komugi</span>
                             <span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat</span>
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
+                            <span class="jp-font font-black text-2xl text-red-600 block">小麦粉</span>
+                            <span class="text-xs font-bold text-gray-800">Komugiko</span>
+                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat Flour</span>
                         </div>
                         <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
                             <span class="jp-font font-black text-2xl text-red-600 block">大麦</span>
@@ -305,6 +316,11 @@
                             <span class="jp-font font-black text-2xl text-red-600 block">ライ麦</span>
                             <span class="text-xs font-bold text-gray-800">Raimugi</span>
                             <span class="text-[10px] text-gray-500 block uppercase font-bold">Rye</span>
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
+                            <span class="jp-font font-black text-2xl text-red-600 block">麦芽</span>
+                            <span class="text-xs font-bold text-gray-800">Bakuga</span>
+                            <span class="text-[10px] text-gray-500 block uppercase font-bold">Malt (Barley)</span>
                         </div>
                         <div class="bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-xs">
                             <span class="jp-font font-black text-2xl text-red-600 block">醤油</span>
@@ -368,10 +384,10 @@
                     <p class="text-red-700 font-black">【重要】セリアック病（重度小麦・グルテンアレルギー）があります。</p>
                     <p><ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。</p>
                     <ul class="list-disc pl-5 space-y-1 text-sm md:text-base font-semibold text-gray-800">
-                        <li><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>、たれ、つゆ、麦味噌、だしの素も一切摂取できません。</li>
-                        <li><strong>コンタミネーション：</strong>揚げ油の共用、同じ茹で汁や調理器具の使い回しも避ける必要があります。</li>
+                        <li><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</li>
+                        <li><strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</li>
                     </ul>
-                    <p class="text-sm md:text-base pt-1 text-gray-900">小麦を含まない料理や、塩・素焼きなど調味料なしで提供できるものはありますか？</p>
+                    <p class="text-sm md:text-base pt-1 text-gray-900">小麦を含まない料理、または「塩のみ・素焼き」で提供できるものはありますか？</p>
                 </div>
             </div>
 
@@ -379,7 +395,7 @@
             <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 mb-4 text-left">
                 <p class="text-xs uppercase font-extrabold text-amber-800 tracking-wider mb-1">English Translation</p>
                 <p class="text-xs md:text-sm text-gray-700 leading-relaxed italic">
-                    "[Important] I have Coeliac disease (severe wheat/gluten allergy). I cannot consume any wheat, barley, or rye. This includes seasonings such as regular soy sauce, tare sauce, tsuyu, barley miso, and dashi bouillon powder. Cross-contamination from shared frying oil, boiling water, or shared utensils must also be avoided. Are there dishes without wheat, or can plain grilled/salted dishes be prepared?"
+                    "[Important] I have Coeliac disease (severe wheat/gluten allergy). I cannot consume any wheat, barley, or rye. Seasonings: I also cannot have regular soy sauce, tare, tsuyu, barley miso, or dashi stock powder. Cooking: please avoid shared frying oil, shared boiling water, and shared utensils. Are there dishes without wheat, or anything you can serve with salt only / plain grilled?"
                 </p>
             </div>
 
@@ -428,7 +444,7 @@
                             <span class="text-sm portrait:text-lg sm:portrait:text-2xl font-bold text-red-600">（重度小麦・グルテンアレルギー）</span>
                         </p>
                         <p class="text-base portrait:text-xl sm:portrait:text-3xl text-gray-900 font-extrabold leading-normal portrait:leading-relaxed landscape:text-base sm:landscape:text-xl md:landscape:text-2xl">
-                            <ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>は一切口にできません。
+                            <ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。
                         </p>
                     </div>
 
@@ -436,10 +452,10 @@
                     <div class="space-y-3 portrait:space-y-4 landscape:space-y-2.5 sm:landscape:space-y-3">
                         <div class="bg-red-50/80 border-2 border-red-300 rounded-2xl p-2.5 portrait:p-4 sm:portrait:p-5 space-y-1.5 portrait:space-y-3 shadow-sm text-sm portrait:text-base sm:portrait:text-2xl landscape:text-sm sm:landscape:text-base md:landscape:text-lg">
                             <p class="text-red-700 font-bold">
-                                ❌ <strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も不可です。
+                                ❌ <strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。
                             </p>
                             <p class="text-red-700 font-bold">
-                                ❌ <strong>油・器具：</strong>同じ揚げ油での調理や器具の使い回しも避けてください。
+                                ❌ <strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。
                             </p>
                         </div>
                         <p class="text-base portrait:text-xl sm:portrait:text-3xl font-black text-gray-900 leading-snug portrait:leading-relaxed landscape:text-base sm:landscape:text-lg md:landscape:text-xl">
@@ -470,21 +486,21 @@
         const phrases = [
             // --- GREETINGS & POLITE ESSENTIALS ---
             { id: 1, category: "greetings", english: "Hello / Good day", romaji: "Konnichiwa", japanese: "こんにちは。" },
-            { id: 2, category: "greetings", english: "Good morning", romaji: "Ohayou gozaimasu", japanese: "おはようございます。" },
+            { id: 2, category: "greetings", english: "Good morning", romaji: "Ohayō gozaimasu", japanese: "おはようございます。" },
             { id: 3, category: "greetings", english: "Good evening", romaji: "Konbanwa", japanese: "こんばんは。" },
-            { id: 4, category: "greetings", english: "Thank you", romaji: "Arigatou gozaimasu", japanese: "ありがとうございます。" },
-            { id: 5, category: "greetings", english: "Thank you very much (upon leaving)", romaji: "Arigatou gozaimashita", japanese: "ありがとうございました。" },
+            { id: 4, category: "greetings", english: "Thank you", romaji: "Arigatō gozaimasu", japanese: "ありがとうございます。" },
+            { id: 5, category: "greetings", english: "Thank you very much (upon leaving)", romaji: "Arigatō gozaimashita", japanese: "ありがとうございました。" },
             { id: 6, category: "greetings", english: "Excuse me / Sorry", romaji: "Sumimasen", japanese: "すみません。" },
             { id: 7, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします。" },
             { id: 8, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
             { id: 9, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
-            { id: 10, category: "greetings", english: "Don't worry, it's okay, I'm fine", romaji: "Daijoubu desu", japanese: "大丈夫です。" },
+            { id: 10, category: "greetings", english: "Don't worry, it's okay, I'm fine", romaji: "Daijōbu desu", japanese: "大丈夫です。" },
 
             // --- COELIAC & GLUTEN-FREE ---
             { id: 1001, category: "coeliac", english: "I have a severe wheat and gluten allergy", romaji: "Komugi to guruten no arerugī ga arimasu", japanese: "小麦とグルテンのアレルギーがあります。" },
             { id: 1002, category: "coeliac", english: "I cannot eat wheat, barley, or rye", romaji: "Komugi, ōmugi, raimugi wa taberaremasen", japanese: "小麦、大麦、ライ麦は食べられません。" },
             { id: 1004, category: "coeliac", english: "Does this contain wheat or soy sauce?", romaji: "Kore ni komugi ya shōyu wa haitte imasu ka?", japanese: "これに小麦や醤油は入っていますか？" },
-            { id: 1005, category: "coeliac", english: "Do you have wheat-free tamari soy sauce?", romaji: "Tamari shōyu wa arimasu ka?", japanese: "たまり醤油はありますか？" },
+            { id: 1005, category: "coeliac", english: "Do you have soy sauce made without wheat?", romaji: "Komugi fushiyō no shōyu wa arimasu ka?", japanese: "小麦不使用の醤油はありますか？" },
             { id: 1006, category: "coeliac", english: "Please do not add any sauce or broth", romaji: "Tare ya dashi wa tsukenaide kudasai", japanese: "タレや出汁はつけないでください。" },
             { id: 1007, category: "coeliac", english: "Can you prepare it with just salt?", romaji: "Shio dake de chōri dekimasu ka?", japanese: "塩だけで調理できますか？" },
 
@@ -492,15 +508,15 @@
             { id: 28, category: "dining", english: "Table for two, please", romaji: "Futari desu", japanese: "二人です。" },
             { id: 29, category: "dining", english: "This one, please (pointing to menu)", romaji: "Kore o onegaishimasu", japanese: "これをお願いします。" },
             { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！" },
-            { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Biiru / o-mizu / o-cha kudasai", japanese: "ビール／お水／お茶 ください。" },
+            { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Bīru / o-mizu / o-cha kudasai", japanese: "ビール／お水／お茶 ください。" },
             { id: 13, category: "dining", english: "Let's eat! / Bon appétit", romaji: "Itadakimasu", japanese: "いただきます！" },
             { id: 27, category: "dining", english: "It is delicious!", romaji: "Oishī desu", japanese: "美味しいです！" },
             { id: 17, category: "dining", english: "Can I get the bill, please? (Tip: cross index fingers into an 'X')", romaji: "Okaikei onegaishimasu", japanese: "お会計お願いします。" },
-            { id: 15, category: "dining", english: "Thank you for the meal (after eating)", romaji: "Gochisousama deshita", japanese: "ごちそうさまでした。" },
+            { id: 15, category: "dining", english: "Thank you for the meal (after eating)", romaji: "Gochisōsama deshita", japanese: "ごちそうさまでした。" },
             { id: 30, category: "dining", english: "We'll be back!", romaji: "Mata kimasu!", japanese: "また来ます！" },
 
             // --- ABOUT US & INTRODUCTIONS ---
-            { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョージーです。" },
+            { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョーズィーです。" },
             { id: 19, category: "about", english: "My name is Frankie", romaji: "Watashi no namae wa Furankī desu", japanese: "私の名前はフランキーです。" },
             { id: 20, category: "about", english: "I am from the UK", romaji: "Watashi wa Igirisu kara kimashita", japanese: "私はイギリスから来ました。" },
             { id: 21, category: "about", english: "Do you understand English?", romaji: "Eigo wakarimasu ka?", japanese: "英語分かりますか？" },
@@ -509,28 +525,28 @@
 
             // --- GETTING AROUND & PAYING ---
             { id: 24, category: "travel", english: "Where is the toilet?", romaji: "Toire wa doko desu ka?", japanese: "トイレはどこですか？" },
-            { id: 25, category: "travel", english: "Can I use card?", romaji: "Kaado wa tsukaemasu ka?", japanese: "カードは使えますか？" },
+            { id: 25, category: "travel", english: "Can I use card?", romaji: "Kādo wa tsukaemasu ka?", japanese: "カードは使えますか？" },
             { id: 26, category: "travel", english: "Excuse me, where does this train depart from?", romaji: "Sumimasen, kono densha wa doko kara demasu ka?", japanese: "すみません、この電車はどこから出ますか？" }
         ];
 
         const words = [
             { id: 101, category: "greetings", english: "Hello", romaji: "Konnichiwa", japanese: "こんにちは" },
-            { id: 102, category: "greetings", english: "Good morning", romaji: "Ohayou", japanese: "おはよう" },
+            { id: 102, category: "greetings", english: "Good morning", romaji: "Ohayō", japanese: "おはよう" },
             { id: 103, category: "greetings", english: "Good evening", romaji: "Konbanwa", japanese: "こんばんは" },
-            { id: 104, category: "greetings", english: "Thank you", romaji: "Arigatou", japanese: "ありがとう" },
+            { id: 104, category: "greetings", english: "Thank you", romaji: "Arigatō", japanese: "ありがとう" },
             { id: 127, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします" },
             { id: 105, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
             { id: 106, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
-            { id: 107, category: "greetings", english: "Okay / Fine (polite)", romaji: "Daijoubu desu", japanese: "大丈夫です" },
+            { id: 107, category: "greetings", english: "Okay / Fine (polite)", romaji: "Daijōbu desu", japanese: "大丈夫です" },
             { id: 108, category: "greetings", english: "Excuse me", romaji: "Sumimasen", japanese: "すみません" },
-            { id: 112, category: "dining", english: "Beer", romaji: "Biiru", japanese: "ビール" },
+            { id: 112, category: "dining", english: "Beer", romaji: "Bīru", japanese: "ビール" },
             { id: 113, category: "dining", english: "Water", romaji: "O-mizu", japanese: "お水" },
             { id: 114, category: "dining", english: "Tea", romaji: "Ocha", japanese: "お茶" },
             { id: 115, category: "dining", english: "Please give me", romaji: "Kudasai", japanese: "ください" },
             { id: 116, category: "dining", english: "Bill", romaji: "Okaikei", japanese: "お会計" },
             { id: 117, category: "dining", english: "Cheers!", romaji: "Kanpai!", japanese: "乾杯！" },
             { id: 118, category: "dining", english: "Bon appétit", romaji: "Itadakimasu", japanese: "いただきます" },
-            { id: 126, category: "dining", english: "Delicious", romaji: "Oishii", japanese: "おいしい" },
+            { id: 126, category: "dining", english: "Delicious", romaji: "Oishī", japanese: "おいしい" },
             { id: 128, category: "dining", english: "Two people", romaji: "Futari", japanese: "二人" },
             { id: 129, category: "dining", english: "This one", romaji: "Kore", japanese: "これ" },
             { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語" },
@@ -539,7 +555,7 @@
             { id: 122, category: "travel", english: "Toilet", romaji: "Toire", japanese: "トイレ" },
             { id: 123, category: "travel", english: "Where", romaji: "Doko", japanese: "どこ" },
             { id: 124, category: "travel", english: "Train", romaji: "Densha", japanese: "電車" },
-            { id: 125, category: "travel", english: "Card", romaji: "Kaado", japanese: "カード" }
+            { id: 125, category: "travel", english: "Card", romaji: "Kādo", japanese: "カード" }
         ];
 
         // --- STATE MANAGEMENT ---
@@ -592,7 +608,6 @@
         const gfFullscreenOverlay = document.getElementById('gf-fullscreen-overlay');
         const gfFsBackBtn = document.getElementById('gf-fs-back-btn');
         const gfFsCardSpeakerBtn = document.getElementById('gf-fs-card-speaker-btn');
-        const gfFsJpText = document.getElementById('gf-fs-jp-text');
         const headerEmergencyGfBtn = document.getElementById('header-emergency-gf-btn');
         const headerGfSafetyGuideBtn = document.getElementById('header-gf-safety-guide-btn');
         const gfSafetyModal = document.getElementById('gf-safety-modal');
@@ -746,19 +761,76 @@
             })[0];
         }
 
+        // Plain text for reading the chef card aloud. Scraping the card's innerText
+        // would also read the <rt> furigana, so each grain word was spoken twice.
+        const CHEF_CARD_SPEECH = "重要。セリアック病、重度の小麦・グルテンアレルギーがあります。小麦、大麦、ライ麦を一切摂取できません。普通の醤油、たれ、つゆ、麦味噌、だしの素も摂取できません。揚げ油、茹で汁、調理器具の共用も避けてください。小麦を含まない料理、または塩のみ、素焼きで提供できるものはありますか？";
+
+        // Google's TTS endpoint rejects text much over 200 characters.
+        const MAX_TTS_CHUNK_LENGTH = 180;
+
+        // Bumped on every new playback so stale async work can tell it has been superseded.
+        let playbackToken = 0;
+        let currentTriggerBtn = null;
+
         function sanitizeJapaneseText(text) {
+            // Keep ？ and ！ so voices use question / exclamation intonation.
             return text
                 .replace(/[\/\／]/g, '、')
-                .replace(/[\(\)（）]/g, '')
-                .replace(/[!！?？]/g, '。')
+                .replace(/[\(\)（）【】「」]/g, '')
                 .replace(/\s+/g, ' ')
                 .trim();
         }
 
-        function playSpeechSynthesisFallback(cleanText, triggerBtn) {
+        // Split on sentence ends only, packing sentences into chunks under the TTS limit.
+        function splitIntoTtsChunks(text) {
+            if (text.length <= MAX_TTS_CHUNK_LENGTH) return [text];
+            const sentences = text.match(/[^。？！]+[。？！]?/g) || [text];
+            const chunks = [];
+            let current = '';
+            sentences.forEach(sentence => {
+                if (current && (current + sentence).length > MAX_TTS_CHUNK_LENGTH) {
+                    chunks.push(current);
+                    current = '';
+                }
+                current += sentence;
+            });
+            if (current) chunks.push(current);
+            return chunks.map(s => s.trim()).filter(s => s.length > 0);
+        }
+
+        function stopPlayback() {
+            playbackToken++;
+            if (currentPlayingAudio) {
+                try {
+                    currentPlayingAudio.onended = null;
+                    currentPlayingAudio.onerror = null;
+                    currentPlayingAudio.pause();
+                    currentPlayingAudio.removeAttribute('src');
+                    currentPlayingAudio.load();
+                } catch (e) {}
+                currentPlayingAudio = null;
+            }
+            if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+            }
+            if (currentTriggerBtn) {
+                currentTriggerBtn.classList.remove('speaking-pulse');
+                currentTriggerBtn = null;
+            }
+        }
+
+        function finishPlayback(token) {
+            if (token !== playbackToken) return;
+            if (currentTriggerBtn) currentTriggerBtn.classList.remove('speaking-pulse');
+            currentTriggerBtn = null;
+            currentPlayingAudio = null;
+        }
+
+        function playSpeechSynthesisFallback(cleanText, token) {
+            if (token !== playbackToken) return;
             if (!('speechSynthesis' in window)) {
                 showToast("Audio playback not supported on this device");
-                if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
+                finishPlayback(token);
                 return;
             }
 
@@ -772,43 +844,81 @@
                 const voice = getBestJapaneseVoice();
                 if (voice) utterance.voice = voice;
 
-                const cleanup = () => {
-                    if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
-                };
-
-                utterance.onend = cleanup;
-                utterance.onerror = cleanup;
-                setTimeout(cleanup, 8000);
+                utterance.onend = () => finishPlayback(token);
+                utterance.onerror = () => finishPlayback(token);
 
                 window.speechSynthesis.speak(utterance);
             } catch (err) {
                 console.warn("SpeechSynthesis error:", err);
-                if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
+                finishPlayback(token);
             }
         }
 
-        async function playAudioChunksSequentially(chunks, triggerBtn) {
-            for (let i = 0; i < chunks.length; i++) {
-                const chunk = chunks[i];
-                if (!chunk) continue;
-                await new Promise((resolve) => {
-                    const audio = new Audio();
-                    currentPlayingAudio = audio;
-                    audio.defaultPlaybackRate = speechRate;
+        // Resolves true when the chunk played to the end, false if it failed or was stopped.
+        function playTtsChunk(chunk, token) {
+            return new Promise((resolve) => {
+                if (token !== playbackToken) return resolve(false);
+
+                const audio = new Audio();
+                currentPlayingAudio = audio;
+                audio.defaultPlaybackRate = speechRate;
+                audio.playbackRate = speechRate;
+                audio.addEventListener('loadedmetadata', () => {
                     audio.playbackRate = speechRate;
-                    audio.addEventListener('loadedmetadata', () => {
-                        audio.playbackRate = speechRate;
-                    });
-                    audio.addEventListener('play', () => {
-                        audio.playbackRate = speechRate;
-                    });
-                    audio.onended = () => resolve();
-                    audio.onerror = () => resolve();
-                    audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(chunk)}`;
-                    audio.play().catch(() => resolve());
                 });
+                audio.addEventListener('play', () => {
+                    audio.playbackRate = speechRate;
+                });
+
+                let settled = false;
+                const settle = (ok) => {
+                    if (settled) return;
+                    settled = true;
+                    clearTimeout(loadTimer);
+                    if (!ok) {
+                        // Silence this element so a late load can't play over the fallback voice.
+                        try {
+                            audio.onended = null;
+                            audio.onerror = null;
+                            audio.pause();
+                            audio.removeAttribute('src');
+                            audio.load();
+                        } catch (e) {}
+                    }
+                    resolve(ok);
+                };
+
+                // Slow connections: give up on the network voice if nothing has loaded yet.
+                const loadTimer = setTimeout(() => {
+                    if (audio.readyState === 0) settle(false);
+                }, 2500);
+
+                audio.onended = () => settle(true);
+                audio.onerror = () => settle(false);
+                // pause() fires no ended/error event, so watch for it to avoid hanging.
+                audio.addEventListener('pause', () => {
+                    if (!audio.ended) settle(false);
+                });
+
+                audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(chunk)}`;
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => settle(false));
+                }
+            });
+        }
+
+        async function playStudioAudio(chunks, token) {
+            for (let i = 0; i < chunks.length; i++) {
+                const ok = await playTtsChunk(chunks[i], token);
+                if (token !== playbackToken) return;
+                if (!ok) {
+                    // Hand whatever hasn't been spoken yet to the device voice.
+                    playSpeechSynthesisFallback(chunks.slice(i).join(''), token);
+                    return;
+                }
             }
-            if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
+            finishPlayback(token);
         }
 
         function playAudio(text, event, triggerBtn) {
@@ -822,81 +932,20 @@
 
             showToast(`Speaking: ${cleanText.slice(0, 22)}${cleanText.length > 22 ? '...' : ''} (${speechRate}x)`);
 
-            if (currentPlayingAudio) {
-                try {
-                    currentPlayingAudio.pause();
-                    currentPlayingAudio.currentTime = 0;
-                } catch (e) {}
-            }
-            if ('speechSynthesis' in window) {
-                try { window.speechSynthesis.cancel(); } catch (e) {}
-            }
+            stopPlayback();
+            const token = playbackToken;
 
             if (triggerBtn) {
+                currentTriggerBtn = triggerBtn;
                 triggerBtn.classList.add('speaking-pulse');
             }
 
             if (voiceEngine === 'device' || !navigator.onLine) {
-                playSpeechSynthesisFallback(cleanText, triggerBtn);
+                playSpeechSynthesisFallback(cleanText, token);
                 return;
             }
 
-            try {
-                const chunks = cleanText.length > 70 
-                    ? cleanText.split(/[。、]/).map(s => s.trim()).filter(s => s.length > 0)
-                    : [cleanText];
-
-                if (chunks.length > 1) {
-                    playAudioChunksSequentially(chunks, triggerBtn);
-                    return;
-                }
-
-                const audio = new Audio();
-                audio.defaultPlaybackRate = speechRate;
-                audio.playbackRate = speechRate;
-                audio.addEventListener('loadedmetadata', () => {
-                    audio.playbackRate = speechRate;
-                });
-                audio.addEventListener('play', () => {
-                    audio.playbackRate = speechRate;
-                });
-                currentPlayingAudio = audio;
-
-                let hasFallbackTriggered = false;
-                const triggerFallback = () => {
-                    if (hasFallbackTriggered) return;
-                    hasFallbackTriggered = true;
-                    playSpeechSynthesisFallback(cleanText, triggerBtn);
-                };
-
-                const timeoutTimer = setTimeout(() => {
-                    if (audio.readyState === 0) {
-                        triggerFallback();
-                    }
-                }, 1200);
-
-                audio.onended = () => {
-                    clearTimeout(timeoutTimer);
-                    if (triggerBtn) triggerBtn.classList.remove('speaking-pulse');
-                };
-
-                audio.onerror = () => {
-                    clearTimeout(timeoutTimer);
-                    triggerFallback();
-                };
-
-                audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(cleanText)}`;
-                
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        clearTimeout(timeoutTimer);
-                        triggerFallback();
-                    });
-                }
-            } catch (err) {
-                playSpeechSynthesisFallback(cleanText, triggerBtn);
-            }
+            playStudioAudio(splitIntoTtsChunks(cleanText), token);
         }
 
         // --- FAVORITES SYSTEM ---
@@ -1746,9 +1795,9 @@
         if (headerGfSafetyGuideBtn) headerGfSafetyGuideBtn.addEventListener('click', showGfSafetyModal);
         if (gfFullscreenTriggerBtn) gfFullscreenTriggerBtn.addEventListener('click', showFullscreenChefCard);
         if (gfFsBackBtn) gfFsBackBtn.addEventListener('click', hideFullscreenChefCard);
-        if (gfFsCardSpeakerBtn && gfFsJpText) {
+        if (gfFsCardSpeakerBtn) {
             gfFsCardSpeakerBtn.addEventListener('click', (e) => {
-                playAudio(gfFsJpText.innerText, e, gfFsCardSpeakerBtn);
+                playAudio(CHEF_CARD_SPEECH, e, gfFsCardSpeakerBtn);
             });
         }
 
@@ -1776,8 +1825,7 @@
 
         if (speakChefCardBtn) {
             speakChefCardBtn.addEventListener('click', (e) => {
-                const text = document.getElementById('chef-card-jp-text').innerText;
-                playAudio(text, e, speakChefCardBtn);
+                playAudio(CHEF_CARD_SPEECH, e, speakChefCardBtn);
             });
         }
 
