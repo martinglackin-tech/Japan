@@ -24,6 +24,14 @@
 
     <!-- Built from src/input.css with `npm run build:css` -->
     <link rel="stylesheet" href="styles.css">
+
+    <script>
+        // When an updated service worker takes over a page loaded under an older one,
+        // reload once so the page and its scripts come from the same deploy.
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), { once: true });
+        }
+    </script>
 </head>
 <body class="notranslate" translate="no">
     <!-- Header -->
