@@ -3,64 +3,124 @@
 @tailwind utilities;
 
 @layer base {
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        overflow-x: hidden;
-        min-height: 100vh;
+    /* Colour tokens as "r g b" so Tailwind can add opacity (see tailwind.config.js). */
+    :root,
+    .force-light {
+        --paper: 250 247 242;
+        --surface: 255 255 255;
+        --surface-2: 243 238 230;
+        --ink: 28 25 23;
+        --muted: 107 99 91;
+        --line: 231 224 214;
+        --accent: 183 56 31;
+        --accent-soft: 251 236 230;
+        color-scheme: light;
+    }
+    html.dark {
+        --paper: 23 20 18;
+        --surface: 33 29 26;
+        --surface-2: 44 39 35;
+        --ink: 245 240 232;
+        --muted: 168 160 151;
+        --line: 58 52 47;
+        --accent: 240 120 92;
+        --accent-soft: 64 34 26;
+        color-scheme: dark;
+    }
+    /* Staff-facing cards stay light in Izakaya mode. */
+    html.dark .force-light {
+        color-scheme: light;
+    }
+    .force-light {
+        color: rgb(var(--ink));
+    }
+
+    html {
         -webkit-tap-highlight-color: transparent;
     }
     body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #e0f2f1 0%, #fff3e0 100%);
-        color: #37474F;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transition: background 0.3s ease, color 0.3s ease;
+        @apply bg-paper text-ink font-sans antialiased;
+        min-height: 100vh;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
-    html.dark body {
-        background: radial-gradient(circle at top, #1f1f28 0%, #121215 100%);
-        color: #e4e4e7;
+    rt {
+        font-size: 0.5em;
+        font-weight: 500;
+        letter-spacing: 0;
+        opacity: 0.7;
     }
-    ruby rt {
-        font-size: 0.6em;
-        color: #dc2626;
-        font-weight: 800;
+    :focus-visible {
+        outline: 2px solid rgb(var(--accent));
+        outline-offset: 2px;
+    }
+    summary {
+        cursor: pointer;
+    }
+    summary::-webkit-details-marker {
+        display: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 }
 
 @layer components {
-    .jp-font {
-        font-family: 'Noto Sans JP', sans-serif;
+    .eyebrow {
+        @apply text-[11px] uppercase tracking-[0.14em] font-semibold text-muted;
     }
-    .title-font {
-        font-family: 'Mochiy Pop One', cursive, sans-serif;
+    .panel {
+        @apply bg-surface border border-line rounded-2xl;
     }
-    .toolbar-btn {
-        @apply inline-flex items-center gap-1.5 bg-white/80 py-1.5 px-3 rounded-full font-bold shadow-sm border border-gray-200 transition-all hover:scale-105 active:scale-95 text-gray-700;
-        @apply dark:bg-zinc-800/80 dark:border-zinc-700 dark:text-zinc-200;
+    .icon-btn {
+        @apply inline-flex items-center justify-center w-10 h-10 rounded-full text-ink transition-colors hover:bg-surface-2;
     }
-    .btn-nav {
-        @apply bg-white px-5 py-2.5 md:px-7 md:py-3 rounded-full font-bold text-gray-700 dark:bg-zinc-800 dark:text-zinc-200;
-        transition: all 0.25s ease;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent text-paper font-semibold px-5 py-3 transition hover:opacity-90 active:scale-[0.98];
     }
-    .btn-nav:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-hinomaru text-white font-semibold px-5 py-3 transition hover:opacity-90 active:scale-[0.98];
     }
-    .btn-nav.active {
-        @apply bg-orange-600 text-white;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(234, 88, 12, 0.35);
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface text-ink font-semibold px-5 py-3 transition hover:bg-surface-2 active:scale-[0.98];
+    }
+    .chip {
+        @apply rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm font-medium text-ink whitespace-nowrap transition-colors hover:bg-surface-2;
+    }
+    .chip[aria-pressed="true"] {
+        @apply bg-ink text-paper border-ink hover:bg-ink;
+    }
+    .segmented {
+        @apply flex rounded-full bg-surface-2 p-1 gap-1;
+    }
+    .segmented > button {
+        @apply flex-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted transition-colors whitespace-nowrap;
+    }
+    .segmented > button[aria-pressed="true"] {
+        @apply bg-surface text-ink shadow-sm;
+    }
+    .tab-btn {
+        @apply flex flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium text-muted transition-colors;
+    }
+    .tab-btn[aria-current="page"] {
+        @apply text-accent;
+    }
+    .top-tab {
+        @apply rounded-full px-3.5 py-1.5 text-sm font-medium text-muted transition-colors hover:text-ink;
+    }
+    .top-tab[aria-current="page"] {
+        @apply bg-surface-2 text-ink;
+    }
+    .play-btn {
+        @apply inline-flex items-center justify-center w-11 h-11 rounded-full bg-accent-soft text-accent flex-shrink-0 transition hover:scale-105 active:scale-95;
     }
     .overlay-btn {
-        @apply inline-flex items-center gap-1 px-3 py-1.5 bg-white hover:bg-red-100 text-red-700 active:scale-95 rounded-full shadow-sm border border-red-300 font-bold text-xs sm:text-sm transition-all;
+        @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2 text-sm font-semibold text-ink whitespace-nowrap transition-colors hover:bg-surface-2;
     }
     .kanji-tile {
-        @apply bg-white p-2.5 rounded-xl border border-amber-200 text-center shadow-sm;
+        @apply rounded-xl border border-line bg-surface p-3 text-center;
     }
 }
 
@@ -81,54 +141,24 @@
 .card-back {
     transform: rotateY(180deg);
 }
-.play-audio-btn {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.play-audio-btn:hover {
-    transform: scale(1.08);
-}
-.play-audio-btn:active {
-    transform: scale(0.95);
-}
-.fav-star-btn {
-    cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.fav-star-btn:hover {
-    transform: scale(1.2);
-}
-.fav-star-btn:active {
-    transform: scale(0.9);
-}
 .speaking-pulse {
     animation: pulse-ring 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 @keyframes pulse-ring {
     0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.6);
+        box-shadow: 0 0 0 0 rgb(var(--accent) / 0.5);
     }
     50% {
-        transform: scale(1.06);
-        box-shadow: 0 0 0 10px rgba(234, 88, 12, 0);
+        box-shadow: 0 0 0 8px rgb(var(--accent) / 0);
     }
 }
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
 }
 .animate-shake {
-    animation: shake 0.4s ease-in-out;
-}
-@keyframes pop-bounce {
-    0% { transform: scale(0.6); opacity: 0; }
-    70% { transform: scale(1.12); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-}
-.animate-pop-bounce {
-    animation: pop-bounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: shake 0.35s ease-in-out;
 }
 .no-scrollbar::-webkit-scrollbar {
     display: none;
