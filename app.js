@@ -33,6 +33,11 @@ function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, c => HTML_ESCAPES[c]);
 }
 
+// Turns {漢字|かな} furigana markup into <ruby>; falls back to the plain Japanese.
+function rubyHtml(item) {
+    return escapeHtml(item.ruby || item.japanese).replace(/\{([^|}]+)\|([^}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>');
+}
+
 function shuffle(items) {
     const result = [...items];
     for (let i = result.length - 1; i > 0; i--) {
@@ -57,6 +62,36 @@ function findItem(id) {
     return phrases.find(p => p.id === id) || words.find(w => w.id === id);
 }
 
+// --- ICONS (outline style, 24px grid) ---
+const ICON_PATHS = {
+    book: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25',
+    shield: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z',
+    cards: 'M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122',
+    check: 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+    x: 'M6 18L18 6M6 6l12 12',
+    settings: 'M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75',
+    speaker: 'M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z',
+    star: 'M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z',
+    rotate: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99',
+    search: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z',
+    'chevron-left': 'M15.75 19.5L8.25 12l7.5-7.5',
+    'chevron-right': 'M8.25 4.5l7.5 7.5-7.5 7.5',
+    'chevron-down': 'M19.5 8.25l-7.5 7.5-7.5-7.5',
+    alert: 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z',
+    expand: 'M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15'
+};
+
+function icon(name, classes = 'w-5 h-5', filled = false) {
+    return `<svg xmlns="http://www.w3.org/2000/svg" class="${classes} pointer-events-none" viewBox="0 0 24 24" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="${ICON_PATHS[name]}"/></svg>`;
+}
+
+// Static markup marks icons as <span data-icon="name" class="w-5 h-5">.
+function hydrateIcons(root) {
+    root.querySelectorAll('[data-icon]').forEach(el => {
+        el.outerHTML = icon(el.dataset.icon, el.className || 'w-5 h-5');
+    });
+}
+
 // --- STATE ---
 let searchQuery = "";
 let selectedCategoryFilter = "all";
@@ -79,33 +114,15 @@ let quizRound = 0; // lets a pending "next question" timer notice the quiz was r
 
 // --- DOM ---
 const mainContent = document.getElementById('main-content');
-const navButtons = {
-    learn: document.getElementById('nav-learn'),
-    flashcards: document.getElementById('nav-flashcards'),
-    quiz: document.getElementById('nav-quiz')
-};
-const quizModal = document.getElementById('quiz-modal');
-const seeAnswersBtn = document.getElementById('see-answers-btn');
-const answersBreakdown = document.getElementById('answers-breakdown');
+const navButtons = document.querySelectorAll('[data-nav]');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsPanel = document.getElementById('settings-panel');
 const audioToast = document.getElementById('audio-toast');
 const toastMessage = document.getElementById('toast-message');
-const gfChefModal = document.getElementById('gf-chef-modal');
-const gfSafetyModal = document.getElementById('gf-safety-modal');
 const gfFullscreenOverlay = document.getElementById('gf-fullscreen-overlay');
 const phraseOverlay = document.getElementById('phrase-overlay');
 const phraseOverlaySpeakerBtn = document.getElementById('phrase-overlay-speaker-btn');
-const speakChefCardBtn = document.getElementById('speak-chef-card-btn');
 const gfFsCardSpeakerBtn = document.getElementById('gf-fs-card-speaker-btn');
-
-const speakerIconSVG = `
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-    </svg>`;
-
-const expandIconSVG = `
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
-    </svg>`;
 
 function showToast(msg, duration = 1800) {
     toastMessage.textContent = msg;
@@ -118,47 +135,39 @@ function showToast(msg, duration = 1800) {
     }, duration);
 }
 
-// --- THEME / IZAKAYA MODE ---
+// --- SETTINGS (theme, voice, speed) ---
 function applyTheme() {
     const isDark = currentTheme === 'izakaya';
     document.documentElement.classList.toggle('dark', isDark);
-    document.getElementById('izakaya-mode-icon').textContent = isDark ? '☀️' : '🏮';
-    document.getElementById('izakaya-mode-label').textContent = isDark ? 'Day Mode' : 'Izakaya Mode';
-    document.getElementById('meta-theme-color').setAttribute('content', isDark ? '#141416' : '#ea580c');
+    document.getElementById('meta-theme-color').setAttribute('content', isDark ? '#171412' : '#faf7f2');
 }
 
-function toggleTheme() {
-    currentTheme = currentTheme === 'izakaya' ? 'day' : 'izakaya';
-    store('jf_japan_theme', currentTheme);
-    applyTheme();
-    showToast(currentTheme === 'izakaya' ? '🏮 Izakaya Low-Light Mode Enabled' : '☀️ Day Mode Enabled');
+function updateSettingsUI() {
+    const current = { theme: currentTheme, voice: voiceEngine, speed: String(speechRate) };
+    settingsPanel.querySelectorAll('[data-setting]').forEach(btn => {
+        btn.setAttribute('aria-pressed', String(current[btn.dataset.setting] === btn.dataset.value));
+    });
 }
 
-// --- AUDIO SETTINGS ---
-function updateSpeedButtonUI() {
-    const slow = speechRate <= 0.75;
-    document.getElementById('audio-speed-icon').textContent = slow ? '🐢' : '⚡';
-    document.getElementById('audio-speed-label').textContent = slow ? '0.75x' : '1.0x';
+function changeSetting(setting, value) {
+    if (setting === 'theme') {
+        currentTheme = value;
+        store('jf_japan_theme', currentTheme);
+        applyTheme();
+    } else if (setting === 'voice') {
+        voiceEngine = value;
+        store('jf_japan_voice_engine', voiceEngine);
+    } else if (setting === 'speed') {
+        speechRate = parseFloat(value);
+        store('jf_japan_speech_rate', String(speechRate));
+    }
+    updateSettingsUI();
 }
 
-function toggleAudioSpeed() {
-    speechRate = speechRate === 1.0 ? 0.75 : 1.0;
-    store('jf_japan_speech_rate', String(speechRate));
-    updateSpeedButtonUI();
-    showToast(`Audio speed: ${speechRate}x ${speechRate < 1 ? '(Slow & Clear)' : '(Normal)'}`);
-}
-
-function updateVoiceEngineUI() {
-    const device = voiceEngine === 'device';
-    document.getElementById('audio-engine-icon').textContent = device ? '📱' : '✨';
-    document.getElementById('audio-engine-label').textContent = device ? 'Device' : 'Studio';
-}
-
-function toggleVoiceEngine() {
-    voiceEngine = voiceEngine === 'studio' ? 'device' : 'studio';
-    store('jf_japan_voice_engine', voiceEngine);
-    updateVoiceEngineUI();
-    showToast(voiceEngine === 'device' ? "Switched to this device's voice" : "Switched to the natural voice");
+function toggleSettings(open = settingsPanel.classList.contains('hidden')) {
+    settingsPanel.classList.toggle('hidden', !open);
+    settingsBtn.setAttribute('aria-expanded', String(open));
+    if (open) settingsPanel.querySelector('[aria-pressed="true"]').focus();
 }
 
 // --- VOICES ---
@@ -436,43 +445,12 @@ function playAudio(text, triggerBtn) {
     speak(cleanText, token);
 }
 
-// --- MODALS ---
-let focusBeforeModal = null;
-
-function showModal(modal) {
-    focusBeforeModal = document.activeElement;
-    const box = modal.querySelector('.modal-box');
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        box.classList.remove('scale-95', 'opacity-0');
-        box.focus();
-    }, 10);
-}
-
-function hideModal(modal) {
-    if (modal.classList.contains('hidden')) return;
-    const box = modal.querySelector('.modal-box');
-    box.classList.add('scale-95', 'opacity-0');
-    setTimeout(() => modal.classList.add('hidden'), 200);
-    if (focusBeforeModal && document.contains(focusBeforeModal)) focusBeforeModal.focus();
-}
-
-function closeModal(modal) {
-    hideModal(modal);
-    if (modal === quizModal) {
-        answersBreakdown.classList.add('hidden');
-        seeAnswersBtn.classList.remove('hidden');
-        startQuiz();
-    }
-}
-
-function isOpen(el) {
-    return !el.classList.contains('hidden');
-}
 
 // --- FULL SCREEN OVERLAYS (chef card and single phrases) ---
 let activeOverlay = null;
+let focusBeforeOverlay = null;
 let wakeLock = null;
+const backgroundRegions = document.querySelectorAll('body > header, body > main, body > nav');
 
 // Keep the screen on while staff are reading.
 async function requestWakeLock() {
@@ -491,10 +469,15 @@ function releaseWakeLock() {
 
 function openOverlay(overlay) {
     if (activeOverlay) closeOverlay();
+    toggleSettings(false);
+    focusBeforeOverlay = document.activeElement;
     activeOverlay = overlay;
     overlay.classList.remove('hidden');
     overlay.classList.add('flex');
+    // Keep keyboard and screen reader focus inside the overlay.
+    backgroundRegions.forEach(el => { el.inert = true; });
     document.body.style.overflow = 'hidden';
+    overlay.querySelector('[data-overlay-close]').focus();
     if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
     }
@@ -508,12 +491,14 @@ function closeOverlay() {
     overlay.classList.add('hidden');
     overlay.classList.remove('flex');
     overlay.querySelector('[data-overlay-content]').classList.remove('rotate-180');
+    backgroundRegions.forEach(el => { el.inert = false; });
     document.body.style.overflow = '';
     if (document.fullscreenElement && document.exitFullscreen) {
         document.exitFullscreen().catch(() => {});
     }
     releaseWakeLock();
     stopPlayback();
+    if (focusBeforeOverlay && document.contains(focusBeforeOverlay)) focusBeforeOverlay.focus();
 }
 
 // Longer phrases get smaller type so they still fit on one screen.
@@ -524,6 +509,7 @@ const PHRASE_SIZE_CLASSES = [
     { maxLength: Infinity, classes: ['text-3xl', 'sm:text-5xl'] }
 ];
 
+// Staff read kanji, so the full screen view leaves out furigana.
 function showPhraseFullscreen(item) {
     const jp = document.getElementById('phrase-overlay-jp');
     PHRASE_SIZE_CLASSES.forEach(size => jp.classList.remove(...size.classes));
@@ -536,25 +522,70 @@ function showPhraseFullscreen(item) {
 }
 
 function showFullscreenChefCard() {
-    hideModal(gfChefModal);
     openOverlay(gfFullscreenOverlay);
 }
 
 // --- NAVIGATION ---
-let currentView = 'learn';
+let currentView = 'phrases';
+
+const views = {
+    phrases: () => showPhrasesView(),
+    coeliac: () => showCoeliacView(),
+    flashcards: () => showFlashcardsView(),
+    quiz: () => showQuizView()
+};
 
 function setView(view) {
     currentView = view;
-    Object.entries(navButtons).forEach(([key, btn]) => {
-        btn.classList.toggle('active', key === view);
-        btn.setAttribute('aria-current', key === view ? 'page' : 'false');
+    navButtons.forEach(btn => {
+        if (btn.dataset.nav === view) btn.setAttribute('aria-current', 'page');
+        else btn.removeAttribute('aria-current');
     });
 }
 
-// --- LEARN VIEW ---
-const filterPillBase = 'px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all shadow-sm whitespace-nowrap';
-const filterPillIdle = 'bg-white/90 text-gray-700 dark:bg-zinc-800 dark:text-zinc-300';
+function goTo(view) {
+    stopPlayback();
+    views[view]();
+    window.scrollTo({ top: 0 });
+}
 
+// --- SHARED PHRASE LIST ---
+function renderPhraseRow(phrase) {
+    const isStarred = savedPhraseIds.includes(phrase.id);
+    const english = escapeHtml(phrase.english);
+    return `
+        <li class="flex items-center gap-1 pl-4 pr-2 py-3">
+            <button type="button" class="flex-1 min-w-0 text-left rounded-lg" data-action="show-phrase" data-id="${phrase.id}">
+                <span class="sr-only">Show full screen: </span>
+                <span class="block text-[15px] font-medium leading-snug">${english}</span>
+                <span lang="ja" class="block font-jp text-[22px] leading-[1.85] mt-1">${rubyHtml(phrase)}</span>
+                <span class="block text-sm text-accent">${escapeHtml(phrase.romaji)}</span>
+            </button>
+            <button type="button" class="icon-btn ${isStarred ? 'text-amber-600 dark:text-amber-400' : 'text-muted'}" data-action="fav" data-id="${phrase.id}" aria-pressed="${isStarred}" aria-label="Save “${english}”">
+                ${icon('star', 'w-5 h-5', isStarred)}
+            </button>
+            <button type="button" class="play-btn" data-action="play" data-text="${escapeHtml(phrase.japanese)}" aria-label="Listen to “${english}”">
+                ${icon('speaker')}
+            </button>
+        </li>
+    `;
+}
+
+function toggleFavorite(phraseId) {
+    const index = savedPhraseIds.indexOf(phraseId);
+    if (index > -1) {
+        savedPhraseIds.splice(index, 1);
+        showToast("Removed from saved");
+    } else {
+        savedPhraseIds.push(phraseId);
+        showToast("Saved");
+    }
+    store('jf_japan_favorites', savedPhraseIds);
+    if (currentView === 'phrases') renderPhraseResults();
+    else if (currentView === 'coeliac') renderCoeliacPhrases();
+}
+
+// --- PHRASES VIEW ---
 function filteredPhrases() {
     const q = normalizeForSearch(searchQuery);
     return phrases.filter(p => {
@@ -570,111 +601,75 @@ function filteredPhrases() {
     });
 }
 
-function showLearnView() {
-    setView('learn');
+function showPhrasesView() {
+    setView('phrases');
     mainContent.innerHTML = `
-        <div class="w-full mb-4 relative flex items-center">
+        <h1 class="sr-only">Phrases</h1>
+        <div class="relative">
             <label for="phrase-search-input" class="sr-only">Search phrases</label>
-            <span class="absolute left-4 text-gray-400 text-lg" aria-hidden="true">🔍</span>
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted">${icon('search')}</span>
             <input
                 type="search"
                 id="phrase-search-input"
                 value="${escapeHtml(searchQuery)}"
-                placeholder="Search English, romaji or Japanese…"
+                placeholder="Search in English, romaji or Japanese"
                 autocomplete="off"
-                class="w-full pl-11 pr-4 py-3 rounded-2xl border shadow-sm text-base font-medium transition-all focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white border-gray-200 text-gray-800 placeholder-gray-400 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-400"
+                class="w-full rounded-xl border border-line bg-surface pl-11 pr-4 py-3 text-base placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50"
             />
         </div>
-        <div id="learn-results" class="w-full"></div>
+        <div id="phrase-results"></div>
     `;
 
     // Only the results are re-rendered, so the input (and any IME composition in it) survives.
     const searchInput = document.getElementById('phrase-search-input');
     const onSearch = () => {
         searchQuery = searchInput.value;
-        renderLearnResults();
+        renderPhraseResults();
     };
     searchInput.addEventListener('input', (e) => {
         if (!e.isComposing) onSearch();
     });
     searchInput.addEventListener('compositionend', onSearch);
 
-    renderLearnResults();
+    renderPhraseResults();
 }
 
-function renderFilterPills() {
-    const pills = [
-        { key: 'all', label: `✨ All (${phrases.length})`, active: 'bg-orange-600 text-white shadow-orange-300' },
-        { key: 'saved', label: `⭐ Saved (${savedPhraseIds.length})`, active: 'bg-amber-500 text-white shadow-amber-300' },
-        ...categoryOrder.map(key => ({
-            key,
-            label: `${categories[key].icon} ${categories[key].short}`,
-            active: 'bg-orange-600 text-white shadow-orange-300'
-        }))
+function renderFilterChips() {
+    const chips = [
+        { key: 'all', label: 'All' },
+        { key: 'saved', label: `Saved${savedPhraseIds.length ? ` · ${savedPhraseIds.length}` : ''}` },
+        ...categoryOrder.map(key => ({ key, label: categories[key].short }))
     ];
     return `
-        <div class="w-full overflow-x-auto pb-2 mb-6 no-scrollbar">
-            <div class="flex items-center space-x-2 w-max min-w-full justify-start md:justify-center px-1">
-                ${pills.map(pill => `
-                    <button type="button" class="${filterPillBase} ${selectedCategoryFilter === pill.key ? pill.active : filterPillIdle}" data-action="filter" data-category="${pill.key}" aria-pressed="${selectedCategoryFilter === pill.key}">
-                        ${escapeHtml(pill.label)}
-                    </button>
+        <div class="-mx-4 mt-4 overflow-x-auto no-scrollbar">
+            <div class="flex gap-2 w-max px-4" role="group" aria-label="Filter by category">
+                ${chips.map(chip => `
+                    <button type="button" class="chip" data-action="filter" data-category="${chip.key}" aria-pressed="${selectedCategoryFilter === chip.key}">${escapeHtml(chip.label)}</button>
                 `).join('')}
             </div>
         </div>
     `;
 }
 
-function renderPhraseCard(phrase) {
-    const isStarred = savedPhraseIds.includes(phrase.id);
-    const english = escapeHtml(phrase.english);
-    return `
-        <div class="bg-white/95 border-white/80 dark:bg-zinc-900 dark:border-zinc-800 backdrop-blur-sm p-4 md:p-5 rounded-2xl shadow-sm hover:shadow-md flex items-center justify-between gap-2 transition-shadow duration-200 border h-full cursor-pointer" data-action="show-phrase" data-id="${phrase.id}">
-            <div class="flex-grow min-w-0">
-                <div class="flex items-start gap-2">
-                    <button type="button" class="fav-star-btn text-lg leading-none ${isStarred ? 'text-amber-400' : 'text-gray-400 hover:text-amber-400 dark:text-zinc-500'}" data-action="fav" data-id="${phrase.id}" aria-pressed="${isStarred}" aria-label="${isStarred ? 'Remove' : 'Save'} “${english}”">
-                        ${isStarred ? '★' : '☆'}
-                    </button>
-                    <p class="font-bold text-base md:text-lg leading-snug text-gray-900 dark:text-zinc-100">${english}</p>
-                </div>
-                <p class="text-orange-700 dark:text-orange-400 font-medium text-sm md:text-base mt-0.5 pl-7">${escapeHtml(phrase.romaji)}</p>
-                <p lang="ja" class="jp-font text-gray-900 dark:text-zinc-100 text-xl md:text-2xl font-bold tracking-wide mt-2 pl-7">${escapeHtml(phrase.japanese)}</p>
-            </div>
-            <div class="flex flex-col items-center gap-2 flex-shrink-0">
-                <button type="button" class="play-audio-btn p-3 rounded-full border shadow-sm bg-orange-50 hover:bg-orange-100 text-orange-600 border-orange-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-orange-400 dark:border-zinc-700" data-action="play" data-text="${escapeHtml(phrase.japanese)}" aria-label="Listen to “${english}”">
-                    ${speakerIconSVG}
-                </button>
-                <button type="button" class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800" data-action="show-phrase" data-id="${phrase.id}" aria-label="Show “${english}” full screen">
-                    ${expandIconSVG}
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-function renderLearnResults() {
-    const results = document.getElementById('learn-results');
+function renderPhraseResults() {
+    const results = document.getElementById('phrase-results');
     if (!results) return;
     const matches = filteredPhrases();
 
     let content = `
-        <div class="w-full mb-3 flex items-center justify-between px-1">
-            <p class="text-xs md:text-sm font-semibold text-gray-600 dark:text-zinc-400">Tap 🔊 to hear • Tap a card to show staff • ⭐ to save</p>
-            <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full shadow-sm whitespace-nowrap">${matches.length} ${matches.length === 1 ? 'Phrase' : 'Phrases'}</span>
-        </div>
-        ${renderFilterPills()}
+        ${renderFilterChips()}
+        <p class="mt-4 text-sm text-muted" aria-live="polite">${matches.length} ${matches.length === 1 ? 'phrase' : 'phrases'} · tap one to show it full screen</p>
     `;
 
     if (matches.length === 0) {
         const saved = selectedCategoryFilter === 'saved' && !searchQuery.trim();
         content += `
-            <div class="text-center py-12 px-4 rounded-3xl bg-white/95 border-white/80 dark:bg-zinc-900 dark:border-zinc-800 border shadow-sm">
-                <span class="text-4xl block mb-2" aria-hidden="true">${saved ? '⭐' : '🔎'}</span>
-                <h3 class="text-lg font-bold mb-1">${saved ? 'No Saved Phrases Yet' : 'No Matching Phrases'}</h3>
-                <p class="text-xs md:text-sm text-gray-500 dark:text-zinc-400 max-w-sm mx-auto">
+            <div class="panel mt-4 px-6 py-12 text-center">
+                <p class="font-display text-lg font-bold">${saved ? 'Nothing saved yet' : 'No matching phrases'}</p>
+                <p class="mt-1 text-sm text-muted max-w-xs mx-auto">
                     ${saved
-                        ? 'Tap the star icon (☆) on any phrase card to pin your daily essentials right here for instant access!'
-                        : 'Try searching for words like "bill", "two", "soy sauce", "mizu", or "すみません".'}
+                        ? 'Tap the star on any phrase to keep it here for quick access.'
+                        : 'Try "bill", "two", "soy sauce", "mizu" or "すみません".'}
                 </p>
             </div>
         `;
@@ -688,63 +683,37 @@ function renderLearnResults() {
         if (catPhrases.length === 0) return;
 
         content += `
-            <section class="w-full mb-8">
-                <div class="flex items-center justify-between mb-4 px-2 border-b border-teal-200/60 dark:border-zinc-800 pb-2">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-2xl" aria-hidden="true">${cat.icon}</span>
-                        <div>
-                            <h3 class="font-bold text-lg md:text-xl text-gray-900 dark:text-zinc-100">${escapeHtml(cat.name)}</h3>
-                            <p lang="ja" class="text-xs font-semibold text-teal-800/80 dark:text-amber-400 jp-font">${cat.jp}</p>
-                        </div>
-                    </div>
-                    <span class="text-xs bg-white/90 text-gray-600 dark:bg-zinc-800 dark:text-zinc-300 font-semibold px-2.5 py-1 rounded-full shadow-sm">${catPhrases.length}</span>
+            <section class="mt-7">
+                <div class="flex items-baseline justify-between gap-3 mb-2 px-1">
+                    <h2 class="font-display text-lg font-bold">${escapeHtml(cat.name)}</h2>
+                    <span lang="ja" class="font-jp text-xs text-muted whitespace-nowrap">${cat.jp}</span>
                 </div>
+                ${catKey === 'coeliac' ? `
+                    <button type="button" data-action="go" data-view="coeliac" class="w-full mb-2 flex items-center justify-between gap-3 rounded-xl bg-accent-soft px-4 py-3 text-left text-sm font-medium text-accent">
+                        <span>Chef card, food guide and label kanji are in the Coeliac tab</span>
+                        ${icon('chevron-right', 'w-4 h-4 flex-shrink-0')}
+                    </button>
+                ` : ''}
+                <ul class="panel divide-y divide-line overflow-hidden">${catPhrases.map(renderPhraseRow).join('')}</ul>
+            </section>
         `;
-
-        if (catKey === "coeliac") {
-            content += `
-                <div class="mb-4 w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button type="button" data-action="open-chef" class="bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white p-3.5 md:p-4 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.01] border border-red-300 text-left">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-2xl bg-white/20 p-2 rounded-xl backdrop-blur-sm flex-shrink-0" aria-hidden="true">⚠️</span>
-                            <div>
-                                <p class="font-extrabold text-sm md:text-base leading-tight">Show Staff (Coeliac Card)</p>
-                                <p class="text-[11px] text-red-100 font-medium mt-0.5">Fullscreen Japanese Chef Allergy Notice</p>
-                            </div>
-                        </div>
-                        <span class="text-lg font-bold ml-2" aria-hidden="true">➜</span>
-                    </button>
-                    <button type="button" data-action="open-guide" class="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white p-3.5 md:p-4 rounded-2xl shadow-md hover:shadow-xl flex items-center justify-between transition-all duration-200 hover:scale-[1.01] border border-amber-300 text-left">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-2xl bg-white/20 p-2 rounded-xl backdrop-blur-sm flex-shrink-0" aria-hidden="true">🔍</span>
-                            <div>
-                                <p class="font-extrabold text-sm md:text-base leading-tight">Food Safety Cheat Sheet</p>
-                                <p class="text-[11px] text-amber-100 font-medium mt-0.5">Safe vs Danger Foods + Kanji Scanner</p>
-                            </div>
-                        </div>
-                        <span class="text-lg font-bold ml-2" aria-hidden="true">➜</span>
-                    </button>
-                </div>
-            `;
-        }
-
-        content += `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-4 w-full">${catPhrases.map(renderPhraseCard).join('')}</div></section>`;
     });
 
     results.innerHTML = content;
 }
 
-function toggleFavorite(phraseId) {
-    const index = savedPhraseIds.indexOf(phraseId);
-    if (index > -1) {
-        savedPhraseIds.splice(index, 1);
-        showToast("Removed from Saved ⭐");
-    } else {
-        savedPhraseIds.push(phraseId);
-        showToast("Saved to Quick-Access ⭐");
-    }
-    store('jf_japan_favorites', savedPhraseIds);
-    renderLearnResults();
+// --- COELIAC VIEW ---
+function showCoeliacView() {
+    setView('coeliac');
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('coeliac-template').content.cloneNode(true));
+    hydrateIcons(mainContent);
+    renderCoeliacPhrases();
+}
+
+function renderCoeliacPhrases() {
+    const list = document.getElementById('coeliac-phrases');
+    if (list) list.innerHTML = phrases.filter(p => p.category === 'coeliac').map(renderPhraseRow).join('');
 }
 
 // --- FLASHCARDS ---
@@ -792,17 +761,13 @@ function moveFlashcard(step) {
 }
 
 function renderFlashcard() {
-    const cardFront = 'bg-white border-teal-50 text-gray-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100';
-
     if (flashcardItems.length === 0) {
         mainContent.innerHTML = `
-            <div class="text-center p-8 ${cardFront} border rounded-3xl max-w-md mx-auto shadow-md">
-                <span class="text-5xl block mb-3" aria-hidden="true">🎉</span>
-                <h3 class="text-xl font-black mb-2 text-emerald-600">Deck Complete!</h3>
-                <p class="text-sm text-gray-500 dark:text-zinc-400 mb-6">Sugoi! You've mastered all ${masteredIds.size} cards.</p>
-                <button type="button" data-action="fc-reset" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-full shadow-md transition-all">
-                    Reset Progress &amp; Shuffle
-                </button>
+            <div class="panel max-w-md mx-auto mt-6 px-6 py-12 text-center">
+                <p class="eyebrow">Deck complete</p>
+                <p class="font-display text-2xl font-bold mt-2">You've mastered all ${masteredIds.size} cards</p>
+                <p class="text-muted mt-2">Sugoi! Reset to practise them again.</p>
+                <button type="button" data-action="fc-reset" class="btn-primary mt-6">Reset and shuffle</button>
             </div>
         `;
         return;
@@ -815,115 +780,96 @@ function renderFlashcard() {
     const item = flashcardItems[currentFlashcardIndex];
     const english = escapeHtml(item.english);
     const romaji = escapeHtml(item.romaji);
-    const japanese = escapeHtml(item.japanese);
+    const total = flashcardItems.length + masteredIds.size;
+    const progress = Math.round((masteredIds.size / total) * 100);
 
     const modes = [
-        { key: 'en_to_jp', label: 'EN ➜ JP (Recall)' },
-        { key: 'jp_to_en', label: 'JP ➜ EN (Reading)' },
-        { key: 'audio_listen', label: '🎧 Audio ➜ Reveal' }
+        { key: 'en_to_jp', label: 'English → 日本語' },
+        { key: 'jp_to_en', label: '日本語 → English' },
+        { key: 'audio_listen', label: 'Listening' }
     ];
-    const modeSelectorHTML = `
-        <div class="w-full mb-4 overflow-x-auto no-scrollbar">
-            <div class="flex items-center space-x-1 sm:space-x-2 w-max min-w-full justify-start sm:justify-center px-1">
-            ${modes.map(mode => `
-                <button type="button" class="text-xs font-bold px-3 py-1.5 rounded-full transition-all whitespace-nowrap ${flashcardStudyMode === mode.key ? 'bg-orange-600 text-white' : 'bg-white text-gray-700 shadow-sm dark:bg-zinc-800 dark:text-zinc-300'}" data-action="fc-mode" data-mode="${mode.key}" aria-pressed="${flashcardStudyMode === mode.key}">
-                    ${mode.label}
-                </button>
-            `).join('')}
-            </div>
-        </div>
-    `;
 
-    const playButton = (size) => `
-        <button type="button" class="play-audio-btn ${size} bg-white text-orange-600 hover:text-orange-700 rounded-full shadow-lg" data-action="play" data-text="${japanese}" aria-label="Pronounce">
-            ${speakerIconSVG}
+    const backPlayButton = `
+        <button type="button" class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-paper/15 text-paper hover:bg-paper/25 transition" data-action="play" data-text="${escapeHtml(item.japanese)}" aria-label="Play pronunciation">
+            ${icon('speaker')}
         </button>
     `;
-    const frontLabel = (text, margin) => `<span class="text-xs uppercase font-extrabold tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full ${margin}">${text}</span>`;
-    const backLabel = (text, margin) => `<span class="text-xs uppercase font-bold tracking-widest text-orange-100 bg-black/25 px-3 py-1 rounded-full ${margin}">${text}</span>`;
 
-    let frontHTML = '';
-    let backHTML = '';
-
+    let frontHTML;
+    let backHTML;
     if (flashcardStudyMode === 'en_to_jp') {
         frontHTML = `
-            ${frontLabel('English', 'mb-3')}
-            <h2 class="text-2xl md:text-3xl font-extrabold leading-snug">${english}</h2>
-            <span class="text-xs text-orange-700 dark:text-orange-400 font-bold mt-6 tracking-wide">Tap or press Space to reveal Japanese &rarr;</span>
+            <p class="eyebrow">English</p>
+            <h2 class="font-display text-3xl font-bold leading-snug mt-3">${english}</h2>
         `;
         backHTML = `
-            ${backLabel('日本語 (Japanese)', 'mb-2')}
-            <p class="text-xl md:text-2xl font-bold tracking-wide text-orange-100 mb-2">${romaji}</p>
-            <p lang="ja" class="jp-font text-3xl md:text-4xl font-black mb-3 drop-shadow-sm">${japanese}</p>
-            ${playButton('p-3')}
+            <p lang="ja" class="font-jp text-4xl leading-[1.7] font-medium">${rubyHtml(item)}</p>
+            <p class="text-paper/75 mt-1">${romaji}</p>
+            <div class="mt-4">${backPlayButton}</div>
         `;
     } else if (flashcardStudyMode === 'jp_to_en') {
         frontHTML = `
-            ${frontLabel('日本語 (Read)', 'mb-3')}
-            <p lang="ja" class="jp-font text-3xl md:text-4xl font-black mb-2">${japanese}</p>
-            <p class="text-base md:text-lg font-bold text-orange-700 dark:text-orange-400">${romaji}</p>
-            <span class="text-xs text-orange-700 dark:text-orange-400 font-bold mt-5 tracking-wide">Tap to reveal English meaning &rarr;</span>
+            <p class="eyebrow">Japanese</p>
+            <p lang="ja" class="font-jp text-4xl leading-[1.7] font-medium mt-3">${rubyHtml(item)}</p>
+            <p class="text-accent mt-1">${romaji}</p>
         `;
         backHTML = `
-            ${backLabel('English Translation', 'mb-3')}
-            <h2 class="text-2xl md:text-3xl font-black text-white leading-snug mb-4">${english}</h2>
-            ${playButton('p-3')}
+            <h2 class="font-display text-3xl font-bold leading-snug">${english}</h2>
+            <div class="mt-4">${backPlayButton}</div>
         `;
     } else {
         frontHTML = `
-            ${frontLabel('Listening Challenge', 'mb-4')}
-            <button type="button" class="play-audio-btn p-5 bg-orange-600 text-white hover:bg-orange-700 rounded-full shadow-xl mb-3" data-action="play" data-text="${japanese}" aria-label="Play the phrase">
-                ${speakerIconSVG}
+            <p class="eyebrow">Listen</p>
+            <button type="button" class="mt-4 inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent text-paper shadow-lg transition hover:scale-105 active:scale-95" data-action="play" data-text="${escapeHtml(item.japanese)}" aria-label="Play the phrase">
+                ${icon('speaker', 'w-8 h-8')}
             </button>
-            <span class="text-xs text-gray-500 dark:text-zinc-400 font-bold mt-3">Listen, test your memory, then tap to reveal</span>
+            <p class="text-muted mt-4">Listen, then flip to check</p>
         `;
         backHTML = `
-            ${backLabel('Answer', 'mb-2')}
-            <h2 class="text-xl md:text-2xl font-black text-white leading-snug mb-1">${english}</h2>
-            <p class="text-base text-orange-200 font-bold mb-1">${romaji}</p>
-            <p lang="ja" class="jp-font text-2xl md:text-3xl font-black mb-3">${japanese}</p>
-            ${playButton('p-2.5')}
+            <h2 class="font-display text-2xl font-bold leading-snug">${english}</h2>
+            <p lang="ja" class="font-jp text-3xl leading-[1.7] font-medium mt-2">${rubyHtml(item)}</p>
+            <p class="text-paper/75">${romaji}</p>
+            <div class="mt-3">${backPlayButton}</div>
         `;
     }
 
-    const navBtn = 'btn-nav font-bold py-2.5 px-5 rounded-full flex items-center space-x-1 text-sm';
     mainContent.innerHTML = `
-        ${modeSelectorHTML}
-        <div class="text-center mb-2">
-            <p class="text-xs text-gray-500 dark:text-zinc-400 font-semibold">Swipe, tap, or press Space to flip card</p>
+        <h1 class="sr-only">Flashcards</h1>
+        <div class="segmented max-w-md mx-auto" role="group" aria-label="Study mode">
+            ${modes.map(mode => `
+                <button type="button" data-action="fc-mode" data-mode="${mode.key}" aria-pressed="${flashcardStudyMode === mode.key}">${mode.label}</button>
+            `).join('')}
         </div>
-        <div class="perspective-1000 h-80 max-w-xl mx-auto">
-            <div id="flashcard" class="card relative w-full h-full mx-auto cursor-pointer select-none" tabindex="0" role="button" aria-label="Flashcard, press to flip" data-action="flip">
-                <div class="card-face absolute w-full h-full ${cardFront} rounded-3xl shadow-xl flex flex-col items-center justify-center p-6 text-center border">
+
+        <div class="max-w-xl mx-auto mt-6">
+            <div class="flex items-center justify-between text-sm text-muted">
+                <span>Card ${currentFlashcardIndex + 1} of ${flashcardItems.length}</span>
+                <span>${masteredIds.size} of ${total} mastered</span>
+            </div>
+            <div class="h-1 rounded-full bg-surface-2 mt-2 overflow-hidden" role="progressbar" aria-label="Cards mastered" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${masteredIds.size}">
+                <div class="h-full bg-accent rounded-full transition-all" style="width: ${progress}%"></div>
+            </div>
+        </div>
+
+        <div class="perspective-1000 h-[22rem] max-w-xl mx-auto mt-5">
+            <div id="flashcard" class="card relative w-full h-full cursor-pointer select-none" tabindex="0" role="button" aria-label="Flashcard. Press to flip." data-action="flip">
+                <div class="card-face absolute inset-0 panel shadow-sm flex flex-col items-center justify-center p-6 text-center">
                     ${frontHTML}
                 </div>
-                <div class="card-back card-face absolute w-full h-full bg-gradient-to-br from-amber-600 via-orange-600 to-rose-700 text-white rounded-3xl shadow-xl flex flex-col items-center justify-center p-6 text-center">
+                <div class="card-back card-face absolute inset-0 rounded-2xl bg-ink text-paper shadow-sm flex flex-col items-center justify-center p-6 text-center">
                     ${backHTML}
-                    <div class="mt-4 flex items-center space-x-2 z-10">
-                        <button type="button" data-action="fc-again" class="bg-black/30 hover:bg-black/50 text-white text-xs font-bold py-1.5 px-3 rounded-full border border-white/30 transition-all flex items-center space-x-1">
-                            <span aria-hidden="true">🔁</span><span>Practice Again</span>
-                        </button>
-                        <button type="button" data-action="fc-gotit" class="bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-black py-1.5 px-3 rounded-full shadow-md transition-all flex items-center space-x-1">
-                            <span aria-hidden="true">✅</span><span>Got It!</span>
-                        </button>
+                    <div class="mt-6 flex items-center gap-2">
+                        <button type="button" data-action="fc-again" class="rounded-full border border-paper/30 px-4 py-2 text-sm font-semibold hover:bg-paper/10 transition">Practise again</button>
+                        <button type="button" data-action="fc-gotit" class="rounded-full bg-paper text-ink px-4 py-2 text-sm font-semibold hover:opacity-90 transition">Got it</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="flex justify-between items-center max-w-xl mx-auto mt-5 px-2">
-            <button type="button" data-action="fc-prev" class="${navBtn}">
-                <span aria-hidden="true">&larr;</span><span>Prev</span>
-            </button>
-            <div class="flex flex-col items-center">
-                <span class="font-bold text-gray-700 bg-white/90 border-gray-100 dark:text-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 px-3.5 py-1 rounded-full shadow-sm text-xs sm:text-sm border">
-                    ${currentFlashcardIndex + 1} / ${flashcardItems.length}
-                </span>
-                <span class="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold mt-0.5">Mastered: ${masteredIds.size}</span>
-            </div>
-            <button type="button" data-action="fc-next" class="${navBtn}">
-                <span>Next</span><span aria-hidden="true">&rarr;</span>
-            </button>
+        <div class="flex items-center justify-between max-w-xl mx-auto mt-4">
+            <button type="button" data-action="fc-prev" class="icon-btn border border-line bg-surface" aria-label="Previous card">${icon('chevron-left')}</button>
+            <p class="text-sm text-muted">Tap the card to flip · swipe to move</p>
+            <button type="button" data-action="fc-next" class="icon-btn border border-line bg-surface" aria-label="Next card">${icon('chevron-right')}</button>
         </div>
     `;
 
@@ -939,10 +885,9 @@ function markFlashcard(mastered) {
         masteredIds.add(item.id);
         store('jf_japan_mastered', [...masteredIds]);
         flashcardItems.splice(currentFlashcardIndex, 1);
-        showToast("Card mastered! 🎉");
+        showToast("Mastered");
         renderFlashcard();
     } else {
-        showToast("Keep practicing! 🔁");
         moveFlashcard(1);
     }
 }
@@ -978,90 +923,73 @@ function generateQuizQuestions() {
 
 function renderQuizQuestion() {
     if (currentQuizQuestionIndex >= quizQuestions.length) {
-        showQuizResults();
+        renderQuizResults();
         return;
     }
     const q = quizQuestions[currentQuizQuestionIndex];
     const answered = quizAnsweredId !== null;
+    const progress = Math.round((currentQuizQuestionIndex / quizQuestions.length) * 100);
 
-    let questionPromptHTML;
-    if (q.isListening) {
-        questionPromptHTML = `
-            <div class="mb-4">
-                <span class="inline-block bg-teal-100 text-teal-800 font-extrabold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-2">🎧 Listening Question</span>
-                <div class="flex items-center justify-center my-2">
-                    <button type="button" class="play-audio-btn p-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full shadow-lg flex items-center space-x-2 font-bold" data-action="play" data-text="${escapeHtml(q.phrase.japanese)}">
-                        ${speakerIconSVG}
-                        <span>Tap to Replay Sound</span>
-                    </button>
-                </div>
-                <p class="text-sm text-gray-500 dark:text-zinc-400 font-semibold mt-1">What does it mean?</p>
-            </div>
-        `;
-    } else {
-        questionPromptHTML = `
-            <div class="mb-5">
-                <p class="text-xs font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400 mb-1">Choose the Japanese for:</p>
-                <h2 class="text-2xl md:text-3xl font-extrabold">${escapeHtml(q.phrase.english)}</h2>
-            </div>
-        `;
-    }
+    const prompt = q.isListening ? `
+        <p class="eyebrow">Listening</p>
+        <button type="button" class="mt-4 inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent text-paper shadow-lg transition hover:scale-105 active:scale-95" data-action="play" data-text="${escapeHtml(q.phrase.japanese)}" aria-label="Play the phrase again">
+            ${icon('speaker', 'w-8 h-8')}
+        </button>
+        <p class="text-muted mt-3">What does it mean?</p>
+    ` : `
+        <p class="eyebrow">Choose the Japanese for</p>
+        <h2 class="font-display text-3xl font-bold leading-snug mt-2">${escapeHtml(q.phrase.english)}</h2>
+    `;
 
     const optionHTML = (option) => {
         const isCorrect = option.id === q.phrase.id;
         const isSelected = option.id === quizAnsweredId;
-        let state = 'bg-gray-50 border-gray-200/80 hover:border-orange-400 hover:bg-orange-50/50 dark:bg-zinc-800 dark:border-zinc-700 dark:hover:border-orange-500';
-        let textColor = 'text-gray-900 dark:text-zinc-100';
-        let subColor = 'text-orange-700 dark:text-orange-400';
-        if (answered && isSelected) {
-            state = isCorrect
-                ? 'bg-emerald-500 border-emerald-600 shadow-lg scale-[1.02]'
-                : 'bg-rose-500 border-rose-600 shadow-lg animate-shake';
-            textColor = 'text-white';
-            subColor = isCorrect ? 'text-emerald-100' : 'text-rose-100';
-        } else if (answered && isCorrect) {
-            state = 'bg-emerald-50 border-emerald-500 dark:bg-emerald-950/50';
-            textColor = 'text-emerald-900 dark:text-emerald-200';
-            subColor = 'text-emerald-700 dark:text-emerald-300';
-        }
-
-        const badge = answered && isSelected ? `
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-                <div class="animate-pop-bounce flex items-center space-x-1.5 ${isCorrect ? 'bg-emerald-600' : 'bg-rose-600'} text-white font-extrabold px-4 py-2 rounded-full shadow-2xl border-2 border-white text-base md:text-lg">
-                    <span class="text-xl" aria-hidden="true">${isCorrect ? '🎉' : '👎'}</span>
-                    <span>${isCorrect ? 'Correct! ✓' : 'Incorrect'}</span>
-                </div>
-            </div>` : '';
+        let state = 'border-line bg-surface hover:border-accent/60';
+        if (answered && isCorrect) state = 'border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40';
+        else if (answered && isSelected) state = 'border-red-600 bg-red-50 dark:bg-red-950/40 animate-shake';
+        else if (answered) state = 'border-line bg-surface opacity-60';
 
         // Listening questions answer in English, without per-option audio that would give it away.
         const body = q.isListening
-            ? `<span class="font-bold ${textColor} text-base md:text-lg leading-tight">${escapeHtml(option.english)}</span>`
-            : `<span lang="ja" class="jp-font font-black ${textColor} text-lg md:text-xl leading-tight">${escapeHtml(option.japanese)}</span>
-               <span class="${subColor} font-bold text-xs md:text-sm mt-0.5">${escapeHtml(option.romaji)}</span>`;
+            ? `<span class="font-medium">${escapeHtml(option.english)}</span>`
+            : `<span lang="ja" class="block font-jp text-xl leading-[1.8]">${rubyHtml(option)}</span>
+               <span class="block text-sm text-accent">${escapeHtml(option.romaji)}</span>`;
         const speaker = q.isListening ? '' : `
-            <button type="button" class="play-audio-btn w-10 h-10 rounded-full ${answered && isSelected ? 'bg-white/20 text-white' : 'bg-orange-100/80 hover:bg-orange-200 text-orange-600 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:text-orange-400'} flex items-center justify-center flex-shrink-0 shadow-sm ml-2" data-action="play" data-text="${escapeHtml(option.japanese)}" aria-label="Listen to ${escapeHtml(option.romaji)}">
-                ${speakerIconSVG}
+            <button type="button" class="px-4 border-l border-line text-accent hover:bg-surface-2 transition-colors" data-action="play" data-text="${escapeHtml(option.japanese)}" aria-label="Listen to ${escapeHtml(option.romaji)}">
+                ${icon('speaker')}
             </button>`;
 
         return `
-            <div class="relative flex items-center justify-between ${state} border-2 rounded-2xl shadow-sm transition-all duration-200 overflow-hidden p-3 ${answered ? 'pointer-events-none' : 'cursor-pointer'}" data-action="quiz-answer" data-id="${option.id}" role="button" tabindex="${answered ? -1 : 0}">
-                <div class="flex flex-col items-start text-left flex-grow pl-2">${body}</div>
+            <li class="flex items-stretch rounded-xl border-2 ${state} overflow-hidden transition-colors">
+                <button type="button" class="flex-1 min-w-0 text-left px-4 py-3" data-action="quiz-answer" data-id="${option.id}" ${answered ? 'disabled' : ''}>${body}</button>
                 ${speaker}
-                ${badge}
-            </div>
+            </li>
         `;
     };
 
+    let feedback = '';
+    if (answered) {
+        const correctLabel = q.isListening ? q.phrase.english : q.phrase.romaji;
+        feedback = quizAnsweredId === q.phrase.id
+            ? '<span class="text-emerald-700 dark:text-emerald-400">Correct</span>'
+            : `<span class="text-red-700 dark:text-red-400">Not quite. It's “${escapeHtml(correctLabel)}”.</span>`;
+    }
+
     mainContent.innerHTML = `
-        <div class="bg-white/95 border-orange-100 text-gray-900 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-xl text-center flex flex-col justify-center min-h-[22rem] max-w-2xl mx-auto border transition-colors">
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-widest">Question ${currentQuizQuestionIndex + 1} of ${quizQuestions.length}</span>
-                <span class="text-xs font-bold bg-orange-100 text-orange-700 px-3 py-1 rounded-full">Score: ${quizScore}</span>
+        <h1 class="sr-only">Quiz</h1>
+        <div class="max-w-xl mx-auto">
+            <div class="flex items-center justify-between text-sm text-muted">
+                <span>Question ${currentQuizQuestionIndex + 1} of ${quizQuestions.length}</span>
+                <span>Score ${quizScore}</span>
             </div>
-            ${questionPromptHTML}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative">
-                ${q.options.map(optionHTML).join('')}
+            <div class="h-1 rounded-full bg-surface-2 mt-2 overflow-hidden">
+                <div class="h-full bg-accent rounded-full transition-all" style="width: ${progress}%"></div>
             </div>
+
+            <div class="mt-8 text-center">${prompt}</div>
+
+            <ul class="mt-8 space-y-3">${q.options.map(optionHTML).join('')}</ul>
+            <p class="mt-4 min-h-[1.5rem] text-center font-medium" aria-live="polite">${feedback}</p>
         </div>
     `;
 
@@ -1074,10 +1002,10 @@ function triggerQuizConfetti() {
     if (typeof confetti === 'function') {
         try {
             confetti({
-                particleCount: 50,
-                spread: 70,
-                origin: { y: 0.65 },
-                colors: ['#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6'],
+                particleCount: 40,
+                spread: 60,
+                origin: { y: 0.7 },
+                colors: ['#b7381f', '#bc002d', '#f0785c', '#e7e0d6', '#1c1917'],
                 disableForReducedMotion: true
             });
         } catch (e) {}
@@ -1093,7 +1021,8 @@ function handleQuizAnswer(optionId) {
 
     quizAnsweredId = optionId;
     quizResults.push({
-        question: q.isListening ? `🎧 ${q.phrase.japanese}` : q.phrase.english,
+        question: q.isListening ? q.phrase.japanese : q.phrase.english,
+        isListening: q.isListening,
         selectedAnswer: label(selected),
         correctAnswer: label(q.phrase),
         isCorrect
@@ -1110,37 +1039,41 @@ function handleQuizAnswer(optionId) {
         quizAnsweredId = null;
         currentQuizQuestionIndex++;
         if (currentView === 'quiz') renderQuizQuestion();
-    }, 1300);
+    }, 1400);
 }
 
-function showQuizResults() {
+function renderQuizResults() {
     const scorePercentage = Math.round((quizScore / quizQuestions.length) * 100);
-    document.getElementById('modal-score').textContent = `${scorePercentage}%`;
+    let feedback = "Good effort. Keep practising and try again.";
+    if (scorePercentage === 100) feedback = "Sugoi! A perfect score. You're ready for Japan.";
+    else if (scorePercentage >= 80) feedback = "Brilliant. You've got the essentials down.";
+    else if (scorePercentage >= 60) feedback = "Nice work. A little flashcard practice and you'll have it.";
 
-    let feedback = "Good effort! Keep practicing Josey & Frankie's phrases.";
-    if (scorePercentage === 100) feedback = "Sugoi! 🌟 Perfect score! You're ready for Japan!";
-    else if (scorePercentage >= 80) feedback = "Brilliant job! You've got the essentials locked down.";
-    else if (scorePercentage >= 60) feedback = "Great work! Review your flashcards and try again.";
+    mainContent.innerHTML = `
+        <div class="max-w-xl mx-auto text-center">
+            <p class="eyebrow">Quiz complete</p>
+            <h1 class="font-display text-6xl font-bold mt-3">${scorePercentage}%</h1>
+            <p class="text-muted mt-3">${quizScore} of ${quizQuestions.length} correct. ${feedback}</p>
+            <button type="button" data-action="quiz-restart" class="btn-primary mt-6">Try again</button>
 
-    document.getElementById('modal-feedback').textContent = feedback;
-    showModal(quizModal);
-}
-
-function showAnswersBreakdown() {
-    answersBreakdown.innerHTML = `<ul class="space-y-2.5">${quizResults.map(result => result.isCorrect ? `
-        <li class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border-l-4 border-emerald-500">
-            <p class="font-bold text-gray-800 dark:text-zinc-100">${escapeHtml(result.question)}</p>
-            <p class="text-emerald-700 dark:text-emerald-300 font-semibold">✓ ${escapeHtml(result.selectedAnswer)}</p>
-        </li>
-    ` : `
-        <li class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border-l-4 border-rose-500">
-            <p class="font-bold text-gray-800 dark:text-zinc-100">${escapeHtml(result.question)}</p>
-            <p class="text-rose-600 dark:text-rose-300 font-semibold line-through">✗ ${escapeHtml(result.selectedAnswer)}</p>
-            <p class="text-emerald-700 dark:text-emerald-300 font-semibold">✓ Correct: ${escapeHtml(result.correctAnswer)}</p>
-        </li>
-    `).join('')}</ul>`;
-    answersBreakdown.classList.remove('hidden');
-    seeAnswersBtn.classList.add('hidden');
+            <ul class="panel divide-y divide-line mt-10 text-left overflow-hidden">
+                ${quizResults.map(result => `
+                    <li class="flex gap-3 px-4 py-3">
+                        <span class="mt-0.5 ${result.isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}">
+                            ${icon(result.isCorrect ? 'check' : 'x')}
+                            <span class="sr-only">${result.isCorrect ? 'Correct' : 'Incorrect'}</span>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="font-medium"${result.isListening ? ' lang="ja"' : ''}>${escapeHtml(result.question)}</p>
+                            ${result.isCorrect
+                                ? `<p class="text-sm text-muted">${escapeHtml(result.correctAnswer)}</p>`
+                                : `<p class="text-sm text-muted"><span class="line-through">${escapeHtml(result.selectedAnswer)}</span> → ${escapeHtml(result.correctAnswer)}</p>`}
+                        </div>
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+    `;
 }
 
 // --- EVENTS ---
@@ -1160,16 +1093,19 @@ mainContent.addEventListener('click', (e) => {
             break;
         case 'filter':
             selectedCategoryFilter = target.dataset.category;
-            renderLearnResults();
+            renderPhraseResults();
             break;
         case 'show-phrase':
             showPhraseFullscreen(findItem(id));
             break;
-        case 'open-chef':
-            showModal(gfChefModal);
+        case 'go':
+            goTo(target.dataset.view);
             break;
-        case 'open-guide':
-            showModal(gfSafetyModal);
+        case 'open-chef-fullscreen':
+            showFullscreenChefCard();
+            break;
+        case 'speak-chef':
+            playAudio(CHEF_CARD_SPEECH, target);
             break;
         case 'flip':
             flipFlashcard();
@@ -1196,6 +1132,9 @@ mainContent.addEventListener('click', (e) => {
         case 'quiz-answer':
             handleQuizAnswer(id);
             break;
+        case 'quiz-restart':
+            startQuiz();
+            break;
     }
 });
 
@@ -1211,29 +1150,21 @@ mainContent.addEventListener('touchend', (e) => {
     else if (swipeDist < -55) moveFlashcard(1);
 }, { passive: true });
 
-document.getElementById('izakaya-mode-btn').addEventListener('click', toggleTheme);
-document.getElementById('audio-speed-btn').addEventListener('click', toggleAudioSpeed);
-document.getElementById('audio-engine-btn').addEventListener('click', toggleVoiceEngine);
-document.getElementById('header-emergency-gf-btn').addEventListener('click', () => showModal(gfChefModal));
-document.getElementById('header-gf-safety-guide-btn').addEventListener('click', () => showModal(gfSafetyModal));
-document.getElementById('gf-fullscreen-trigger-btn').addEventListener('click', showFullscreenChefCard);
-document.getElementById('gf-safety-open-card-btn').addEventListener('click', () => {
-    hideModal(gfSafetyModal);
-    showModal(gfChefModal);
-});
-speakChefCardBtn.addEventListener('click', () => playAudio(CHEF_CARD_SPEECH, speakChefCardBtn));
+navButtons.forEach(btn => btn.addEventListener('click', () => goTo(btn.dataset.nav)));
+
+document.getElementById('header-chef-btn').addEventListener('click', showFullscreenChefCard);
 gfFsCardSpeakerBtn.addEventListener('click', () => playAudio(CHEF_CARD_SPEECH, gfFsCardSpeakerBtn));
 phraseOverlaySpeakerBtn.addEventListener('click', () => playAudio(phraseOverlaySpeakerBtn.dataset.text, phraseOverlaySpeakerBtn));
-seeAnswersBtn.addEventListener('click', showAnswersBreakdown);
 
-navButtons.learn.addEventListener('click', showLearnView);
-navButtons.flashcards.addEventListener('click', showFlashcardsView);
-navButtons.quiz.addEventListener('click', showQuizView);
-
-[gfChefModal, gfSafetyModal, quizModal].forEach(modal => {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal || e.target.closest('[data-modal-close]')) closeModal(modal);
-    });
+settingsBtn.addEventListener('click', () => toggleSettings());
+settingsPanel.addEventListener('click', (e) => {
+    const option = e.target.closest('[data-setting]');
+    if (option) changeSetting(option.dataset.setting, option.dataset.value);
+});
+document.addEventListener('click', (e) => {
+    if (!settingsPanel.classList.contains('hidden') && !settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) {
+        toggleSettings(false);
+    }
 });
 
 [gfFullscreenOverlay, phraseOverlay].forEach(overlay => {
@@ -1250,18 +1181,12 @@ document.addEventListener('visibilitychange', () => {
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        if (activeOverlay) closeOverlay();
-        else {
-            const openModal = [gfChefModal, gfSafetyModal, quizModal].find(isOpen);
-            if (openModal) closeModal(openModal);
+        if (activeOverlay) {
+            closeOverlay();
+        } else if (!settingsPanel.classList.contains('hidden')) {
+            toggleSettings(false);
+            settingsBtn.focus();
         }
-        return;
-    }
-
-    // Enter / Space on a focused quiz option (a div acting as a button).
-    if (e.target.dataset && e.target.dataset.action === 'quiz-answer' && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        e.target.click();
         return;
     }
 
@@ -1292,8 +1217,8 @@ populateVoices();
 if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
     window.speechSynthesis.onvoiceschanged = populateVoices;
 }
+hydrateIcons(document);
 applyTheme();
-updateSpeedButtonUI();
-updateVoiceEngineUI();
-showLearnView();
+updateSettingsUI();
+showPhrasesView();
 loadRecordings();

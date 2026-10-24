@@ -11,6 +11,8 @@
 
     const categoryOrder = ["greetings", "coeliac", "dining", "about", "travel"];
 
+    // `ruby` marks furigana as {漢字|かな}; it must read the same as `japanese` once the
+    // readings are removed.
     const phrases = [
         // Greetings & polite essentials
         { id: 1, category: "greetings", english: "Hello / Good day", romaji: "Konnichiwa", japanese: "こんにちは。" },
@@ -19,42 +21,42 @@
         { id: 4, category: "greetings", english: "Thank you", romaji: "Arigatō gozaimasu", japanese: "ありがとうございます。" },
         { id: 5, category: "greetings", english: "Thank you very much (upon leaving)", romaji: "Arigatō gozaimashita", japanese: "ありがとうございました。" },
         { id: 6, category: "greetings", english: "Excuse me / Sorry", romaji: "Sumimasen", japanese: "すみません。" },
-        { id: 7, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします。" },
+        { id: 7, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします。", ruby: "お{願|ねが}いします。" },
         { id: 8, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
         { id: 9, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
-        { id: 10, category: "greetings", english: "Don't worry, it's okay, I'm fine", romaji: "Daijōbu desu", japanese: "大丈夫です。" },
+        { id: 10, category: "greetings", english: "Don't worry, it's okay, I'm fine", romaji: "Daijōbu desu", japanese: "大丈夫です。", ruby: "{大丈夫|だいじょうぶ}です。" },
 
         // Coeliac & gluten-free
-        { id: 1001, category: "coeliac", english: "I have a severe wheat and gluten allergy", romaji: "Komugi to guruten no arerugī ga arimasu", japanese: "小麦とグルテンのアレルギーがあります。" },
-        { id: 1002, category: "coeliac", english: "I cannot eat wheat, barley, or rye", romaji: "Komugi, ōmugi, raimugi wa taberaremasen", japanese: "小麦、大麦、ライ麦は食べられません。" },
-        { id: 1004, category: "coeliac", english: "Does this contain wheat or soy sauce?", romaji: "Kore ni komugi ya shōyu wa haitte imasu ka?", japanese: "これに小麦や醤油は入っていますか？" },
-        { id: 1005, category: "coeliac", english: "Do you have soy sauce made without wheat?", romaji: "Komugi fushiyō no shōyu wa arimasu ka?", japanese: "小麦不使用の醤油はありますか？" },
-        { id: 1006, category: "coeliac", english: "Please do not add any sauce or broth", romaji: "Tare ya dashi wa tsukenaide kudasai", japanese: "タレや出汁はつけないでください。" },
-        { id: 1007, category: "coeliac", english: "Can you prepare it with just salt?", romaji: "Shio dake de chōri dekimasu ka?", japanese: "塩だけで調理できますか？" },
+        { id: 1001, category: "coeliac", english: "I have a severe wheat and gluten allergy", romaji: "Komugi to guruten no arerugī ga arimasu", japanese: "小麦とグルテンのアレルギーがあります。", ruby: "{小麦|こむぎ}とグルテンのアレルギーがあります。" },
+        { id: 1002, category: "coeliac", english: "I cannot eat wheat, barley, or rye", romaji: "Komugi, ōmugi, raimugi wa taberaremasen", japanese: "小麦、大麦、ライ麦は食べられません。", ruby: "{小麦|こむぎ}、{大麦|おおむぎ}、ライ{麦|むぎ}は{食|た}べられません。" },
+        { id: 1004, category: "coeliac", english: "Does this contain wheat or soy sauce?", romaji: "Kore ni komugi ya shōyu wa haitte imasu ka?", japanese: "これに小麦や醤油は入っていますか？", ruby: "これに{小麦|こむぎ}や{醤油|しょうゆ}は{入|はい}っていますか？" },
+        { id: 1005, category: "coeliac", english: "Do you have soy sauce made without wheat?", romaji: "Komugi fushiyō no shōyu wa arimasu ka?", japanese: "小麦不使用の醤油はありますか？", ruby: "{小麦|こむぎ}{不使用|ふしよう}の{醤油|しょうゆ}はありますか？" },
+        { id: 1006, category: "coeliac", english: "Please do not add any sauce or broth", romaji: "Tare ya dashi wa tsukenaide kudasai", japanese: "タレや出汁はつけないでください。", ruby: "タレや{出汁|だし}はつけないでください。" },
+        { id: 1007, category: "coeliac", english: "Can you prepare it with just salt?", romaji: "Shio dake de chōri dekimasu ka?", japanese: "塩だけで調理できますか？", ruby: "{塩|しお}だけで{調理|ちょうり}できますか？" },
 
         // Drinking & dining
-        { id: 28, category: "dining", english: "Table for two, please", romaji: "Futari desu", japanese: "二人です。" },
-        { id: 29, category: "dining", english: "This one, please (pointing to menu)", romaji: "Kore o onegaishimasu", japanese: "これをお願いします。" },
-        { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！" },
-        { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Bīru / o-mizu / o-cha kudasai", japanese: "ビール／お水／お茶 ください。" },
+        { id: 28, category: "dining", english: "Table for two, please", romaji: "Futari desu", japanese: "二人です。", ruby: "{二人|ふたり}です。" },
+        { id: 29, category: "dining", english: "This one, please (pointing to menu)", romaji: "Kore o onegaishimasu", japanese: "これをお願いします。", ruby: "これをお{願|ねが}いします。" },
+        { id: 14, category: "dining", english: "Cheers! (for drinks)", romaji: "Kanpai!", japanese: "乾杯！", ruby: "{乾杯|かんぱい}！" },
+        { id: 16, category: "dining", english: "Please give me beer/water/tea", romaji: "Bīru / o-mizu / o-cha kudasai", japanese: "ビール／お水／お茶 ください。", ruby: "ビール／お{水|みず}／お{茶|ちゃ} ください。" },
         { id: 13, category: "dining", english: "Let's eat! / Bon appétit", romaji: "Itadakimasu", japanese: "いただきます！" },
-        { id: 27, category: "dining", english: "It is delicious!", romaji: "Oishī desu", japanese: "美味しいです！" },
-        { id: 17, category: "dining", english: "Can I get the bill, please? (Tip: cross index fingers into an 'X')", romaji: "Okaikei onegaishimasu", japanese: "お会計お願いします。" },
+        { id: 27, category: "dining", english: "It is delicious!", romaji: "Oishī desu", japanese: "美味しいです！", ruby: "{美味|おい}しいです！" },
+        { id: 17, category: "dining", english: "Can I get the bill, please? (Tip: cross index fingers into an 'X')", romaji: "Okaikei onegaishimasu", japanese: "お会計お願いします。", ruby: "お{会計|かいけい}お{願|ねが}いします。" },
         { id: 15, category: "dining", english: "Thank you for the meal (after eating)", romaji: "Gochisōsama deshita", japanese: "ごちそうさまでした。" },
-        { id: 30, category: "dining", english: "We'll be back!", romaji: "Mata kimasu!", japanese: "また来ます！" },
+        { id: 30, category: "dining", english: "We'll be back!", romaji: "Mata kimasu!", japanese: "また来ます！", ruby: "また{来|き}ます！" },
 
         // About us & introductions
-        { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョーズィーです。" },
-        { id: 19, category: "about", english: "My name is Frankie", romaji: "Watashi no namae wa Furankī desu", japanese: "私の名前はフランキーです。" },
-        { id: 20, category: "about", english: "I am from the UK", romaji: "Watashi wa Igirisu kara kimashita", japanese: "私はイギリスから来ました。" },
-        { id: 21, category: "about", english: "Do you understand English?", romaji: "Eigo wakarimasu ka?", japanese: "英語分かりますか？" },
-        { id: 22, category: "about", english: "I don't understand Japanese", romaji: "Nihongo wakarimasen", japanese: "日本語分かりません。" },
+        { id: 18, category: "about", english: "My name is Josey", romaji: "Watashi no namae wa Jōzī desu", japanese: "私の名前はジョーズィーです。", ruby: "{私|わたし}の{名前|なまえ}はジョーズィーです。" },
+        { id: 19, category: "about", english: "My name is Frankie", romaji: "Watashi no namae wa Furankī desu", japanese: "私の名前はフランキーです。", ruby: "{私|わたし}の{名前|なまえ}はフランキーです。" },
+        { id: 20, category: "about", english: "I am from the UK", romaji: "Watashi wa Igirisu kara kimashita", japanese: "私はイギリスから来ました。", ruby: "{私|わたし}はイギリスから{来|き}ました。" },
+        { id: 21, category: "about", english: "Do you understand English?", romaji: "Eigo wakarimasu ka?", japanese: "英語分かりますか？", ruby: "{英語|えいご}{分|わ}かりますか？" },
+        { id: 22, category: "about", english: "I don't understand Japanese", romaji: "Nihongo wakarimasen", japanese: "日本語分かりません。", ruby: "{日本語|にほんご}{分|わ}かりません。" },
         { id: 23, category: "about", english: "Cool, pretty, cute", romaji: "Kakkoī, kirei, kawaī", japanese: "かっこいい、きれい、かわいい。" },
 
         // Getting around & paying
         { id: 24, category: "travel", english: "Where is the toilet?", romaji: "Toire wa doko desu ka?", japanese: "トイレはどこですか？" },
-        { id: 25, category: "travel", english: "Can I use card?", romaji: "Kādo wa tsukaemasu ka?", japanese: "カードは使えますか？" },
-        { id: 26, category: "travel", english: "Excuse me, where does this train depart from?", romaji: "Sumimasen, kono densha wa doko kara demasu ka?", japanese: "すみません、この電車はどこから出ますか？" }
+        { id: 25, category: "travel", english: "Can I use card?", romaji: "Kādo wa tsukaemasu ka?", japanese: "カードは使えますか？", ruby: "カードは{使|つか}えますか？" },
+        { id: 26, category: "travel", english: "Excuse me, where does this train depart from?", romaji: "Sumimasen, kono densha wa doko kara demasu ka?", japanese: "すみません、この電車はどこから出ますか？", ruby: "すみません、この{電車|でんしゃ}はどこから{出|で}ますか？" }
     ];
 
     const words = [
@@ -62,27 +64,27 @@
         { id: 102, category: "greetings", english: "Good morning", romaji: "Ohayō", japanese: "おはよう" },
         { id: 103, category: "greetings", english: "Good evening", romaji: "Konbanwa", japanese: "こんばんは" },
         { id: 104, category: "greetings", english: "Thank you", romaji: "Arigatō", japanese: "ありがとう" },
-        { id: 127, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします" },
+        { id: 127, category: "greetings", english: "Please", romaji: "Onegaishimasu", japanese: "お願いします", ruby: "お{願|ねが}いします" },
         { id: 105, category: "greetings", english: "Yes", romaji: "Hai", japanese: "はい" },
         { id: 106, category: "greetings", english: "No", romaji: "Iie", japanese: "いいえ" },
-        { id: 107, category: "greetings", english: "Okay / Fine (polite)", romaji: "Daijōbu desu", japanese: "大丈夫です" },
+        { id: 107, category: "greetings", english: "Okay / Fine (polite)", romaji: "Daijōbu desu", japanese: "大丈夫です", ruby: "{大丈夫|だいじょうぶ}です" },
         { id: 108, category: "greetings", english: "Excuse me", romaji: "Sumimasen", japanese: "すみません" },
         { id: 112, category: "dining", english: "Beer", romaji: "Bīru", japanese: "ビール" },
-        { id: 113, category: "dining", english: "Water", romaji: "O-mizu", japanese: "お水" },
-        { id: 114, category: "dining", english: "Tea", romaji: "Ocha", japanese: "お茶" },
+        { id: 113, category: "dining", english: "Water", romaji: "O-mizu", japanese: "お水", ruby: "お{水|みず}" },
+        { id: 114, category: "dining", english: "Tea", romaji: "Ocha", japanese: "お茶", ruby: "お{茶|ちゃ}" },
         { id: 115, category: "dining", english: "Please give me", romaji: "Kudasai", japanese: "ください" },
-        { id: 116, category: "dining", english: "Bill", romaji: "Okaikei", japanese: "お会計" },
-        { id: 117, category: "dining", english: "Cheers!", romaji: "Kanpai!", japanese: "乾杯！" },
+        { id: 116, category: "dining", english: "Bill", romaji: "Okaikei", japanese: "お会計", ruby: "お{会計|かいけい}" },
+        { id: 117, category: "dining", english: "Cheers!", romaji: "Kanpai!", japanese: "乾杯！", ruby: "{乾杯|かんぱい}！" },
         { id: 118, category: "dining", english: "Bon appétit", romaji: "Itadakimasu", japanese: "いただきます" },
         { id: 126, category: "dining", english: "Delicious", romaji: "Oishī", japanese: "おいしい" },
-        { id: 128, category: "dining", english: "Two people", romaji: "Futari", japanese: "二人" },
+        { id: 128, category: "dining", english: "Two people", romaji: "Futari", japanese: "二人", ruby: "{二人|ふたり}" },
         { id: 129, category: "dining", english: "This one", romaji: "Kore", japanese: "これ" },
-        { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語" },
-        { id: 120, category: "about", english: "Japanese", romaji: "Nihongo", japanese: "日本語" },
+        { id: 119, category: "about", english: "English", romaji: "Eigo", japanese: "英語", ruby: "{英語|えいご}" },
+        { id: 120, category: "about", english: "Japanese", romaji: "Nihongo", japanese: "日本語", ruby: "{日本語|にほんご}" },
         { id: 121, category: "about", english: "UK / Britain", romaji: "Igirisu", japanese: "イギリス" },
         { id: 122, category: "travel", english: "Toilet", romaji: "Toire", japanese: "トイレ" },
         { id: 123, category: "travel", english: "Where", romaji: "Doko", japanese: "どこ" },
-        { id: 124, category: "travel", english: "Train", romaji: "Densha", japanese: "電車" },
+        { id: 124, category: "travel", english: "Train", romaji: "Densha", japanese: "電車", ruby: "{電車|でんしゃ}" },
         { id: 125, category: "travel", english: "Card", romaji: "Kādo", japanese: "カード" }
     ];
 

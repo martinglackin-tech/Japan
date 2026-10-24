@@ -10,9 +10,9 @@
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="J&amp;F Japan">
-    <meta name="theme-color" content="#ea580c" id="meta-theme-color">
+    <meta name="theme-color" content="#faf7f2" id="meta-theme-color">
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
@@ -20,88 +20,130 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Mochiy+Pop+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@600;700&display=swap" rel="stylesheet">
 
     <!-- Built from src/input.css with `npm run build:css` -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="antialiased selection:bg-orange-200 notranslate" translate="no">
-    <div id="app-container" class="w-full max-w-4xl mx-auto p-3 sm:p-5 md:p-8 flex flex-col items-center">
+<body class="notranslate" translate="no">
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-paper/85 backdrop-blur-md border-b border-line pt-[env(safe-area-inset-top)]">
+        <div class="relative max-w-3xl mx-auto px-4 h-14 flex items-center gap-3">
+            <span class="w-6 h-6 rounded-full bg-hinomaru flex-shrink-0" aria-hidden="true"></span>
+            <div class="leading-tight min-w-0">
+                <p class="font-display font-semibold text-[15px] truncate">Josey &amp; Frankie</p>
+                <p lang="ja" class="font-jp text-[11px] text-muted tracking-wide">日本語フレーズブック</p>
+            </div>
 
-        <!-- Top utilities bar -->
-        <div class="w-full max-w-lg flex items-center justify-between gap-2 mb-3 px-1 text-xs">
-            <button id="izakaya-mode-btn" type="button" class="toolbar-btn">
-                <span id="izakaya-mode-icon" aria-hidden="true">🏮</span>
-                <span id="izakaya-mode-label">Izakaya Mode</span>
-            </button>
+            <nav class="hidden md:flex items-center gap-1 ml-6" aria-label="Sections">
+                <button type="button" class="top-tab" data-nav="phrases">Phrases</button>
+                <button type="button" class="top-tab" data-nav="coeliac">Coeliac</button>
+                <button type="button" class="top-tab" data-nav="flashcards">Flashcards</button>
+                <button type="button" class="top-tab" data-nav="quiz">Quiz</button>
+            </nav>
 
-            <div class="flex items-center gap-1.5">
-                <button id="audio-speed-btn" type="button" class="toolbar-btn" title="Audio playback speed">
-                    <span id="audio-speed-icon" aria-hidden="true">⚡</span>
-                    <span id="audio-speed-label">1.0x</span>
+            <div class="ml-auto flex items-center gap-1">
+                <button id="header-chef-btn" type="button" class="inline-flex items-center gap-1.5 rounded-full bg-hinomaru text-white text-sm font-semibold pl-3 pr-3.5 py-1.5 transition hover:opacity-90 active:scale-95" aria-label="Show the coeliac card to staff, full screen">
+                    <span data-icon="alert" class="w-4 h-4"></span>
+                    <span>Chef card</span>
                 </button>
-                <button id="audio-engine-btn" type="button" class="toolbar-btn" title="Switch between the natural voice (recorded or online) and this device's built-in voice">
-                    <span id="audio-engine-icon" aria-hidden="true">✨</span>
-                    <span id="audio-engine-label">Studio</span>
+                <button id="settings-btn" type="button" class="icon-btn" aria-label="Settings" aria-expanded="false" aria-controls="settings-panel">
+                    <span data-icon="settings" class="w-5 h-5"></span>
                 </button>
+            </div>
+
+            <!-- Settings -->
+            <div id="settings-panel" class="hidden absolute right-3 top-full mt-2 w-[19rem] panel shadow-xl p-4 space-y-4" role="dialog" aria-label="Settings">
+                <div>
+                    <p class="eyebrow mb-2" id="theme-label">Theme</p>
+                    <div class="segmented" role="group" aria-labelledby="theme-label">
+                        <button type="button" data-setting="theme" data-value="day">Day</button>
+                        <button type="button" data-setting="theme" data-value="izakaya">Izakaya (dark)</button>
+                    </div>
+                </div>
+                <div>
+                    <p class="eyebrow mb-2" id="voice-label">Voice</p>
+                    <div class="segmented" role="group" aria-labelledby="voice-label">
+                        <button type="button" data-setting="voice" data-value="studio">Natural</button>
+                        <button type="button" data-setting="voice" data-value="device">This device</button>
+                    </div>
+                </div>
+                <div>
+                    <p class="eyebrow mb-2" id="speed-label">Speed</p>
+                    <div class="segmented" role="group" aria-labelledby="speed-label">
+                        <button type="button" data-setting="speed" data-value="1">Normal</button>
+                        <button type="button" data-setting="speed" data-value="0.75">Slow</button>
+                    </div>
+                </div>
+                <p class="text-xs text-muted leading-relaxed">Natural uses recordings or an online voice. "This device" uses your phone's built-in Japanese voice and always works offline.</p>
             </div>
         </div>
+    </header>
 
-        <!-- Header -->
-        <header class="w-full flex flex-col items-center mb-6">
-            <div class="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl p-5 md:p-6 shadow-xl border border-white/80 dark:border-zinc-800 max-w-lg w-full text-center">
-                <div class="flex items-center justify-center space-x-2 mb-1.5">
-                    <span class="text-2xl" role="img" aria-label="Japan flag">🇯🇵</span>
-                    <h1 class="title-font text-2xl md:text-3xl font-extrabold text-orange-600 tracking-tight">Josey &amp; Frankie's</h1>
-                    <span class="text-2xl" role="img" aria-label="Lantern">🏮</span>
-                </div>
-                <p class="text-xs uppercase tracking-widest text-teal-800 dark:text-teal-300 font-bold mb-1">Essential Japanese Phrasebook</p>
-                <p lang="ja" class="jp-font font-bold text-gray-700 dark:text-zinc-300 text-lg md:text-xl">必須 日本語フレーズブック</p>
+    <main id="main-content" class="max-w-3xl mx-auto px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-12"></main>
 
-                <div class="mt-3.5 flex flex-wrap items-center justify-center gap-2">
-                    <button id="header-emergency-gf-btn" type="button" class="inline-flex items-center space-x-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 dark:bg-red-950/60 dark:hover:bg-red-900/60 dark:text-red-200 dark:border-red-900 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95">
-                        <span class="text-sm" aria-hidden="true">⚠️</span>
-                        <span>Coeliac Chef Card (Show Staff)</span>
+    <!-- Bottom tab bar (phones) -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-surface/90 backdrop-blur-md border-t border-line pb-[env(safe-area-inset-bottom)]" aria-label="Sections">
+        <div class="grid grid-cols-4 max-w-md mx-auto">
+            <button type="button" class="tab-btn" data-nav="phrases"><span data-icon="book" class="w-6 h-6"></span>Phrases</button>
+            <button type="button" class="tab-btn" data-nav="coeliac"><span data-icon="shield" class="w-6 h-6"></span>Coeliac</button>
+            <button type="button" class="tab-btn" data-nav="flashcards"><span data-icon="cards" class="w-6 h-6"></span>Cards</button>
+            <button type="button" class="tab-btn" data-nav="quiz"><span data-icon="check" class="w-6 h-6"></span>Quiz</button>
+        </div>
+    </nav>
+
+    <!-- Coeliac tab. Cloned by app.js, which adds the phrase list. -->
+    <template id="coeliac-template">
+        <section class="space-y-8">
+            <div>
+                <p class="eyebrow text-accent">For restaurant staff</p>
+                <h1 class="font-display text-3xl font-bold mt-1">Coeliac card</h1>
+                <p class="text-muted mt-2 leading-relaxed">Show this to staff or the chef before ordering. It explains coeliac disease, the hidden gluten in seasonings, and cross-contamination.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <button type="button" data-action="open-chef-fullscreen" class="btn-danger flex-1 sm:flex-none">
+                        <span data-icon="expand" class="w-5 h-5"></span><span class="whitespace-nowrap">Show full screen</span>
                     </button>
-                    <button id="header-gf-safety-guide-btn" type="button" class="inline-flex items-center space-x-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 dark:text-amber-200 dark:border-amber-900 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95">
-                        <span class="text-sm" aria-hidden="true">🔍</span>
-                        <span>Food Safety Cheat Sheet</span>
+                    <button type="button" data-action="speak-chef" class="btn-secondary">
+                        <span data-icon="speaker" class="w-5 h-5"></span>Read aloud
                     </button>
                 </div>
             </div>
-        </header>
 
-        <!-- Primary navigation -->
-        <nav class="w-full flex justify-center space-x-2 md:space-x-4 mb-6" aria-label="Sections">
-            <button id="nav-learn" type="button" class="btn-nav active">Learn</button>
-            <button id="nav-flashcards" type="button" class="btn-nav">Flashcards</button>
-            <button id="nav-quiz" type="button" class="btn-nav">Quiz</button>
-        </nav>
-
-        <main id="main-content" class="w-full"></main>
-    </div>
-
-    <!-- Coeliac food safety cheat sheet -->
-    <div id="gf-safety-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 md:p-6 hidden z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="gf-safety-title">
-        <div class="modal-box bg-white dark:bg-zinc-900 dark:text-zinc-100 rounded-3xl shadow-2xl p-5 md:p-7 max-w-2xl w-full transition-all scale-95 opacity-0 border-2 border-amber-300 dark:border-amber-800 my-auto" tabindex="-1">
-            <div class="flex items-start justify-between border-b border-gray-100 dark:border-zinc-800 pb-3 mb-4">
-                <div class="flex items-center space-x-2.5">
-                    <span class="text-3xl" aria-hidden="true">🌾</span>
-                    <div>
-                        <h2 id="gf-safety-title" class="title-font text-xl md:text-2xl font-black text-amber-700 dark:text-amber-400">Coeliac Safe vs. Unsafe Food Guide</h2>
-                        <p class="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Frankie's Japan Dining &amp; Menu Cheat Sheet</p>
-                    </div>
+            <!-- Kept light in both themes: this is what staff read. -->
+            <article lang="ja" class="force-light rounded-2xl bg-surface border-2 border-hinomaru/30 p-5 font-jp text-ink shadow-sm">
+                <p class="inline-block rounded-md bg-hinomaru text-white text-xs font-bold px-2 py-1 mb-3">店員様・調理場へ</p>
+                <div class="space-y-2.5 text-[17px] leading-[1.9]">
+                    <p class="font-bold text-hinomaru">【重要】セリアック病（重度小麦・グルテンアレルギー）があります。</p>
+                    <p class="font-medium"><ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。</p>
+                    <ul class="space-y-1.5 text-[15px] border-l-2 border-hinomaru/40 pl-3">
+                        <li><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</li>
+                        <li><strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</li>
+                    </ul>
+                    <p class="font-medium">小麦を含まない料理、または「塩のみ・素焼き」で提供できるものはありますか？</p>
                 </div>
-                <button type="button" data-modal-close class="text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-2xl leading-none" aria-label="Close">&times;</button>
+            </article>
+
+            <details class="panel px-5 py-4 group">
+                <summary class="flex items-center justify-between font-semibold">
+                    English translation
+                    <span data-icon="chevron-down" class="w-5 h-5 text-muted transition-transform group-open:rotate-180"></span>
+                </summary>
+                <p class="mt-3 text-sm text-muted leading-relaxed">"[Important] I have Coeliac disease (severe wheat/gluten allergy). I cannot consume any wheat, barley, or rye. Seasonings: I also cannot have regular soy sauce, tare, tsuyu, barley miso, or dashi stock powder. Cooking: please avoid shared frying oil, shared boiling water, and shared utensils. Are there dishes without wheat, or anything you can serve with salt only / plain grilled?"</p>
+            </details>
+
+            <div>
+                <h2 class="font-display text-xl font-bold mb-3">Useful phrases</h2>
+                <ul id="coeliac-phrases" class="panel divide-y divide-line overflow-hidden"></ul>
             </div>
 
-            <div class="space-y-4 text-left max-h-[68vh] overflow-y-auto pr-1">
-                <div class="bg-emerald-50/80 dark:bg-emerald-950/40 border-2 border-emerald-300 dark:border-emerald-800 rounded-2xl p-4 shadow-sm">
-                    <div class="flex items-center space-x-2 mb-2">
-                        <span class="text-xl" aria-hidden="true">✅</span>
-                        <h3 class="font-extrabold text-emerald-900 dark:text-emerald-200 text-base md:text-lg">Generally Safer Bets (Specify NO tare / sauce)</h3>
-                    </div>
-                    <ul class="text-xs md:text-sm text-emerald-950 dark:text-emerald-100 space-y-1.5 font-medium pl-6 list-disc">
+            <div class="space-y-4">
+                <h2 class="font-display text-xl font-bold">Food guide</h2>
+
+                <div class="panel p-5">
+                    <h3 class="flex items-center gap-2 font-semibold text-emerald-700 dark:text-emerald-400">
+                        <span data-icon="check" class="w-5 h-5"></span>Generally safer (ask for no tare or sauce)
+                    </h3>
+                    <ul class="mt-3 space-y-2.5 text-sm leading-relaxed text-ink/90">
                         <li><strong>Sashimi (刺身):</strong> Plain raw fish is usually fine. Skip the table soy sauce and bring your own certified gluten-free soy sauce (many tamari brands still contain wheat).</li>
                         <li><strong>Shio Yakitori (塩焼き鳥):</strong> Skewered chicken grilled with <em>salt only</em> (ask for <em>"Shio dake"</em>, strictly avoid <em>Tare</em> sauce).</li>
                         <li><strong>Edamame (枝豆):</strong> Salt-boiled soybeans. Safe &amp; naturally GF.</li>
@@ -110,12 +152,11 @@
                     </ul>
                 </div>
 
-                <div class="bg-rose-50/80 dark:bg-rose-950/40 border-2 border-rose-300 dark:border-rose-800 rounded-2xl p-4 shadow-sm">
-                    <div class="flex items-center space-x-2 mb-2">
-                        <span class="text-xl" aria-hidden="true">❌</span>
-                        <h3 class="font-extrabold text-rose-900 dark:text-rose-200 text-base md:text-lg">Strict Red Flags (Contains Gluten)</h3>
-                    </div>
-                    <ul class="text-xs md:text-sm text-rose-950 dark:text-rose-100 space-y-1.5 font-medium pl-6 list-disc">
+                <div class="panel p-5">
+                    <h3 class="flex items-center gap-2 font-semibold text-red-700 dark:text-red-400">
+                        <span data-icon="x" class="w-5 h-5"></span>Contains gluten
+                    </h3>
+                    <ul class="mt-3 space-y-2.5 text-sm leading-relaxed text-ink/90">
                         <li><strong>Soy Sauce (醤油 Shoyu):</strong> Brewed with equal parts wheat and soybeans. Found in almost all pre-seasoned broths, tares, and glazes.</li>
                         <li><strong>Tempura, Katsu &amp; Fried Food (天ぷら / カツ):</strong> Coated in wheat flour/panko and fried in shared fryers.</li>
                         <li><strong>Ramen, Udon &amp; Soba (ラーメン / うどん / 蕎麦):</strong> Ramen/Udon are pure wheat noodles. Most Soba noodles also blend 20-30% wheat flour unless 100% <em>Juwari</em> (十割). Broths contain wheat soy sauce.</li>
@@ -127,142 +168,65 @@
                     </ul>
                 </div>
 
-                <div class="bg-amber-50/80 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 rounded-2xl p-4 shadow-sm">
-                    <div class="flex items-center space-x-2 mb-2">
-                        <span class="text-xl" aria-hidden="true">🔍</span>
-                        <h3 class="font-extrabold text-amber-950 dark:text-amber-200 text-base md:text-lg">Konbini / Store Ingredient Kanji Scanner</h3>
+                <div class="panel p-5">
+                    <h3 class="flex items-center gap-2 font-semibold">
+                        <span data-icon="search" class="w-5 h-5"></span>Reading food labels
+                    </h3>
+                    <p class="mt-2 text-sm text-muted">Check the ingredients (原材料名) and allergen (アレルギー物質) panels on packaged food for these:</p>
+                    <div class="force-light mt-3 kanji-tile border-hinomaru/40">
+                        <span lang="ja" class="font-jp font-bold text-2xl text-hinomaru block">（一部に小麦を含む）</span>
+                        <span class="text-sm font-medium block mt-1">Ichibu ni komugi o fukumu</span>
+                        <span class="text-xs text-muted block">"Contains some wheat": the standard allergen label wording</span>
                     </div>
-                    <p class="text-xs text-amber-900 dark:text-amber-100 mb-3 font-semibold">Inspect the allergen table (原材料名 / アレルギー物質) on packaged food for these characters:</p>
-                    <div class="kanji-tile border-2 border-red-300 mb-2">
-                        <span lang="ja" class="jp-font font-black text-xl md:text-2xl text-red-600 block">（一部に小麦を含む）</span>
-                        <span class="text-xs font-bold text-gray-800">Ichibu ni komugi o fukumu</span>
-                        <span class="text-[10px] text-gray-500 block uppercase font-bold">"Contains some wheat": the standard allergen label wording</span>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">小麦</span><span class="text-xs font-bold text-gray-800">Komugi</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat</span></div>
-                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">小麦粉</span><span class="text-xs font-bold text-gray-800">Komugiko</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Wheat Flour</span></div>
-                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">大麦</span><span class="text-xs font-bold text-gray-800">Ōmugi</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Barley</span></div>
-                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">ライ麦</span><span class="text-xs font-bold text-gray-800">Raimugi</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Rye</span></div>
-                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">麦芽</span><span class="text-xs font-bold text-gray-800">Bakuga</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Malt (Barley)</span></div>
-                        <div class="kanji-tile"><span lang="ja" class="jp-font font-black text-2xl text-red-600 block">醤油</span><span class="text-xs font-bold text-gray-800">Shōyu</span><span class="text-[10px] text-gray-500 block uppercase font-bold">Soy Sauce</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-zinc-800 flex gap-2">
-                <button id="gf-safety-open-card-btn" type="button" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-full font-bold text-xs md:text-sm transition-all shadow-sm">
-                    Open Coeliac Card for Staff ➜
-                </button>
-                <button type="button" data-modal-close class="bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 py-2.5 px-5 rounded-full font-bold text-xs md:text-sm transition-all">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quiz results -->
-    <div id="quiz-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <div class="modal-box bg-white dark:bg-zinc-900 dark:text-zinc-100 rounded-3xl shadow-2xl p-6 md:p-8 text-center max-w-md w-full transition-all scale-95 opacity-0 border border-orange-100 dark:border-zinc-800" tabindex="-1">
-            <h2 id="modal-title" class="title-font text-2xl md:text-3xl font-bold mb-3 text-orange-600">Quiz Complete!</h2>
-            <p id="modal-score" class="text-4xl md:text-5xl font-black mb-2 text-gray-800 dark:text-zinc-100">100%</p>
-            <p id="modal-feedback" class="text-sm md:text-base text-gray-600 dark:text-zinc-300 mb-4"></p>
-            <button id="see-answers-btn" type="button" class="text-orange-700 dark:text-orange-400 font-semibold hover:underline mb-4 text-xs md:text-sm block mx-auto">See answers breakdown</button>
-            <div id="answers-breakdown" class="hidden text-left max-h-60 overflow-y-auto mb-4 p-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl border border-gray-100 dark:border-zinc-700 text-xs md:text-sm"></div>
-            <button type="button" data-modal-close class="w-full bg-orange-600 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-700 transition-all duration-200 shadow-md">Practice Again</button>
-        </div>
-    </div>
-
-    <!-- Coeliac chef card -->
-    <div id="gf-chef-modal" class="modal fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 md:p-6 hidden z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="gf-chef-title">
-        <div class="modal-box bg-white dark:bg-zinc-900 dark:text-zinc-100 rounded-3xl shadow-2xl p-5 md:p-7 max-w-xl w-full transition-all scale-95 opacity-0 border-2 border-red-200 dark:border-red-900 my-auto" tabindex="-1">
-            <div class="flex items-start justify-between border-b border-gray-100 dark:border-zinc-800 pb-3 mb-4">
-                <div class="flex items-center space-x-2">
-                    <span class="text-3xl" aria-hidden="true">⚠️</span>
-                    <div>
-                        <h2 id="gf-chef-title" class="title-font text-xl md:text-2xl font-black text-red-600">Coeliac Restaurant Card</h2>
-                        <p class="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">シェフ・店員様へのご案内 (Show to staff / chef)</p>
+                    <div class="force-light mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <div class="kanji-tile"><span lang="ja" class="font-jp font-bold text-2xl text-hinomaru block">小麦</span><span class="text-sm font-medium block">Komugi</span><span class="text-xs text-muted block">Wheat</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="font-jp font-bold text-2xl text-hinomaru block">小麦粉</span><span class="text-sm font-medium block">Komugiko</span><span class="text-xs text-muted block">Wheat flour</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="font-jp font-bold text-2xl text-hinomaru block">大麦</span><span class="text-sm font-medium block">Ōmugi</span><span class="text-xs text-muted block">Barley</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="font-jp font-bold text-2xl text-hinomaru block">ライ麦</span><span class="text-sm font-medium block">Raimugi</span><span class="text-xs text-muted block">Rye</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="font-jp font-bold text-2xl text-hinomaru block">麦芽</span><span class="text-sm font-medium block">Bakuga</span><span class="text-xs text-muted block">Malt (barley)</span></div>
+                        <div class="kanji-tile"><span lang="ja" class="font-jp font-bold text-2xl text-hinomaru block">醤油</span><span class="text-sm font-medium block">Shōyu</span><span class="text-xs text-muted block">Soy sauce</span></div>
                     </div>
                 </div>
-                <button type="button" data-modal-close class="text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-2xl leading-none" aria-label="Close">&times;</button>
             </div>
-
-            <!-- Kept on a light background in both themes: this is what staff read. -->
-            <div class="bg-red-50 border-2 border-red-300 rounded-2xl p-4 md:p-5 mb-4 shadow-inner">
-                <div class="flex items-center justify-between mb-2.5">
-                    <span lang="ja" class="inline-block bg-red-600 text-white text-xs font-black px-2.5 py-1 rounded-md uppercase tracking-wider">店員様・調理場へ提示</span>
-                    <button id="speak-chef-card-btn" type="button" class="flex items-center space-x-1 text-xs font-bold text-red-700 bg-white px-2.5 py-1 rounded-full shadow-sm border border-red-200 hover:bg-red-50">
-                        <span aria-hidden="true">🔊</span><span>Speak Notice</span>
-                    </button>
-                </div>
-                <div lang="ja" class="jp-font text-base md:text-lg font-bold text-gray-900 leading-relaxed text-left space-y-2">
-                    <p class="text-red-700 font-black">【重要】セリアック病（重度小麦・グルテンアレルギー）があります。</p>
-                    <p><ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。</p>
-                    <ul class="list-disc pl-5 space-y-1 text-sm md:text-base font-semibold text-gray-800">
-                        <li><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</li>
-                        <li><strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</li>
-                    </ul>
-                    <p class="text-sm md:text-base pt-1 text-gray-900">小麦を含まない料理、または「塩のみ・素焼き」で提供できるものはありますか？</p>
-                </div>
-            </div>
-
-            <div class="bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-xl p-3.5 mb-4 text-left">
-                <p class="text-xs uppercase font-extrabold text-amber-800 dark:text-amber-300 tracking-wider mb-1">English Translation</p>
-                <p class="text-xs md:text-sm text-gray-700 dark:text-zinc-300 leading-relaxed italic">
-                    "[Important] I have Coeliac disease (severe wheat/gluten allergy). I cannot consume any wheat, barley, or rye. Seasonings: I also cannot have regular soy sauce, tare, tsuyu, barley miso, or dashi stock powder. Cooking: please avoid shared frying oil, shared boiling water, and shared utensils. Are there dishes without wheat, or anything you can serve with salt only / plain grilled?"
-                </p>
-            </div>
-
-            <div class="space-y-2.5">
-                <button id="gf-fullscreen-trigger-btn" type="button" class="w-full bg-gradient-to-r from-red-600 via-rose-600 to-orange-600 text-white px-5 py-3 rounded-full font-bold shadow-md hover:shadow-lg flex items-center justify-center space-x-2 transition-all duration-200 hover:scale-[1.01]">
-                    <span class="text-lg" aria-hidden="true">⛶</span>
-                    <span>Full Screen Japanese View (Show to Staff)</span>
-                </button>
-                <button type="button" data-modal-close class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 px-6 py-2.5 rounded-full font-bold transition-all duration-200">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
+        </section>
+    </template>
 
     <!-- Full screen chef card (always light, for staff to read) -->
-    <div id="gf-fullscreen-overlay" class="fixed inset-0 w-full h-[100dvh] bg-red-50 z-[100] hidden flex-col justify-between p-3 sm:p-5 select-none overflow-hidden border-4 border-red-500" role="dialog" aria-modal="true" aria-label="Coeliac card, full screen">
-        <div class="w-full flex items-center justify-between gap-2 pb-2 border-b-2 border-red-300 flex-shrink-0">
-            <span lang="ja" class="inline-flex items-center space-x-1.5 bg-red-600 text-white text-xs sm:text-sm font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                <span aria-hidden="true">⚠️</span>
-                <span>店員様・調理場へ提示 (FOR STAFF)</span>
-            </span>
+    <div id="gf-fullscreen-overlay" class="force-light fixed inset-0 w-full h-[100dvh] bg-surface z-[100] hidden flex-col select-none overflow-hidden" role="dialog" aria-modal="true" aria-label="Coeliac card, full screen">
+        <div class="h-2 bg-hinomaru flex-shrink-0" aria-hidden="true"></div>
+        <div class="w-full flex items-center justify-between gap-2 px-3 sm:px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 border-b border-line flex-shrink-0">
+            <span lang="ja" class="inline-flex items-center rounded-md bg-hinomaru text-white text-xs sm:text-sm font-bold px-2.5 py-1 whitespace-nowrap">店員様・調理場へ</span>
             <div class="flex items-center gap-2">
                 <button id="gf-fs-card-speaker-btn" type="button" class="overlay-btn" aria-label="Read the card aloud in Japanese">
-                    <span class="text-base leading-none" aria-hidden="true">🔊</span>
-                    <span lang="ja">読み上げ</span>
+                    <span data-icon="speaker" class="w-4 h-4"></span><span lang="ja">読み上げ</span>
                 </button>
-                <button type="button" data-overlay-rotate class="overlay-btn" aria-label="Turn the card upside down for someone opposite you">
-                    <span class="text-base leading-none" aria-hidden="true">🔄</span>
+                <button type="button" data-overlay-rotate class="overlay-btn px-2.5" aria-label="Turn the card upside down for someone opposite you">
+                    <span data-icon="rotate" class="w-4 h-4"></span>
                 </button>
-                <button type="button" data-overlay-close class="overlay-btn bg-gray-900 hover:bg-gray-800 text-white border-gray-900">
-                    <span lang="ja">✕ 戻る</span><span>(Back)</span>
+                <button type="button" data-overlay-close class="overlay-btn bg-ink text-paper border-ink hover:bg-ink/90">
+                    <span data-icon="x" class="w-4 h-4"></span><span class="sr-only sm:not-sr-only">Close</span>
                 </button>
             </div>
         </div>
 
-        <div data-overlay-content class="flex-1 w-full flex items-center justify-center min-h-0 py-2 sm:py-3 overflow-y-auto transition-transform duration-300">
-            <div lang="ja" class="jp-font font-black text-gray-900 w-full max-w-4xl text-left leading-snug portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly">
-                <div class="space-y-4 portrait:space-y-0 portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly landscape:grid landscape:grid-cols-2 landscape:gap-4 landscape:space-y-0 landscape:items-center">
+        <div data-overlay-content class="flex-1 w-full flex items-center justify-center min-h-0 px-4 sm:px-6 py-3 overflow-y-auto transition-transform duration-300">
+            <div lang="ja" class="font-jp text-ink w-full max-w-4xl text-left leading-snug portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly">
+                <div class="space-y-4 portrait:space-y-0 portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly landscape:grid landscape:grid-cols-2 landscape:gap-6 landscape:space-y-0 landscape:items-center">
                     <div class="space-y-3 portrait:space-y-4 landscape:space-y-2 sm:landscape:space-y-3">
-                        <p class="text-red-700 font-black text-xl portrait:text-2xl sm:portrait:text-4xl landscape:text-xl sm:landscape:text-2xl md:landscape:text-3xl leading-tight">
+                        <p class="text-hinomaru font-bold text-xl portrait:text-2xl sm:portrait:text-4xl landscape:text-xl sm:landscape:text-2xl md:landscape:text-3xl leading-tight">
                             【重要】セリアック病<br>
-                            <span class="text-sm portrait:text-lg sm:portrait:text-2xl font-bold text-red-600">（重度小麦・グルテンアレルギー）</span>
+                            <span class="text-sm portrait:text-lg sm:portrait:text-2xl font-medium">（重度小麦・グルテンアレルギー）</span>
                         </p>
-                        <p class="text-base portrait:text-xl sm:portrait:text-3xl text-gray-900 font-extrabold leading-normal portrait:leading-relaxed landscape:text-base sm:landscape:text-xl md:landscape:text-2xl">
+                        <p class="text-base portrait:text-xl sm:portrait:text-3xl font-bold leading-normal portrait:leading-relaxed landscape:text-base sm:landscape:text-xl md:landscape:text-2xl">
                             <ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。
                         </p>
                     </div>
                     <div class="space-y-3 portrait:space-y-4 landscape:space-y-2.5 sm:landscape:space-y-3">
-                        <div class="bg-red-50 border-2 border-red-300 rounded-2xl p-2.5 portrait:p-4 sm:portrait:p-5 space-y-1.5 portrait:space-y-3 shadow-sm text-sm portrait:text-base sm:portrait:text-2xl landscape:text-sm sm:landscape:text-base md:landscape:text-lg">
-                            <p class="text-red-700 font-bold">❌ <strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</p>
-                            <p class="text-red-700 font-bold">❌ <strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</p>
+                        <div class="border-l-4 border-hinomaru bg-hinomaru/5 rounded-r-xl p-3 portrait:p-4 sm:portrait:p-5 space-y-1.5 portrait:space-y-3 text-sm portrait:text-base sm:portrait:text-2xl landscape:text-sm sm:landscape:text-base md:landscape:text-lg font-medium">
+                            <p><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</p>
+                            <p><strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</p>
                         </div>
-                        <p class="text-base portrait:text-xl sm:portrait:text-3xl font-black text-gray-900 leading-snug portrait:leading-relaxed landscape:text-base sm:landscape:text-lg md:landscape:text-xl">
+                        <p class="text-base portrait:text-xl sm:portrait:text-3xl font-bold leading-snug portrait:leading-relaxed landscape:text-base sm:landscape:text-lg md:landscape:text-xl">
                             小麦を含まない料理、または「塩のみ・素焼き」で提供できるものはありますか？
                         </p>
                     </div>
@@ -272,28 +236,28 @@
     </div>
 
     <!-- Any phrase, full screen (always light, for staff to read) -->
-    <div id="phrase-overlay" class="fixed inset-0 w-full h-[100dvh] bg-white z-[100] hidden flex-col p-3 sm:p-5 select-none overflow-hidden border-4 border-orange-500" role="dialog" aria-modal="true" aria-label="Phrase, full screen">
-        <div class="w-full flex items-center justify-end gap-2 pb-2 flex-shrink-0">
+    <div id="phrase-overlay" class="force-light fixed inset-0 w-full h-[100dvh] bg-surface z-[100] hidden flex-col select-none overflow-hidden" role="dialog" aria-modal="true" aria-label="Phrase, full screen">
+        <div class="h-2 bg-hinomaru flex-shrink-0" aria-hidden="true"></div>
+        <div class="w-full flex items-center justify-end gap-2 px-3 sm:px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 flex-shrink-0">
             <button id="phrase-overlay-speaker-btn" type="button" class="overlay-btn" aria-label="Play pronunciation">
-                <span class="text-base leading-none" aria-hidden="true">🔊</span>
-                <span lang="ja">読み上げ</span>
+                <span data-icon="speaker" class="w-4 h-4"></span><span lang="ja">読み上げ</span>
             </button>
-            <button type="button" data-overlay-rotate class="overlay-btn" aria-label="Turn the phrase upside down for someone opposite you">
-                <span class="text-base leading-none" aria-hidden="true">🔄</span>
+            <button type="button" data-overlay-rotate class="overlay-btn px-2.5" aria-label="Turn the phrase upside down for someone opposite you">
+                <span data-icon="rotate" class="w-4 h-4"></span>
             </button>
-            <button type="button" data-overlay-close class="overlay-btn bg-gray-900 hover:bg-gray-800 text-white border-gray-900">
-                <span lang="ja">✕ 戻る</span><span>(Back)</span>
+            <button type="button" data-overlay-close class="overlay-btn bg-ink text-paper border-ink hover:bg-ink/90">
+                <span data-icon="x" class="w-4 h-4"></span><span class="sr-only sm:not-sr-only">Close</span>
             </button>
         </div>
-        <div data-overlay-content class="flex-1 flex flex-col items-center justify-center text-center min-h-0 overflow-y-auto px-2 transition-transform duration-300">
-            <p id="phrase-overlay-jp" lang="ja" class="jp-font font-black text-gray-900 leading-tight break-words max-w-full"></p>
-            <p id="phrase-overlay-romaji" class="mt-6 text-lg sm:text-2xl font-bold text-orange-700"></p>
-            <p id="phrase-overlay-en" class="mt-2 text-base sm:text-xl font-semibold text-gray-600"></p>
+        <div data-overlay-content class="flex-1 flex flex-col items-center justify-center text-center min-h-0 overflow-y-auto px-4 transition-transform duration-300">
+            <p id="phrase-overlay-jp" lang="ja" class="font-jp font-bold text-ink leading-tight break-words max-w-full"></p>
+            <p id="phrase-overlay-romaji" class="mt-8 text-lg sm:text-2xl font-medium text-accent"></p>
+            <p id="phrase-overlay-en" class="mt-2 text-base sm:text-xl text-muted"></p>
         </div>
     </div>
 
     <!-- Toast -->
-    <div id="audio-toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900/95 text-white text-xs md:text-sm px-4 py-2 rounded-full shadow-2xl backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 z-[110]" role="status" aria-live="polite">
+    <div id="audio-toast" class="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] md:bottom-6 left-1/2 -translate-x-1/2 bg-ink text-paper text-sm px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-[110]" role="status" aria-live="polite">
         <span id="toast-message"></span>
     </div>
 
