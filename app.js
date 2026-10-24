@@ -96,7 +96,7 @@ function hydrateIcons(root) {
 let searchQuery = "";
 let selectedCategoryFilter = "all";
 let savedPhraseIds = loadJSON('jf_japan_favorites', []);
-let currentTheme = loadString('jf_japan_theme', 'day'); // 'day' or 'izakaya'
+let currentTheme = loadString('jf_japan_theme', 'auto'); // 'auto', 'day' or 'izakaya'
 let voiceEngine = loadString('jf_japan_voice_engine', 'studio'); // 'studio' or 'device'
 let speechRate = parseFloat(loadString('jf_japan_speech_rate', '1.0')) || 1.0;
 
@@ -136,8 +136,10 @@ function showToast(msg, duration = 1800) {
 }
 
 // --- SETTINGS (theme, voice, speed) ---
+const prefersDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
 function applyTheme() {
-    const isDark = currentTheme === 'izakaya';
+    const isDark = currentTheme === 'izakaya' || (currentTheme === 'auto' && !!prefersDark && prefersDark.matches);
     document.documentElement.classList.toggle('dark', isDark);
     document.getElementById('meta-theme-color').setAttribute('content', isDark ? '#171412' : '#faf7f2');
 }
@@ -743,7 +745,11 @@ function flashcardDeck() {
 
 function showFlashcardsView() {
     setView('flashcards');
-    flashcardItems = shuffle(flashcardDeck().filter(item => !masteredIds.has(item.id)));
+    // Forget mastered ids for cards that are no longer in the deck, so the counts add up.
+    const deck = flashcardDeck();
+    masteredIds = new Set(deck.filter(item => masteredIds.has(item.id)).map(item => item.id));
+    store('jf_japan_mastered', [...masteredIds]);
+    flashcardItems = shuffle(deck.filter(item => !masteredIds.has(item.id)));
     currentFlashcardIndex = 0;
     renderFlashcard();
 }
@@ -766,7 +772,17 @@ function flipFlashcard() {
     const flashcard = document.getElementById('flashcard');
     if (!flashcard) return;
     triggerHapticFeedback();
-    flashcard.classList.toggle('is-flipped');
+    setFlashcardFace(!flashcard.classList.contains('is-flipped'));
+}
+
+// Hide the face turned away from the reader from the keyboard and screen readers,
+// so "Got it" can't be pressed before the answer is shown.
+function setFlashcardFace(flipped) {
+    const flashcard = document.getElementById('flashcard');
+    flashcard.classList.toggle('is-flipped', flipped);
+    flashcard.querySelector('.card-front').inert = flipped;
+    flashcard.querySelector('.card-back').inert = !flipped;
+    flashcard.querySelector(flipped ? '.card-back' : '.card-front').focus();
 }
 
 function moveFlashcard(step) {
@@ -799,9 +815,9 @@ function renderFlashcard() {
     const progress = Math.round((masteredIds.size / total) * 100);
 
     const modes = [
-        { key: 'en_to_jp', label: 'English → 日本語' },
-        { key: 'jp_to_en', label: '日本語 → English' },
-        { key: 'audio_listen', label: 'Listening' }
+        { key: 'en_to_jp', label: 'English → 日本語', short: 'EN → JP' },
+        { key: 'jp_to_en', label: '日本語 → English', short: 'JP → EN' },
+        { key: 'audio_listen', label: 'Listening', short: 'Listen' }
     ];
 
     const backPlayButton = `
@@ -852,7 +868,9 @@ function renderFlashcard() {
         <h1 class="sr-only">Flashcards</h1>
         <div class="segmented max-w-md mx-auto" role="group" aria-label="Study mode">
             ${modes.map(mode => `
-                <button type="button" data-action="fc-mode" data-mode="${mode.key}" aria-pressed="${flashcardStudyMode === mode.key}">${mode.label}</button>
+                <button type="button" data-action="fc-mode" data-mode="${mode.key}" aria-pressed="${flashcardStudyMode === mode.key}" aria-label="${mode.label}">
+                    <span class="min-[420px]:hidden">${mode.short}</span><span class="hidden min-[420px]:inline">${mode.label}</span>
+                </button>
             `).join('')}
         </div>
 
@@ -867,11 +885,11 @@ function renderFlashcard() {
         </div>
 
         <div class="perspective-1000 h-[22rem] max-w-xl mx-auto mt-5">
-            <div id="flashcard" class="card relative w-full h-full cursor-pointer select-none" tabindex="0" role="button" aria-label="Flashcard. Press to flip." data-action="flip">
-                <div class="card-face absolute inset-0 panel shadow-sm flex flex-col items-center justify-center p-6 text-center">
+            <div id="flashcard" class="card relative w-full h-full cursor-pointer select-none" data-action="flip">
+                <div class="card-front card-face absolute inset-0 panel shadow-sm flex flex-col items-center justify-center p-6 text-center" tabindex="0" aria-label="Card front. Press Space to flip." aria-roledescription="flashcard">
                     ${frontHTML}
                 </div>
-                <div class="card-back card-face absolute inset-0 rounded-2xl bg-ink text-paper shadow-sm flex flex-col items-center justify-center p-6 text-center">
+                <div class="card-back card-face absolute inset-0 rounded-2xl bg-ink text-paper shadow-sm flex flex-col items-center justify-center p-6 text-center" tabindex="-1" aria-label="Card back" aria-roledescription="flashcard" inert>
                     ${backHTML}
                     <div class="mt-6 flex items-center gap-2">
                         <button type="button" data-action="fc-again" class="rounded-full border border-paper/30 px-4 py-2 text-sm font-semibold hover:bg-paper/10 transition">Practise again</button>
@@ -888,9 +906,8 @@ function renderFlashcard() {
         </div>
     `;
 
-    if (flashcardStudyMode === 'audio_listen') {
-        setTimeout(() => playAudio(item.japanese, null), 300);
-    }
+    // Played straight away rather than after a delay, so it still counts as part of the tap (iPhones need that).
+    if (flashcardStudyMode === 'audio_listen') playAudio(item.japanese, null);
 }
 
 function markFlashcard(mastered) {
@@ -989,6 +1006,9 @@ function renderQuizQuestion() {
             ? '<span class="text-emerald-700 dark:text-emerald-400">Correct</span>'
             : `<span class="text-red-700 dark:text-red-400">Not quite. It's “${escapeHtml(correctLabel)}”.</span>`;
     }
+    const nextButton = answered && quizAnsweredId !== q.phrase.id
+        ? `<div class="mt-4 text-center"><button type="button" data-action="quiz-next" class="btn-primary">${currentQuizQuestionIndex + 1 < quizQuestions.length ? 'Next question' : 'See results'}</button></div>`
+        : '';
 
     mainContent.innerHTML = `
         <h1 class="sr-only">Quiz</h1>
@@ -1005,12 +1025,11 @@ function renderQuizQuestion() {
 
             <ul class="mt-8 space-y-3">${q.options.map(optionHTML).join('')}</ul>
             <p class="mt-4 min-h-[1.5rem] text-center font-medium" aria-live="polite">${feedback}</p>
+            ${nextButton}
         </div>
     `;
 
-    if (q.isListening && !answered) {
-        setTimeout(() => playAudio(q.phrase.japanese, null), 300);
-    }
+    if (q.isListening && !answered) playAudio(q.phrase.japanese, null);
 }
 
 function triggerQuizConfetti() {
@@ -1047,14 +1066,22 @@ function handleQuizAnswer(optionId) {
         triggerQuizConfetti();
     }
     renderQuizQuestion();
+    if (!isCorrect) {
+        // Leave the right answer on screen until "Next" is pressed.
+        document.querySelector('[data-action="quiz-next"]').focus();
+        return;
+    }
 
     const round = quizRound;
     setTimeout(() => {
-        if (round !== quizRound) return;
-        quizAnsweredId = null;
-        currentQuizQuestionIndex++;
-        if (currentView === 'quiz') renderQuizQuestion();
+        if (round === quizRound) nextQuizQuestion();
     }, 1400);
+}
+
+function nextQuizQuestion() {
+    quizAnsweredId = null;
+    currentQuizQuestionIndex++;
+    if (currentView === 'quiz') renderQuizQuestion();
 }
 
 function renderQuizResults() {
@@ -1147,6 +1174,9 @@ mainContent.addEventListener('click', (e) => {
         case 'quiz-answer':
             handleQuizAnswer(id);
             break;
+        case 'quiz-next':
+            nextQuizQuestion();
+            break;
         case 'quiz-restart':
             startQuiz();
             break;
@@ -1224,6 +1254,20 @@ document.addEventListener('keydown', (e) => {
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(() => {});
+        // On the first visit the fonts load before the service worker is running, so they
+        // aren't cached. Tell it which stylesheets and characters the app uses so it can
+        // cache the matching font files, and the app looks the same offline.
+        navigator.serviceWorker.ready.then(registration => {
+            const css = [...document.querySelectorAll('link[rel="stylesheet"]')]
+                .map(link => link.href)
+                .filter(href => href.startsWith('https://fonts.googleapis.com/'));
+            const text = document.body.textContent +
+                document.getElementById('coeliac-template').content.textContent +
+                JSON.stringify(globalThis.PHRASEBOOK);
+            if (css.length && registration.active) {
+                registration.active.postMessage({ type: 'cache-fonts', css, chars: [...new Set(text)].join('') });
+            }
+        }).catch(() => {});
     });
 }
 
@@ -1234,6 +1278,11 @@ if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== un
 }
 hydrateIcons(document);
 applyTheme();
+if (prefersDark && prefersDark.addEventListener) {
+    prefersDark.addEventListener('change', () => {
+        if (currentTheme === 'auto') applyTheme();
+    });
+}
 updateSettingsUI();
 showPhrasesView();
 loadRecordings();

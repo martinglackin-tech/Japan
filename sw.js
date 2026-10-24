@@ -1,5 +1,5 @@
 // Offline support. Bump CORE_CACHE when the list of core files changes.
-const CORE_CACHE = 'jf-japan-core-v2';
+const CORE_CACHE = 'jf-japan-core-v3';
 const FONT_CACHE = 'jf-japan-fonts-v1';
 // Filled by app.js (loadRecordings); listed here so activate doesn't delete it.
 const AUDIO_CACHE = 'jf-japan-audio-v1';
@@ -14,6 +14,8 @@ const CORE_FILES = [
     'manifest.webmanifest',
     'icons/icon.svg',
     'icons/icon-192.png',
+    'icons/icon-512.png',
+    'icons/icon-maskable-512.png',
     'icons/apple-touch-icon.png'
 ];
 
@@ -95,4 +97,42 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(staleWhileRevalidate(event, FONT_CACHE));
     }
     // Everything else (e.g. the online voice) goes straight to the network.
+});
+
+// Google Fonts splits each font into files by character range. The page sends its font
+// stylesheets and the characters it shows (see app.js), so the files it needs are cached
+// on the first visit, before this worker was handling the page's requests.
+function inUnicodeRange(range, codePoint) {
+    return range.split(',').some(part => {
+        const [lo, hi = lo] = part.trim().replace(/^U\+/i, '').split('-');
+        const low = parseInt(lo.replace(/\?/g, '0'), 16);
+        const high = parseInt((hi === lo ? lo.replace(/\?/g, 'F') : hi), 16);
+        return codePoint >= low && codePoint <= high;
+    });
+}
+
+async function cacheFonts(cssUrls, chars) {
+    const cache = await caches.open(FONT_CACHE);
+    const codePoints = [...chars].map(c => c.codePointAt(0));
+    const save = async (url) => {
+        if (await cache.match(url)) return cache.match(url);
+        const response = await fetch(url);
+        if (response.ok) await cache.put(url, response.clone());
+        return response;
+    };
+    for (const cssUrl of cssUrls) {
+        const css = await (await save(cssUrl)).text();
+        const files = (css.match(/@font-face\s*{[^}]*}/g) || []).filter(face => {
+            const range = face.match(/unicode-range:\s*([^;}]+)/);
+            return !range || codePoints.some(cp => inUnicodeRange(range[1], cp));
+        }).map(face => (face.match(/url\(([^)]+)\)/) || [])[1]).filter(Boolean);
+        await Promise.all(files.map(url => save(url.replace(/['"]/g, '')).catch(() => {})));
+    }
+}
+
+self.addEventListener('message', (event) => {
+    const { data } = event;
+    if (!data || data.type !== 'cache-fonts' || !Array.isArray(data.css) || typeof data.chars !== 'string') return;
+    const css = data.css.filter(url => url.startsWith('https://fonts.googleapis.com/'));
+    event.waitUntil(cacheFonts(css, data.chars).catch(() => {}));
 });

@@ -40,7 +40,7 @@
             <span class="w-6 h-6 rounded-full bg-hinomaru flex-shrink-0" aria-hidden="true"></span>
             <div class="leading-tight min-w-0">
                 <p class="font-display font-semibold text-[15px] truncate">Josey &amp; Frankie</p>
-                <p lang="ja" class="font-jp text-[11px] text-muted tracking-wide">日本語フレーズブック</p>
+                <p lang="ja" class="font-jp text-[11px] text-muted tracking-wide truncate">日本語フレーズブック</p>
             </div>
 
             <nav class="hidden md:flex items-center gap-1 ml-6" aria-label="Sections">
@@ -51,7 +51,7 @@
             </nav>
 
             <div class="ml-auto flex items-center gap-1">
-                <button id="header-chef-btn" type="button" class="inline-flex items-center gap-1.5 rounded-full bg-hinomaru text-white text-sm font-semibold pl-3 pr-3.5 py-1.5 transition hover:opacity-90 active:scale-95" aria-label="Show the coeliac card to staff, full screen">
+                <button id="header-chef-btn" type="button" class="inline-flex items-center gap-1.5 rounded-full bg-hinomaru text-white text-sm font-semibold whitespace-nowrap flex-shrink-0 pl-3 pr-3.5 py-1.5 transition hover:opacity-90 active:scale-95" aria-label="Show the coeliac card to staff, full screen">
                     <span data-icon="alert" class="w-4 h-4"></span>
                     <span>Chef card</span>
                 </button>
@@ -65,8 +65,9 @@
                 <div>
                     <p class="eyebrow mb-2" id="theme-label">Theme</p>
                     <div class="segmented" role="group" aria-labelledby="theme-label">
+                        <button type="button" data-setting="theme" data-value="auto">Auto</button>
                         <button type="button" data-setting="theme" data-value="day">Day</button>
-                        <button type="button" data-setting="theme" data-value="izakaya">Izakaya (dark)</button>
+                        <button type="button" data-setting="theme" data-value="izakaya">Izakaya</button>
                     </div>
                 </div>
                 <div>
@@ -83,7 +84,7 @@
                         <button type="button" data-setting="speed" data-value="0.75">Slow</button>
                     </div>
                 </div>
-                <p class="text-xs text-muted leading-relaxed">Natural uses recordings or an online voice. "This device" uses your phone's built-in Japanese voice and always works offline.</p>
+                <p class="text-xs text-muted leading-relaxed">Izakaya is the dark theme; Auto follows your phone. Natural uses recordings or an online voice. "This device" uses your phone's built-in Japanese voice and always works offline.</p>
             </div>
         </div>
     </header>
@@ -206,7 +207,7 @@
             <span lang="ja" class="inline-flex items-center rounded-md bg-hinomaru text-white text-xs sm:text-sm font-bold px-2.5 py-1 whitespace-nowrap">店員様・調理場へ</span>
             <div class="flex items-center gap-2">
                 <button id="gf-fs-card-speaker-btn" type="button" class="overlay-btn" aria-label="Read the card aloud in Japanese">
-                    <span data-icon="speaker" class="w-4 h-4"></span><span lang="ja">読み上げ</span>
+                    <span data-icon="speaker" class="w-4 h-4"></span><span lang="ja" class="hidden min-[360px]:inline">読み上げ</span>
                 </button>
                 <button type="button" data-overlay-rotate class="overlay-btn px-2.5" aria-label="Turn the card upside down for someone opposite you">
                     <span data-icon="rotate" class="w-4 h-4"></span>
@@ -217,27 +218,26 @@
             </div>
         </div>
 
-        <div data-overlay-content class="flex-1 w-full flex items-center justify-center min-h-0 px-4 sm:px-6 py-3 overflow-y-auto transition-transform duration-300">
-            <div lang="ja" class="font-jp text-ink w-full max-w-4xl text-left leading-snug portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly">
-                <div class="space-y-4 portrait:space-y-0 portrait:h-full portrait:flex portrait:flex-col portrait:justify-evenly landscape:grid landscape:grid-cols-2 landscape:gap-6 landscape:space-y-0 landscape:items-center">
-                    <div class="space-y-3 portrait:space-y-4 landscape:space-y-2 sm:landscape:space-y-3">
-                        <p class="text-hinomaru font-bold text-xl portrait:text-2xl sm:portrait:text-4xl landscape:text-xl sm:landscape:text-2xl md:landscape:text-3xl leading-tight">
-                            【重要】セリアック病<br>
-                            <span class="text-sm portrait:text-lg sm:portrait:text-2xl font-medium">（重度小麦・グルテンアレルギー）</span>
-                        </p>
-                        <p class="text-base portrait:text-xl sm:portrait:text-3xl font-bold leading-normal portrait:leading-relaxed landscape:text-base sm:landscape:text-xl md:landscape:text-2xl">
-                            <ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。
-                        </p>
+        <div data-overlay-content class="flex-1 w-full flex justify-center min-h-0 px-5 sm:px-8 py-4 overflow-y-auto transition-transform duration-300">
+            <!-- Type scales with the screen (see .chef-fs in src/input.css) so staff can read it at arm's length. -->
+            <div lang="ja" class="chef-fs font-jp text-ink w-full max-w-6xl my-auto text-left">
+                <div class="chef-fs-col">
+                    <p class="chef-fs-title text-hinomaru font-bold">
+                        【重要】セリアック病<br>
+                        <span class="chef-fs-sub font-medium">（重度小麦・グルテンアレルギー）</span>
+                    </p>
+                    <p class="chef-fs-body font-bold">
+                        <ruby>小麦<rt>こむぎ</rt></ruby>、<ruby>大麦<rt>おおむぎ</rt></ruby>、<ruby>ライ麦<rt>らいむぎ</rt></ruby>を一切摂取できません。
+                    </p>
+                </div>
+                <div class="chef-fs-col">
+                    <div class="chef-fs-note border-l-4 border-hinomaru bg-hinomaru/5 rounded-r-xl font-medium">
+                        <p><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</p>
+                        <p><strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</p>
                     </div>
-                    <div class="space-y-3 portrait:space-y-4 landscape:space-y-2.5 sm:landscape:space-y-3">
-                        <div class="border-l-4 border-hinomaru bg-hinomaru/5 rounded-r-xl p-3 portrait:p-4 sm:portrait:p-5 space-y-1.5 portrait:space-y-3 text-sm portrait:text-base sm:portrait:text-2xl landscape:text-sm sm:landscape:text-base md:landscape:text-lg font-medium">
-                            <p><strong>調味料：</strong>普通の<ruby>醤油<rt>しょうゆ</rt></ruby>・たれ・つゆ・麦味噌・だしの素も摂取できません。</p>
-                            <p><strong>調理：</strong>揚げ油・茹で汁・調理器具の共用も避けてください。</p>
-                        </div>
-                        <p class="text-base portrait:text-xl sm:portrait:text-3xl font-bold leading-snug portrait:leading-relaxed landscape:text-base sm:landscape:text-lg md:landscape:text-xl">
-                            小麦を含まない料理、または「塩のみ・素焼き」で提供できるものはありますか？
-                        </p>
-                    </div>
+                    <p class="chef-fs-body font-bold">
+                        小麦を含まない料理、または「塩のみ・素焼き」で提供できるものはありますか？
+                    </p>
                 </div>
             </div>
         </div>
@@ -248,7 +248,7 @@
         <div class="h-2 bg-hinomaru flex-shrink-0" aria-hidden="true"></div>
         <div class="w-full flex items-center justify-end gap-2 px-3 sm:px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 flex-shrink-0">
             <button id="phrase-overlay-speaker-btn" type="button" class="overlay-btn" aria-label="Play pronunciation">
-                <span data-icon="speaker" class="w-4 h-4"></span><span lang="ja">読み上げ</span>
+                <span data-icon="speaker" class="w-4 h-4"></span><span lang="ja" class="hidden min-[360px]:inline">読み上げ</span>
             </button>
             <button type="button" data-overlay-rotate class="overlay-btn px-2.5" aria-label="Turn the phrase upside down for someone opposite you">
                 <span data-icon="rotate" class="w-4 h-4"></span>
