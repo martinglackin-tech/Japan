@@ -1,5 +1,5 @@
 // Offline support. Bump CORE_CACHE when the list of core files changes.
-const CORE_CACHE = 'jf-japan-core-v1';
+const CORE_CACHE = 'jf-japan-core-v2';
 const FONT_CACHE = 'jf-japan-fonts-v1';
 // Filled by app.js (loadRecordings); listed here so activate doesn't delete it.
 const AUDIO_CACHE = 'jf-japan-audio-v1';
@@ -20,7 +20,8 @@ const CORE_FILES = [
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CORE_CACHE)
-            .then(cache => cache.addAll(CORE_FILES))
+            // Skip the HTTP cache so a deploy is never precached with stale files.
+            .then(cache => cache.addAll(CORE_FILES.map(file => new Request(file, { cache: 'reload' }))))
             .then(() => self.skipWaiting())
     );
 });
@@ -34,11 +35,25 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Serve from cache straight away, then refresh the cache in the background,
-// so a new deploy shows up on the next visit.
+// The app's own files are fetched from the network first, so the page and its scripts
+// always come from the same deploy; the cache is only used offline. (Serving cached
+// scripts first once paired a new index.html with an old app.js, leaving a blank page.)
+function networkFirst(request, cacheKey = request) {
+    return fetch(request, { cache: 'no-cache' })
+        .then(response => {
+            if (response.ok) {
+                const copy = response.clone();
+                caches.open(CORE_CACHE).then(cache => cache.put(cacheKey, copy));
+            }
+            return response;
+        })
+        .catch(() => caches.match(cacheKey, { ignoreSearch: true }));
+}
+
+// Fonts don't change, so serve them from the cache and refresh in the background.
 function staleWhileRevalidate(event, cacheName) {
     return caches.open(cacheName).then(cache =>
-        cache.match(event.request, { ignoreSearch: true }).then(cached => {
+        cache.match(event.request).then(cached => {
             const network = fetch(event.request)
                 .then(response => {
                     if (response && (response.ok || response.type === 'opaque')) {
@@ -64,29 +79,15 @@ self.addEventListener('fetch', (event) => {
     if (url.origin === self.location.origin) {
         if (request.mode === 'navigate') {
             // Any navigation inside the app falls back to the cached page when offline.
-            event.respondWith(
-                fetch(request)
-                    .then(response => {
-                        if (response.ok) {
-                            const copy = response.clone();
-                            caches.open(CORE_CACHE).then(cache => cache.put('index.html', copy));
-                        }
-                        return response;
-                    })
-                    .catch(() => caches.match('index.html'))
-            );
+            event.respondWith(networkFirst(request, 'index.html'));
             return;
         }
-        if (url.pathname.endsWith('/audio/index.json')) {
-            // Network first so newly generated recordings are picked up.
-            event.respondWith(fetch(request).catch(() => caches.match(request, { ignoreSearch: true })));
-            return;
-        }
-        if (url.pathname.includes('/audio/')) {
+        if (url.pathname.includes('/audio/') && !url.pathname.endsWith('/audio/index.json')) {
+            // Recordings never change in place (new text gets a new file name).
             event.respondWith(caches.match(request).then(cached => cached || fetch(request)));
             return;
         }
-        event.respondWith(staleWhileRevalidate(event, CORE_CACHE));
+        event.respondWith(networkFirst(request));
         return;
     }
 
