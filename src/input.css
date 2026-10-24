@@ -167,3 +167,44 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* Full screen chef card. Sizes follow the screen (the smaller of width and height),
+   so the card fills a phone or a laptop without scrolling. */
+.chef-fs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1em;
+    font-size: clamp(1rem, min(5.4vw, 2.9vh), 2.5rem);
+    line-height: 1.5;
+}
+.chef-fs-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+}
+.chef-fs-title {
+    font-size: 1.5em;
+    line-height: 1.25;
+}
+.chef-fs-sub {
+    font-size: 0.55em;
+}
+.chef-fs-body {
+    font-size: 1.15em;
+    line-height: 1.6;
+}
+.chef-fs-note {
+    padding: 0.8em 1em;
+}
+.chef-fs-note > p + p {
+    margin-top: 0.6em;
+}
+@media (orientation: landscape) {
+    .chef-fs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        column-gap: 2.5em;
+        font-size: clamp(0.9rem, min(2.4vw, 4.2vh), 2.5rem);
+    }
+}
