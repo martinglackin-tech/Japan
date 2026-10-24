@@ -187,10 +187,12 @@ function getBestJapaneseVoice() {
     if (!cachedVoices || cachedVoices.length === 0) {
         populateVoices();
     }
-    const jpVoices = cachedVoices.filter(v =>
+    let jpVoices = cachedVoices.filter(v =>
         (v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('ja')) ||
         (v.name && (v.name.toLowerCase().includes('japan') || v.name.includes('日本語')))
     );
+    // Network voices need a connection and stay silent offline, so only offer on-device ones.
+    if (!navigator.onLine) jpVoices = jpVoices.filter(v => v.localService !== false);
 
     if (jpVoices.length === 0) return null;
 
@@ -327,6 +329,8 @@ function finishPlayback(token) {
     currentPlayingAudio = null;
 }
 
+const NO_VOICE_MESSAGE = "No Japanese voice on this device. Install one in your phone's text-to-speech settings.";
+
 function playDeviceVoice(cleanText, token) {
     if (token !== playbackToken) return;
     if (!('speechSynthesis' in window)) {
@@ -343,10 +347,21 @@ function playDeviceVoice(cleanText, token) {
         utterance.pitch = 1.0;
 
         const voice = getBestJapaneseVoice();
-        if (voice) utterance.voice = voice;
+        if (voice) {
+            utterance.voice = voice;
+        } else if (cachedVoices.length > 0) {
+            // The device listed its voices and none of them can speak Japanese right now.
+            showToast(NO_VOICE_MESSAGE, 4000);
+        }
 
         utterance.onend = () => finishPlayback(token);
-        utterance.onerror = () => finishPlayback(token);
+        utterance.onerror = (e) => {
+            // 'interrupted' and 'canceled' come from stopPlayback, not a failure.
+            if (token === playbackToken && e.error !== 'interrupted' && e.error !== 'canceled') {
+                showToast(NO_VOICE_MESSAGE, 4000);
+            }
+            finishPlayback(token);
+        };
 
         window.speechSynthesis.speak(utterance);
     } catch (err) {
