@@ -1,5 +1,5 @@
 // Offline support. Bump CORE_CACHE when the list of core files changes.
-const CORE_CACHE = 'jf-japan-core-v3';
+const CORE_CACHE = 'jf-japan-core-v4';
 const FONT_CACHE = 'jf-japan-fonts-v1';
 // Filled by app.js (loadRecordings); listed here so activate doesn't delete it.
 const AUDIO_CACHE = 'jf-japan-audio-v1';
@@ -28,11 +28,12 @@ self.addEventListener('install', (event) => {
     );
 });
 
+// Cache Storage is shared by every app on this origin, so only delete this app's own old caches.
 self.addEventListener('activate', (event) => {
     const keep = [CORE_CACHE, FONT_CACHE, AUDIO_CACHE];
     event.waitUntil(
         caches.keys()
-            .then(keys => Promise.all(keys.filter(key => !keep.includes(key)).map(key => caches.delete(key))))
+            .then(keys => Promise.all(keys.filter(key => key.startsWith('jf-japan-') && !keep.includes(key)).map(key => caches.delete(key))))
             .then(() => self.clients.claim())
     );
 });
